@@ -10,13 +10,32 @@ Projeto incremental desenvolvido para a disciplina **Práticas de Implementaçã
 
 O SupportFlow parte da hipótese de que informações técnicas fragmentadas durante o atendimento podem causar retrabalho, repetição de testes e perda de contexto em transferências e escalonamentos.
 
-Consulte:
+Consulte a documentação do processo de Discovery:
 
 - `docs/problem.md`
 - `docs/prd.md`
 - `docs/spec.md`
 - `docs/architecture.md`
 - `docs/design.md`
+
+## Protótipo
+
+O protótipo da aplicação foi desenvolvido no Google Stitch com base no PRD, especificação técnica e Design System do projeto.
+
+**Google Stitch:**  
+https://stitch.withgoogle.com/projects/5301597292888761257
+
+Foram desenvolvidas as principais telas do MVP:
+
+- Login
+- Dashboard
+- Lista de Chamados
+- Novo Chamado
+- Detalhes do Chamado
+- Lista de Clientes
+- Detalhes do Cliente
+
+Durante a etapa de prototipação também foram explorados os recursos de Preview, Variations e protótipo interativo do Stitch.
 
 ## Stack priorizada
 
@@ -44,42 +63,3 @@ supportflow/
 │   └── workflows/
 ├── .env.example
 └── README.md
-```
-
-## Status da V1
-
-### Discovery
-
-- [x] Problem Statement
-- [x] PRD
-- [x] Especificação
-- [x] Arquitetura
-- [x] Design System
-- [ ] Protótipos no Stitch
-- [ ] Validação com usuários
-
-### Delivery
-
-- [ ] Frontend
-- [ ] Backend
-- [ ] Banco
-- [ ] Autenticação
-- [ ] Testes
-- [ ] CI/CD
-- [ ] Deploy
-
-## Próximos passos
-
-1. Gerar os protótipos no Stitch usando `docs/prd.md`, `docs/spec.md` e `docs/design.md`.
-2. Validar os protótipos.
-3. Implementar a aplicação.
-4. Configurar os serviços externos.
-5. Testar.
-6. Publicar.
-7. Preparar a apresentação final da V1.
-
-## Pesquisa de validação
-
-As principais evidências públicas estão descritas em `docs/problem.md`.
-
-Importante: dados da Anatel demonstram relevância de atendimento e qualidade no setor, mas não provam diretamente a hipótese de fragmentação de informações dentro das equipes. Essa parte deve ser validada por entrevistas/observação.
