@@ -10,22 +10,22 @@ Projeto incremental desenvolvido para a disciplina **Práticas de Implementaçã
 
 O SupportFlow parte da hipótese de que informações técnicas fragmentadas durante o atendimento podem causar retrabalho, repetição de testes e perda de contexto em transferências e escalonamentos.
 
-Consulte a documentação do processo de Discovery:
+## Documentação
 
-- `docs/problem.md`
-- `docs/prd.md`
-- `docs/spec.md`
-- `docs/architecture.md`
-- `docs/design.md`
+- [`docs/problem.md`](docs/problem.md) — definição do problema.
+- [`docs/prd.md`](docs/prd.md) — requisitos do produto.
+- [`docs/spec.md`](docs/spec.md) — especificação técnica.
+- [`docs/architecture.md`](docs/architecture.md) — arquitetura.
+- [`docs/design.md`](docs/design.md) — design system.
+- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — configuração das seções 1 a 4 do Delivery.
 
 ## Protótipo
 
-O protótipo da aplicação foi desenvolvido no Google Stitch com base no PRD, especificação técnica e Design System do projeto.
+Protótipo criado no Google Stitch com base no PRD, especificação e Design System.
 
-**Google Stitch:**  
-https://stitch.withgoogle.com/projects/5301597292888761257
+**Stitch:** https://stitch.withgoogle.com/projects/5301597292888761257
 
-Foram desenvolvidas as principais telas do MVP:
+Telas principais:
 
 - Login
 - Dashboard
@@ -35,7 +35,7 @@ Foram desenvolvidas as principais telas do MVP:
 - Lista de Clientes
 - Detalhes do Cliente
 
-Durante a etapa de prototipação também foram explorados os recursos de Preview, Variations e protótipo interativo do Stitch.
+Foram explorados Preview, Variations e protótipo interativo.
 
 ## Stack priorizada
 
@@ -45,13 +45,14 @@ Durante a etapa de prototipação também foram explorados os recursos de Previe
 - ORM: Prisma
 - Autenticação: Clerk
 - CI/CD: GitHub Actions
-- Frontend deploy: Vercel
+- Deploy frontend: Vercel
 - Observabilidade: Sentry
 - E2E: Playwright
 - Prototipação: Google Stitch
-- Agente de IA priorizado: Google Antigravity
+- Agente de IA: Google Antigravity
+- SDD: OpenSpec
 
-## Estrutura planejada
+## Estrutura alvo
 
 ```text
 supportflow/
@@ -59,7 +60,86 @@ supportflow/
 │   ├── web/
 │   └── api/
 ├── docs/
-├── .github/
-│   └── workflows/
+├── scripts/
+├── .agents/
+├── openspec/
+├── AGENTS.md
 ├── .env.example
+├── .gitignore
 └── README.md
+```
+
+## Configuração inicial do Delivery
+
+As seções 1 a 4 do roteiro estão documentadas em [`docs/delivery-configuration.md`](docs/delivery-configuration.md).
+
+### 1. Criar o `.env` local
+
+No Windows/PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Preencha as credenciais apenas no `.env` local. O arquivo está ignorado pelo Git e **não deve ser enviado ao GitHub**.
+
+### 2. Instalar skills do agente
+
+```powershell
+./scripts/setup-agent-skills.ps1
+```
+
+Depois verifique `.agents/skills/`.
+
+### 3. Configurar MCP no Antigravity
+
+Use como referência:
+
+- [`docs/antigravity-mcp.example.json`](docs/antigravity-mcp.example.json)
+
+Configure localmente as chaves do Stitch e Context7 e teste no Agent com:
+
+```text
+Liste os projetos do Stitch
+```
+
+O projeto esperado é **SupportFlow**.
+
+## Regras para agentes
+
+As regras operacionais do projeto estão em [`AGENTS.md`](AGENTS.md), incluindo:
+
+- arquitetura;
+- segurança;
+- qualidade e testes;
+- autonomia no terminal;
+- uso do Context7;
+- critérios de conclusão.
+
+## Status
+
+### Discovery
+
+- [x] Problem Statement
+- [x] PRD
+- [x] Especificação
+- [x] Arquitetura
+- [x] Design System
+- [x] Protótipos no Stitch
+- [x] Preview / Variations / Interact
+
+### Delivery — configuração (seções 1 a 4)
+
+- [x] Documentação disponível em `docs/`
+- [x] `.gitignore` configurado
+- [x] `.env.example` criado
+- [x] README atualizado
+- [x] `AGENTS.md` criado
+- [x] Script de instalação de skills preparado
+- [x] Exemplo de MCP preparado
+- [ ] Pré-requisitos validados no computador local
+- [ ] `.env` local preenchido
+- [ ] Skills instaladas localmente
+- [ ] MCP Stitch e Context7 configurados/testados no Antigravity
+
+Os itens locais não são marcados como concluídos até serem realmente executados e validados no computador do desenvolvedor.
