@@ -1,40 +1,46 @@
-# Delivery — Configuração (Seções 1 a 4)
+# Delivery — Preparação do ambiente (Seções 1, 2 e 3)
 
-Este documento aplica ao **SupportFlow** as seções 1 a 4 do roteiro oficial de Delivery.
+Este documento aplica ao **SupportFlow** as seções 1, 2 e 3 do roteiro de Delivery e inclui a preparação complementar do ambiente **Open Source AI**.
 
-> Escopo desta etapa: preparar ambiente, variáveis, documentação, agente de IA, skills e MCP Servers. Não inclui ainda a criação das mudanças do OpenSpec (seção 5 em diante).
+> Escopo desta entrega: visão geral do fluxo, orientações gerais, pré-requisitos, configuração do projeto, variáveis de ambiente, README e preparação de OmniRoute/OpenCode. Não inclui etapas posteriores do roteiro de Delivery.
 
 ## 1. Visão geral do fluxo
 
-Resultados esperados do Delivery ao longo da disciplina:
+Resultados esperados ao longo do Delivery:
 
 - roadmap de mudanças;
 - propostas de mudança;
-- planos e casos de teste;
+- planos de testes;
+- casos de teste;
 - incrementos do produto.
 
-Participantes principais:
+Participantes:
 
 - Designer UX;
 - Desenvolvedor.
 
-Ferramentas priorizadas para o SupportFlow:
+Ferramentas previstas:
 
-- Google Antigravity;
-- OpenSpec;
-- Playwright;
-- GitHub;
-- Stitch;
-- Context7;
-- Vercel;
-- Supabase;
-- Clerk.
+- agentes de IA para desenvolvimento, como Google Antigravity e OpenCode;
+- OpenSpec para Spec-Driven Development;
+- Playwright para automação de testes;
+- GitHub, Vercel, Supabase, Clerk, Context7 e Google Stitch.
 
 ## 2. Orientações gerais
 
-### Pré-requisitos locais
+### Pré-requisitos
 
-Instalar e validar:
+Devem estar instalados localmente:
+
+- Google Antigravity IDE;
+- Node.js e npm;
+- Git;
+- Docker e Docker Compose;
+- OpenSpec;
+- Playwright;
+- VS Code/OpenCode para o fluxo Open Source AI.
+
+Comandos sugeridos para validação:
 
 ```powershell
 node --version
@@ -43,9 +49,10 @@ git --version
 docker --version
 docker compose version
 openspec --version
+npx playwright --version
 ```
 
-Também devem existir contas/logins ativos em:
+Também devem existir contas e logins ativos em:
 
 - GitHub;
 - Vercel;
@@ -54,34 +61,31 @@ Também devem existir contas/logins ativos em:
 - Context7;
 - Google Stitch.
 
-### Antigravity
+### Gerenciamento da janela de contexto
 
-Instalar o Google Antigravity localmente e usar o painel **Agent**.
-
-Prática recomendada:
-
-- iniciar uma nova conversa para cada tarefa relevante;
-- usar modelos com maior capacidade de raciocínio no planejamento;
-- usar modelos mais rápidos na execução quando adequado;
-- referenciar arquivos com `@`, por exemplo `@docs/spec.md`.
+Para cada tarefa relevante, priorizar uma nova conversa no agente de IA. No Antigravity, utilizar o painel **Agent** e iniciar uma nova conversa.
 
 ### Ciclo Planejar / Executar
 
-Para cada tarefa:
+As tarefas devem seguir, sempre que possível, o ciclo:
 
-1. pesquisar e entender contexto;
-2. criar plano;
+1. pesquisar e entender o contexto;
+2. planejar a solução;
 3. implementar;
-4. validar com lint/testes/build aplicáveis;
-5. registrar resultado e riscos restantes.
+4. validar o resultado.
 
-As regras permanentes estão em `AGENTS.md`.
+No planejamento, priorizar modelos com maior capacidade de raciocínio. Para execução, podem ser utilizados modelos mais rápidos quando adequado.
+
+### Ajuste nos prompts
+
+- substituir valores entre `< >` pelos dados reais do SupportFlow;
+- utilizar `@` para referenciar arquivos, diretórios, regras ou MCP servers disponíveis no agente.
 
 ## 3. Configuração do projeto
 
-### Documentação
+### Documentação geral
 
-A pasta `docs/` contém:
+O repositório possui a documentação exigida em `docs/`:
 
 ```text
 docs/
@@ -89,23 +93,22 @@ docs/
 ├── design.md
 ├── prd.md
 ├── problem.md
-├── spec.md
-└── delivery-configuration.md
+└── spec.md
 ```
 
 ### Variáveis de ambiente
 
-O arquivo versionado é apenas `.env.example`.
+O repositório mantém apenas o arquivo seguro `.env.example` versionado.
 
-Crie localmente o arquivo `.env` a partir dele:
+No Windows/PowerShell, criar o arquivo local `.env` com:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-O `.gitignore` já bloqueia `.env` e variantes contendo segredos.
+As credenciais reais devem ser preenchidas somente no `.env` local.
 
-Preencha localmente:
+Principais variáveis utilizadas:
 
 ```dotenv
 PROJECT_NAME=SupportFlow
@@ -125,135 +128,145 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
 CLERK_JWT_KEY=""
 
+OMNIROUTE_API_KEY=
+
 FRONTEND_PORT=3000
 BACKEND_PORT=3001
 NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
-
-SENTRY_DSN=
-NEXT_PUBLIC_SENTRY_DSN=
 ```
 
-### Onde obter as chaves
+As chaves podem ser obtidas nos painéis dos respectivos serviços. Nenhum segredo deve ser enviado ao GitHub.
 
-- Context7: dashboard → API Keys.
-- Stitch: Settings → API Key.
-- Vercel: Account Settings → Tokens.
-- Supabase: Account/Dashboard → Access Tokens e, após criar o projeto, configurações de API/banco.
-- Clerk: Application → Configure → API Keys.
+### `.gitignore`
 
-Nunca coloque os valores reais no GitHub.
+O `.gitignore` do projeto ignora `.env` e suas variantes, mantendo apenas `.env.example` versionado.
 
 ### README
 
-O `README.md` deve permanecer como porta de entrada do projeto e apontar para:
+O `README.md` funciona como porta de entrada do repositório e apresenta:
 
-- problema;
-- documentação de Discovery;
+- objetivo do SupportFlow;
+- documentação do Discovery;
 - protótipo no Stitch;
-- stack;
-- configuração do Delivery.
+- stack priorizada;
+- estrutura do projeto;
+- instruções de configuração inicial.
 
-## 4. Configuração do Agente de IA
+---
 
-### AGENTS.md
+# Preparação complementar — Ambiente Open Source AI
 
-O repositório possui `AGENTS.md` com:
+A preparação Open Source AI segue a orientação complementar indicada no roteiro de Delivery.
 
-- prioridades;
-- stack;
-- estrutura alvo;
-- limites arquiteturais;
-- fluxo de trabalho;
-- comandos alvo;
-- critérios de qualidade/testes;
-- governança de terminal;
-- uso do Context7;
-- referências da documentação.
+## 1. Providers
 
-Revise esse arquivo sempre que surgir uma regra recorrente, evitando duplicação.
+Podem ser utilizadas contas em provedores com modelos gratuitos ou free tier, por exemplo:
 
-### Skills
+- Ollama Cloud;
+- OpenRouter;
+- AgentRouter;
+- Groq;
+- OpenCode Zen;
+- OpenCode Go;
+- Alibaba Model Studio;
+- NVIDIA Build.
 
-No terminal, a partir da raiz do projeto, execute:
+As chaves dos providers são configuradas localmente no OmniRoute e não são versionadas no repositório.
+
+## 2. OmniRoute
+
+Instalar o OmniRoute conforme a documentação oficial do projeto.
+
+Em Windows, caso a instalação padrão apresente problemas, pode ser utilizada a alternativa via Docker:
 
 ```powershell
-npx skills add https://github.com/hashicorp/agent-skills --yes --skill terraform-style-guide --agent universal
-npx skills add https://github.com/vercel/next.js/tree/canary/skills --yes --agent universal --skill next-best-practices next-cache-components deploy-to-vercel react-best-practices web-design-guidelines composition-patterns
-npx skills add https://github.com/prisma/skills --yes --agent universal --skill prisma-database-setup
-npx skills add https://github.com/supabase/agent-skills --yes --agent universal
-npx skills add https://github.com/clerk/skills --yes --agent universal --skill clerk-setup clerk
-npx skills add https://github.com/mattpocock/skills --yes --agent universal --skill improve-codebase-architecture
-npx skills add https://github.com/addyosmani/agent-skills --yes --agent universal --skill frontend-ui-engineering code-review-and-quality ci-cd-and-automation
-npx skills add https://github.com/sickn33/antigravity-awesome-skills --yes --agent universal --skill backend-architect nestjs-expert docker-expert github-actions-templates
+docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 -p 20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
 ```
 
-Depois confira se `.agents/skills/` foi criado e contém as skills instaladas.
-
-Também há um script auxiliar em `scripts/setup-agent-skills.ps1` com esses comandos.
-
-### MCP Servers no Antigravity
-
-No Antigravity:
-
-1. Agent.
-2. `...` → MCP Store.
-3. Manage MCP Servers.
-4. View raw config.
-5. Use a configuração abaixo substituindo os placeholders pelos valores do `.env` local.
-
-```json
-{
-  "mcpServers": {
-    "stitch": {
-      "serverUrl": "https://stitch.googleapis.com/mcp",
-      "headers": {
-        "X-Goog-Api-Key": "<STITCH_API_KEY>"
-      }
-    },
-    "context7": {
-      "serverUrl": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "<CONTEXT7_API_KEY>"
-      }
-    }
-  }
-}
-```
-
-Salve e use **Refresh**.
-
-Um exemplo sem credenciais reais também está em `docs/antigravity-mcp.example.json`.
-
-### Teste do MCP do Stitch
-
-Abra uma nova conversa no Agent e solicite:
+Após iniciar o OmniRoute, acessar:
 
 ```text
-Liste os projetos do Stitch
+http://localhost:20128/
 ```
 
-O projeto esperado é **SupportFlow** (Stitch project ID `5301597292888761257`).
+No dashboard:
 
-### Teste do Context7
+1. abrir **API Key Manager**;
+2. criar uma API key;
+3. guardar a chave em local seguro e preencher `OMNIROUTE_API_KEY` no `.env` local;
+4. abrir **Providers** e configurar os providers escolhidos;
+5. abrir **Compression Settings** e selecionar **Stacked**.
 
-Solicite ao agente uma consulta simples de documentação atualizada, por exemplo:
+## 3. OpenCode
+
+Instalar o OpenCode e utilizá-lo pelo VS Code ou por uma integração compatível.
+
+Na interface do OpenCode:
 
 ```text
-Use o Context7 para consultar a documentação atual do Next.js App Router e informe a versão/documentação encontrada.
+/connect
 ```
 
-## Checklist de conclusão das seções 1 a 4
+Selecionar/configurar o provider OmniRoute e, depois, consultar os modelos:
 
-- [x] Documentação de Discovery no repositório.
-- [x] `.gitignore` protege `.env`.
-- [x] `.env.example` criado sem segredos.
-- [x] README existente.
-- [x] `AGENTS.md` criado.
-- [ ] Antigravity instalado localmente.
-- [ ] Node/npm/Git/Docker/OpenSpec validados localmente.
-- [ ] `.env` local criado e preenchido.
-- [ ] Skills instaladas localmente em `.agents/skills/`.
-- [ ] MCP Stitch configurado e testado no Antigravity.
-- [ ] MCP Context7 configurado e testado no Antigravity.
+```text
+/models
+```
 
-Os itens não marcados exigem execução/autenticação no computador do desenvolvedor e não devem ser simulados por commits no GitHub.
+Podem ser priorizados modelos recentes e gratuitos das famílias DeepSeek, Qwen, Kimi, GLM e MiniMax, conforme disponibilidade dos providers configurados.
+
+## 4. Configuração do agente
+
+O arquivo `opencode.json` foi criado na raiz do SupportFlow e contém:
+
+- provider OmniRoute;
+- MCP Playwright Test;
+- MCP Google Stitch;
+- MCP Context7.
+
+As credenciais são referenciadas por variáveis de ambiente e não ficam gravadas diretamente no JSON.
+
+> Observação: o exemplo disponibilizado no roteiro possui um bloco `mcp` duplicado. No SupportFlow foi utilizada a mesma estrutura funcional, corrigindo a duplicação para manter o arquivo JSON válido.
+
+Variáveis utilizadas pelo agente:
+
+```dotenv
+OMNIROUTE_API_KEY=
+STITCH_API_KEY=
+CONTEXT7_API_KEY=
+```
+
+O OpenCode também pode consumir skills e outros recursos armazenados no diretório `.agents` quando essas etapas forem necessárias posteriormente no projeto.
+
+## Checklist desta entrega
+
+### Repositório
+
+- [x] Documentação `problem.md` disponível.
+- [x] Documentação `prd.md` disponível.
+- [x] Documentação `spec.md` disponível.
+- [x] Documentação `design.md` disponível.
+- [x] Documentação `architecture.md` disponível.
+- [x] `.gitignore` protegendo `.env`.
+- [x] `.env.example` sem segredos reais.
+- [x] README disponível.
+- [x] `OMNIROUTE_API_KEY` adicionada ao exemplo de ambiente.
+- [x] `opencode.json` criado para a preparação Open Source AI.
+
+### Execução local
+
+- [ ] Antigravity instalado e validado.
+- [ ] Node.js/npm instalados e validados.
+- [ ] Git instalado e validado.
+- [ ] Docker/Docker Compose instalados e validados.
+- [ ] OpenSpec instalado e validado.
+- [ ] Playwright instalado e validado.
+- [ ] `.env` local criado e credenciais preenchidas.
+- [ ] Conta(s) de provider Open Source AI criada(s).
+- [ ] OmniRoute instalado/iniciado e API key criada.
+- [ ] Provider(s) configurado(s) no OmniRoute.
+- [ ] Compression Settings configurado como Stacked.
+- [ ] OpenCode instalado e conectado ao OmniRoute.
+- [ ] Modelo do OmniRoute selecionado/testado no OpenCode.
+
+Os itens locais só devem ser marcados após serem realmente executados no computador do desenvolvedor.
