@@ -17,7 +17,7 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
-- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — configuração das seções 1 a 4 do Delivery.
+- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente, seções 1, 2 e 3 do Delivery e complemento Open Source AI.
 
 ## Protótipo
 
@@ -49,8 +49,9 @@ Foram explorados Preview, Variations e protótipo interativo.
 - Observabilidade: Sentry
 - E2E: Playwright
 - Prototipação: Google Stitch
-- Agente de IA: Google Antigravity
+- Agente de IA: Google Antigravity / OpenCode
 - SDD: OpenSpec
+- Gateway Open Source AI: OmniRoute
 
 ## Estrutura alvo
 
@@ -66,12 +67,13 @@ supportflow/
 ├── AGENTS.md
 ├── .env.example
 ├── .gitignore
+├── opencode.json
 └── README.md
 ```
 
-## Configuração inicial do Delivery
+## Preparação do ambiente — Delivery
 
-As seções 1 a 4 do roteiro estão documentadas em [`docs/delivery-configuration.md`](docs/delivery-configuration.md).
+As seções **1, 2 e 3** do roteiro de Delivery e a preparação complementar do ambiente **Open Source AI** estão documentadas em [`docs/delivery-configuration.md`](docs/delivery-configuration.md).
 
 ### 1. Criar o `.env` local
 
@@ -83,63 +85,58 @@ Copy-Item .env.example .env
 
 Preencha as credenciais apenas no `.env` local. O arquivo está ignorado pelo Git e **não deve ser enviado ao GitHub**.
 
-### 2. Instalar skills do agente
+### 2. Validar os pré-requisitos
 
 ```powershell
-./scripts/setup-agent-skills.ps1
+node --version
+npm --version
+git --version
+docker --version
+docker compose version
+openspec --version
+npx playwright --version
 ```
 
-Depois verifique `.agents/skills/`.
+Também devem estar disponíveis Google Antigravity, VS Code/OpenCode e os acessos aos serviços definidos no roteiro.
 
-### 3. Configurar MCP no Antigravity
+### 3. Preparar o ambiente Open Source AI
 
-Use como referência:
+O projeto inclui [`opencode.json`](opencode.json), preparado para integração com:
 
-- [`docs/antigravity-mcp.example.json`](docs/antigravity-mcp.example.json)
+- OmniRoute;
+- Playwright Test MCP;
+- Google Stitch MCP;
+- Context7 MCP.
 
-Configure localmente as chaves do Stitch e Context7 e teste no Agent com:
+A variável `OMNIROUTE_API_KEY` está declarada em `.env.example` e deve receber o valor real apenas no arquivo `.env` local.
 
-```text
-Liste os projetos do Stitch
-```
+O OmniRoute deve ser iniciado localmente e configurado com ao menos um provider. Em seguida, o OpenCode deve ser conectado ao OmniRoute e um modelo disponível deve ser selecionado/testado.
 
-O projeto esperado é **SupportFlow**.
+## Status da preparação
 
-## Regras para agentes
+### Arquivos do repositório
 
-As regras operacionais do projeto estão em [`AGENTS.md`](AGENTS.md), incluindo:
+- [x] Documentação de Discovery disponível em `docs/`.
+- [x] `.gitignore` configurado para proteger `.env`.
+- [x] `.env.example` criado sem credenciais reais.
+- [x] README atualizado.
+- [x] `OMNIROUTE_API_KEY` adicionada ao exemplo de ambiente.
+- [x] `opencode.json` criado.
+- [x] Preparação das seções 1, 2 e 3 documentada.
+- [x] Preparação Open Source AI documentada.
 
-- arquitetura;
-- segurança;
-- qualidade e testes;
-- autonomia no terminal;
-- uso do Context7;
-- critérios de conclusão.
+### Validações locais
 
-## Status
+- [ ] Antigravity validado.
+- [ ] Node.js/npm validados.
+- [ ] Git validado.
+- [ ] Docker/Docker Compose validados.
+- [ ] OpenSpec validado.
+- [ ] Playwright validado.
+- [ ] `.env` local preenchido.
+- [ ] OmniRoute instalado e configurado.
+- [ ] Provider Open Source AI configurado.
+- [ ] OpenCode conectado ao OmniRoute.
+- [ ] Modelo selecionado e testado.
 
-### Discovery
-
-- [x] Problem Statement
-- [x] PRD
-- [x] Especificação
-- [x] Arquitetura
-- [x] Design System
-- [x] Protótipos no Stitch
-- [x] Preview / Variations / Interact
-
-### Delivery — configuração (seções 1 a 4)
-
-- [x] Documentação disponível em `docs/`
-- [x] `.gitignore` configurado
-- [x] `.env.example` criado
-- [x] README atualizado
-- [x] `AGENTS.md` criado
-- [x] Script de instalação de skills preparado
-- [x] Exemplo de MCP preparado
-- [ ] Pré-requisitos validados no computador local
-- [ ] `.env` local preenchido
-- [ ] Skills instaladas localmente
-- [ ] MCP Stitch e Context7 configurados/testados no Antigravity
-
-Os itens locais não são marcados como concluídos até serem realmente executados e validados no computador do desenvolvedor.
+Os itens locais devem ser marcados somente após execução real no computador do desenvolvedor.
