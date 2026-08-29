@@ -272,12 +272,18 @@ O Google Antigravity foi instalado e validado localmente em duas frentes:
 - [x] Teste real de chamada pelo OpenCode concluído com sucesso.
 - [x] MCPs Context7, Playwright Test e Stitch exibidos como conectados.
 
-### Acessos/credenciais ainda a conferir no ambiente local
+### Acessos/credenciais validados no ambiente local
 
-- [ ] Vercel — conta/login e `VERCEL_API_TOKEN`.
-- [ ] Supabase — conta/login e `SUPABASE_ACCESS_TOKEN`.
-- [ ] Clerk — conta/login e chaves da aplicação.
-- [ ] Context7 — conta/login e `CONTEXT7_API_KEY` no `.env` local.
-- [ ] Google Stitch — `STITCH_API_KEY` no `.env` local.
+- [x] Vercel — conta/login e `VERCEL_API_TOKEN` configurados.
+- [x] Supabase — conta/login e `SUPABASE_ACCESS_TOKEN` configurados.
+- [x] Clerk — conta/login e chaves da aplicação configuradas.
+- [x] Context7 — conta/login e `CONTEXT7_API_KEY` configurada no `.env` local.
+- [x] Google Stitch — `STITCH_API_KEY` configurada no `.env` local.
 
-Os itens restantes correspondem à conferência das credenciais exigidas pela seção 3. As chaves reais devem permanecer somente no `.env` local e nunca ser versionadas no GitHub.
+### Segurança das credenciais
+
+- [x] `.env` confirmado como ignorado pelo Git.
+- [x] `.env` não aparece entre os arquivos versionados (`git ls-files .env` sem retorno).
+- [x] Repositório local sem alterações pendentes após a validação (`working tree clean`).
+
+As chaves reais permanecem somente no `.env` local e não são versionadas no GitHub.
