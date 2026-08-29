@@ -171,72 +171,71 @@ Podem ser utilizadas contas em provedores com modelos gratuitos ou free tier, po
 - Alibaba Model Studio;
 - NVIDIA Build.
 
+No ambiente validado para o SupportFlow foi utilizado **OpenRouter** como provider conectado ao OmniRoute.
+
 As chaves dos providers são configuradas localmente no OmniRoute e não são versionadas no repositório.
 
 ## 2. OmniRoute
 
-Instalar o OmniRoute conforme a documentação oficial do projeto.
-
-Em Windows, caso a instalação padrão apresente problemas, pode ser utilizada a alternativa via Docker:
+Em Windows, o OmniRoute foi executado via Docker com:
 
 ```powershell
 docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 -p 20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
 ```
 
-Após iniciar o OmniRoute, acessar:
+Dashboard local:
 
 ```text
 http://localhost:20128/
 ```
 
-No dashboard:
+Configuração validada:
 
-1. abrir **API Key Manager**;
-2. criar uma API key;
-3. guardar a chave em local seguro e preencher `OMNIROUTE_API_KEY` no `.env` local;
-4. abrir **Providers** e configurar os providers escolhidos;
-5. abrir **Compression Settings** e selecionar **Stacked**.
+1. API key criada no Gerenciador API;
+2. `OMNIROUTE_API_KEY` preenchida no `.env` local;
+3. OpenRouter configurado como provider;
+4. teste de conexão do provider concluído com sucesso;
+5. Prompt Compression ativado;
+6. perfil global **Stacked** selecionado, executando `RTK → Caveman`.
 
 ## 3. OpenCode
 
-Instalar o OpenCode e utilizá-lo pelo VS Code ou por uma integração compatível.
+O OpenCode foi instalado e executado dentro do projeto SupportFlow.
 
-Na interface do OpenCode:
+O arquivo `opencode.json` registra o provider OmniRoute e os MCP servers utilizados pelo projeto.
 
-```text
-/connect
-```
+Modelos disponibilizados:
 
-Selecionar/configurar o provider OmniRoute e, depois, consultar os modelos:
+- `OmniRoute Auto`;
+- `OmniRoute Auto Coding`.
 
-```text
-/models
-```
-
-Podem ser priorizados modelos recentes e gratuitos das famílias DeepSeek, Qwen, Kimi, GLM e MiniMax, conforme disponibilidade dos providers configurados.
+Foi executado um teste real pelo OpenCode com resposta bem-sucedida através do OmniRoute.
 
 ## 4. Configuração do agente
 
-O arquivo `opencode.json` foi criado na raiz do SupportFlow e contém:
+O arquivo `opencode.json` na raiz do SupportFlow contém:
 
 - provider OmniRoute;
 - MCP Playwright Test;
 - MCP Google Stitch;
 - MCP Context7.
 
-As credenciais são referenciadas por variáveis de ambiente e não ficam gravadas diretamente no JSON.
+O endpoint local utilizado pelo OpenCode é:
 
-> Observação: o exemplo disponibilizado no roteiro possui um bloco `mcp` duplicado. No SupportFlow foi utilizada a mesma estrutura funcional, corrigindo a duplicação para manter o arquivo JSON válido.
-
-Variáveis utilizadas pelo agente:
-
-```dotenv
-OMNIROUTE_API_KEY=
-STITCH_API_KEY=
-CONTEXT7_API_KEY=
+```text
+http://localhost:20128/v1
 ```
 
-O OpenCode também pode consumir skills e outros recursos armazenados no diretório `.agents` quando essas etapas forem necessárias posteriormente no projeto.
+Os MCPs **Context7**, **Playwright Test** e **Stitch** foram exibidos como conectados na validação do OpenCode.
+
+> Observação: o exemplo disponibilizado no roteiro possui um bloco `mcp` duplicado. No SupportFlow foi utilizada uma estrutura JSON válida, mantendo o objetivo funcional do roteiro.
+
+## 5. Google Antigravity
+
+O Google Antigravity foi instalado e validado localmente em duas frentes:
+
+- Agent com acesso ao projeto SupportFlow e leitura dos arquivos da pasta `docs/`;
+- Antigravity IDE instalado e aberto com o repositório `SupportFlow` carregado.
 
 ## Checklist desta entrega
 
@@ -249,24 +248,36 @@ O OpenCode também pode consumir skills e outros recursos armazenados no diretó
 - [x] Documentação `architecture.md` disponível.
 - [x] `.gitignore` protegendo `.env`.
 - [x] `.env.example` sem segredos reais.
-- [x] README disponível.
+- [x] README disponível e atualizado.
 - [x] `OMNIROUTE_API_KEY` adicionada ao exemplo de ambiente.
 - [x] `opencode.json` criado para a preparação Open Source AI.
 
-### Execução local
+### Execução local validada
 
-- [ ] Antigravity instalado e validado.
-- [ ] Node.js/npm instalados e validados.
-- [ ] Git instalado e validado.
-- [ ] Docker/Docker Compose instalados e validados.
-- [ ] OpenSpec instalado e validado.
-- [ ] Playwright instalado e validado.
-- [ ] `.env` local criado e credenciais preenchidas.
-- [ ] Conta(s) de provider Open Source AI criada(s).
-- [ ] OmniRoute instalado/iniciado e API key criada.
-- [ ] Provider(s) configurado(s) no OmniRoute.
-- [ ] Compression Settings configurado como Stacked.
-- [ ] OpenCode instalado e conectado ao OmniRoute.
-- [ ] Modelo do OmniRoute selecionado/testado no OpenCode.
+- [x] Google Antigravity IDE instalado e validado.
+- [x] Antigravity Agent validado com acesso ao SupportFlow.
+- [x] Node.js/npm instalados e validados.
+- [x] Git instalado e validado.
+- [x] Docker/Docker Compose instalados e validados.
+- [x] OpenSpec instalado e validado.
+- [x] Playwright instalado e validado.
+- [x] `.env` local criado.
+- [x] `OMNIROUTE_API_KEY` configurada localmente.
+- [x] Conta OpenRouter utilizada como provider Open Source AI.
+- [x] OmniRoute iniciado via Docker e API key criada.
+- [x] OpenRouter configurado e testado no OmniRoute.
+- [x] Compression Settings configurado com **Stacked (RTK → Caveman)**.
+- [x] OpenCode instalado e reconhecendo o provider OmniRoute.
+- [x] Modelos OmniRoute carregados no OpenCode.
+- [x] Teste real de chamada pelo OpenCode concluído com sucesso.
+- [x] MCPs Context7, Playwright Test e Stitch exibidos como conectados.
 
-Os itens locais só devem ser marcados após serem realmente executados no computador do desenvolvedor.
+### Acessos/credenciais ainda a conferir no ambiente local
+
+- [ ] Vercel — conta/login e `VERCEL_API_TOKEN`.
+- [ ] Supabase — conta/login e `SUPABASE_ACCESS_TOKEN`.
+- [ ] Clerk — conta/login e chaves da aplicação.
+- [ ] Context7 — conta/login e `CONTEXT7_API_KEY` no `.env` local.
+- [ ] Google Stitch — `STITCH_API_KEY` no `.env` local.
+
+Os itens restantes correspondem à conferência das credenciais exigidas pela seção 3. As chaves reais devem permanecer somente no `.env` local e nunca ser versionadas no GitHub.
