@@ -5,8 +5,7 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "OmniRoute",
       "options": {
-        "baseURL": "http://localhost:20128/v1",
-        "apiKey": "{env:OMNIROUTE_API_KEY}"
+        "baseURL": "http://localhost:20128/v1"
       },
       "models": {
         "auto": {
