@@ -108,9 +108,9 @@ O projeto inclui [`opencode.json`](opencode.json), preparado para integração c
 - Google Stitch MCP;
 - Context7 MCP.
 
-A variável `OMNIROUTE_API_KEY` está declarada em `.env.example` e deve receber o valor real apenas no arquivo `.env` local.
+A variável `OMNIROUTE_API_KEY` está declarada em `.env.example` e recebe o valor real apenas no arquivo `.env` local.
 
-O OmniRoute deve ser iniciado localmente e configurado com ao menos um provider. Em seguida, o OpenCode deve ser conectado ao OmniRoute e um modelo disponível deve ser selecionado/testado.
+O OmniRoute foi executado localmente via Docker, configurado com OpenRouter e com o perfil de compressão **Stacked (RTK → Caveman)**. O OpenCode foi conectado ao OmniRoute e validado com uma chamada real de modelo.
 
 ## Status da preparação
 
@@ -125,18 +125,32 @@ O OmniRoute deve ser iniciado localmente e configurado com ao menos um provider.
 - [x] Preparação das seções 1, 2 e 3 documentada.
 - [x] Preparação Open Source AI documentada.
 
-### Validações locais
+### Validações locais realizadas
 
-- [ ] Antigravity validado.
-- [ ] Node.js/npm validados.
-- [ ] Git validado.
-- [ ] Docker/Docker Compose validados.
-- [ ] OpenSpec validado.
-- [ ] Playwright validado.
-- [ ] `.env` local preenchido.
-- [ ] OmniRoute instalado e configurado.
-- [ ] Provider Open Source AI configurado.
-- [ ] OpenCode conectado ao OmniRoute.
-- [ ] Modelo selecionado e testado.
+- [x] Google Antigravity IDE instalado, aberto e com o SupportFlow carregado.
+- [x] Agent do Antigravity validado com acesso aos arquivos do projeto.
+- [x] Node.js/npm validados.
+- [x] Git validado.
+- [x] Docker/Docker Compose validados.
+- [x] OpenSpec validado.
+- [x] Playwright validado.
+- [x] `.env` local criado e protegido pelo `.gitignore`.
+- [x] `OMNIROUTE_API_KEY` configurada localmente.
+- [x] Conta OpenRouter criada/utilizada como provider Open Source AI.
+- [x] OmniRoute instalado/iniciado via Docker e API key criada.
+- [x] OpenRouter configurado e testado no OmniRoute.
+- [x] Compression Settings configurado com perfil **Stacked (RTK → Caveman)**.
+- [x] OpenCode instalado e reconhecendo o provider OmniRoute.
+- [x] Modelos `OmniRoute Auto` e `OmniRoute Auto Coding` disponíveis.
+- [x] Chamada real pelo OpenCode validada com sucesso.
+- [x] MCPs Context7, Playwright Test e Stitch exibidos como conectados no OpenCode.
 
-Os itens locais devem ser marcados somente após execução real no computador do desenvolvedor.
+### Acessos ainda a conferir para concluir todos os pré-requisitos do roteiro
+
+- [ ] Vercel — conta/login e token.
+- [ ] Supabase — conta/login e access token.
+- [ ] Clerk — conta/login e chaves da aplicação.
+- [ ] Context7 — conta/login e API key no `.env` local.
+- [ ] Google Stitch — API key no `.env` local.
+
+As credenciais reais permanecem somente no ambiente local e não são versionadas no GitHub.
