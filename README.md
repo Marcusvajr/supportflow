@@ -1,10 +1,6 @@
 # SupportFlow
 
-Aplicação web para centralização e acompanhamento de chamados técnicos em provedores de internet.
-
-## Projeto acadêmico
-
-Projeto incremental desenvolvido para a disciplina **Práticas de Implementação e Evolução de Software**.
+Aplicação web para centralização e continuidade de chamados técnicos em provedores de internet, desenvolvida de forma incremental na disciplina **Práticas de Implementação e Evolução de Software**.
 
 ## Problema
 
@@ -17,43 +13,35 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
-- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente, seções 1, 2 e 3 do Delivery e complemento Open Source AI.
+- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente e seções 1 a 3 do Delivery.
+- [`docs/compliance-v2.md`](docs/compliance-v2.md) — adequações da entrega incremental v2 ao regulamento da disciplina.
+- [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças.
 
 ## Protótipo
 
-Protótipo criado no Google Stitch com base no PRD, especificação e Design System.
+Protótipo criado no Google Stitch.
 
 **Stitch:** https://stitch.withgoogle.com/projects/5301597292888761257
 
-Telas principais:
+Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado, clientes e detalhes do cliente.
 
-- Login
-- Dashboard
-- Lista de Chamados
-- Novo Chamado
-- Detalhes do Chamado
-- Lista de Clientes
-- Detalhes do Cliente
-
-Foram explorados Preview, Variations e protótipo interativo.
-
-## Stack priorizada
+## Stack
 
 - Frontend: Next.js + React + TypeScript
-- Backend: Node.js + NestJS
+- Backend: Node.js + NestJS + TypeScript
 - Banco: PostgreSQL / Supabase
 - ORM: Prisma
 - Autenticação: Clerk
 - CI/CD: GitHub Actions
 - Deploy frontend: Vercel
-- Observabilidade: Sentry
-- E2E: Playwright
+- Observabilidade: Sentry + logs estruturados
+- E2E/aceite: Playwright
 - Prototipação: Google Stitch
-- Agente de IA: Google Antigravity / OpenCode
+- Agentes: Google Antigravity / OpenCode
 - SDD: OpenSpec
-- Gateway Open Source AI: OmniRoute
+- Gateway Open Source AI: OmniRoute + OpenRouter
 
-## Estrutura alvo
+## Estrutura atual
 
 ```text
 supportflow/
@@ -61,96 +49,125 @@ supportflow/
 │   ├── web/
 │   └── api/
 ├── docs/
+├── openspec/
+│   ├── changes/
+│   ├── config.yaml
+│   └── roadmap.md
 ├── scripts/
 ├── .agents/
-├── openspec/
+├── .github/workflows/
 ├── AGENTS.md
+├── package.json
 ├── .env.example
 ├── .gitignore
 ├── opencode.json
 └── README.md
 ```
 
-## Preparação do ambiente — Delivery
+## Entrega incremental v2
 
-As seções **1, 2 e 3** do roteiro de Delivery e a preparação complementar do ambiente **Open Source AI** estão documentadas em [`docs/delivery-configuration.md`](docs/delivery-configuration.md).
+A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incremental.
 
-### 1. Criar o `.env` local
+### Change implementada na base do repositório
 
-No Windows/PowerShell:
+`change-01-project-foundation`:
+
+- monorepo com npm workspaces;
+- frontend inicial em Next.js;
+- backend inicial em NestJS;
+- health check em `GET /api/v1/health`;
+- teste unitário inicial;
+- pipeline de CI para verificação estática, testes e build.
+
+Os artefatos OpenSpec da change estão em `openspec/changes/change-01-project-foundation/`.
+
+### Changes planejadas
+
+1. `change-02-auth-clerk`
+2. `change-03-customer-management`
+3. `change-04-ticket-lifecycle`
+4. `change-05-ticket-activities`
+5. `change-06-dashboard-and-search`
+6. `change-07-ai-ticket-summary`
+7. `change-08-platform-compliance`
+
+Cada proposta informa escopo, dependências, riscos, lint e testes necessários.
+
+## Conformidade acadêmica
+
+O roadmap contempla:
+
+- testes de unidade, integração e E2E/aceite;
+- dois fluxos de negócio ponta a ponta;
+- IA assistiva para resumo de contexto técnico;
+- evolução para contêineres OCI e Infraestrutura como Código;
+- configuração por variáveis de ambiente e código versionado.
+
+A IA planejada é **assistiva**: não altera automaticamente diagnóstico, status, prioridade ou responsável.
+
+## Preparação local
+
+### Criar o `.env`
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Preencha as credenciais apenas no `.env` local. O arquivo está ignorado pelo Git e **não deve ser enviado ao GitHub**.
+As credenciais reais devem existir somente no `.env` local. O arquivo é ignorado pelo Git.
 
-### 2. Validar os pré-requisitos
+### Inicializar artefatos de agente/OpenSpec no ambiente local
 
 ```powershell
-node --version
-npm --version
-git --version
-docker --version
-docker compose version
-openspec --version
-npx playwright --version
+./scripts/init-v2.ps1
 ```
 
-Também devem estar disponíveis Google Antigravity, VS Code/OpenCode e os acessos aos serviços definidos no roteiro.
+Esse script executa a inicialização do OpenSpec para Antigravity/OpenCode e chama o instalador de skills previsto no roteiro.
 
-### 3. Preparar o ambiente Open Source AI
+### Instalar dependências e validar a fundação
 
-O projeto inclui [`opencode.json`](opencode.json), preparado para integração com:
+```powershell
+npm install
+npm run lint
+npm run test
+npm run build
+```
 
-- OmniRoute;
-- Playwright Test MCP;
-- Google Stitch MCP;
-- Context7 MCP.
+### Executar aplicações
 
-A variável `OMNIROUTE_API_KEY` está declarada em `.env.example` e recebe o valor real apenas no arquivo `.env` local.
+Em terminais separados:
 
-O OmniRoute foi executado localmente via Docker, configurado com OpenRouter e com o perfil de compressão **Stacked (RTK → Caveman)**. O OpenCode foi conectado ao OmniRoute e validado com uma chamada real de modelo.
+```powershell
+npm run dev:web
+npm run dev:api
+```
 
-## Status da preparação
+Endpoints esperados:
 
-### Arquivos do repositório
+- frontend: `http://localhost:3000`
+- backend: `http://localhost:3001`
+- health: `http://localhost:3001/api/v1/health`
 
-- [x] Documentação de Discovery disponível em `docs/`.
-- [x] `.gitignore` configurado para proteger `.env`.
-- [x] `.env.example` criado sem credenciais reais.
-- [x] README atualizado.
-- [x] `OMNIROUTE_API_KEY` adicionada ao exemplo de ambiente.
-- [x] `opencode.json` criado.
-- [x] Preparação das seções 1, 2 e 3 documentada.
-- [x] Preparação Open Source AI documentada.
+## Preparação de ambiente já validada
 
-### Validações locais realizadas
+Foram validados localmente durante a preparação:
 
-- [x] Google Antigravity IDE instalado, aberto e com o SupportFlow carregado.
-- [x] Agent do Antigravity validado com acesso aos arquivos do projeto.
-- [x] Node.js/npm validados.
-- [x] Git validado.
-- [x] Docker/Docker Compose validados.
-- [x] OpenSpec validado.
-- [x] Playwright validado.
-- [x] `.env` local criado e protegido pelo `.gitignore`.
-- [x] `OMNIROUTE_API_KEY` configurada localmente.
-- [x] Conta OpenRouter criada/utilizada como provider Open Source AI.
-- [x] OmniRoute instalado/iniciado via Docker e API key criada.
-- [x] OpenRouter configurado e testado no OmniRoute.
-- [x] Compression Settings configurado com perfil **Stacked (RTK → Caveman)**.
-- [x] OpenCode instalado e reconhecendo o provider OmniRoute.
-- [x] Modelos `OmniRoute Auto` e `OmniRoute Auto Coding` disponíveis.
-- [x] Chamada real pelo OpenCode validada com sucesso.
-- [x] MCPs Context7, Playwright Test e Stitch exibidos como conectados no OpenCode.
+- Google Antigravity;
+- Node.js/npm;
+- Git;
+- Docker/Docker Compose;
+- OpenSpec;
+- Playwright;
+- OpenCode;
+- OmniRoute/OpenRouter;
+- MCPs Context7, Playwright Test e Stitch;
+- credenciais locais de Vercel, Supabase, Clerk, Context7 e Stitch.
 
-### Acessos ainda a conferir para concluir todos os pré-requisitos do roteiro
+Nenhum valor real de token ou API key é versionado.
 
-- [ ] Vercel — conta/login e token.
-- [ ] Supabase — conta/login e access token.
-- [ ] Clerk — conta/login e chaves da aplicação.
-- [ ] Context7 — conta/login e API key no `.env` local.
-- [ ] Google Stitch — API key no `.env` local.
+## Segurança
 
-As credenciais reais permanecem somente no ambiente local e não são versionadas no GitHub.
+- nunca commitar `.env`;
+- nunca expor `CLERK_SECRET_KEY` ou credenciais administrativas no frontend;
+- usar somente dados fictícios de clientes;
+- aplicar autorização no backend;
+- manter regras de negócio fora do frontend.

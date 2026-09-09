@@ -1,0 +1,58 @@
+schema: spec-driven
+
+context: |
+  Project Overview:
+    - SupportFlow is an academic web application for continuity and management of technical support tickets in regional internet providers.
+    - Monorepo with npm workspaces.
+    - Target directories: apps/web, apps/api, docs, openspec, .agents, .github.
+
+  Product references:
+    - docs/problem.md
+    - docs/prd.md
+    - docs/spec.md
+    - docs/design.md
+    - docs/architecture.md
+    - docs/compliance-v2.md
+
+  Tech stack:
+    Frontend: TypeScript, Next.js, React, App Router
+    Backend: TypeScript, Node.js, NestJS
+    Database: PostgreSQL on Supabase
+    ORM: Prisma
+    Identity: Clerk with RBAC AGENT and SUPERVISOR
+    Observability: Sentry and structured logs
+    Development: Google Antigravity, OpenCode, Context7, Stitch, npm workspaces
+    Testing: unit/integration tests plus Playwright for E2E/acceptance
+    DevOps: GitHub Actions, Vercel, OCI containers and Infrastructure as Code in the compliance change
+
+  Architectural constraints:
+    - Business rules belong to the NestJS backend.
+    - The frontend must not access business tables directly.
+    - Authentication is delegated to Clerk; authorization is enforced by the backend.
+    - Production secrets must never be versioned.
+    - Use only fictitious customer data in the academic environment.
+    - Do not implement autonomous AI diagnosis; AI is assistive only.
+
+  Testing & Quality Guidelines:
+    - Business rules require unit tests.
+    - Controllers and APIs require integration tests when introduced.
+    - Complete user flows require Playwright E2E/acceptance tests.
+    - Cover Happy Path, Sad Path and Edge Cases for relevant rules.
+    - Initial backend coverage target: 70% for business layers, aligned with docs/architecture.md.
+    - Every change must run the applicable lint, test and build commands before completion.
+
+rules:
+  proposal:
+    - Align scope with docs/prd.md, docs/spec.md, docs/architecture.md and docs/compliance-v2.md.
+    - Keep each change at small or medium size, complexity and risk.
+    - Explicitly state functional scope, dependencies, risks, lint and required unit/integration/E2E tests.
+    - Preserve NestJS as the source of business rules and Next.js as presentation.
+    - Ensure the roadmap contains at least two end-to-end business flows and one AI capability.
+  design:
+    - Follow docs/design.md and the architecture boundaries.
+    - Prefer incremental, reversible decisions.
+  tasks:
+    - Create or update tests for changed behavior.
+    - Database changes require versioned Prisma migrations.
+    - Do not mark implementation tasks complete until corresponding code exists.
+    - Final review must include lint, tests and build.

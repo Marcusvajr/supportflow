@@ -1,0 +1,20 @@
+{
+  "name": "supportflow",
+  "version": "0.2.0",
+  "private": true,
+  "description": "SupportFlow academic monorepo",
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@supportflow/web",
+    "dev:api": "npm run dev --workspace=@supportflow/api",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
