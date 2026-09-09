@@ -21,12 +21,15 @@
 
 ## 4. Qualidade e automação
 
-- [x] Criar scripts raiz `lint`, `test` e `build`.
-- [x] Criar workflow inicial de CI no GitHub Actions.
+- [x] Criar scripts raiz `dev`, `lint`, `test`, `test:e2e` e `build`.
+- [x] Configurar Playwright para smoke tests de frontend e health check.
+- [x] Criar workflow de CI com verificação estática, teste unitário, build e E2E smoke.
 - [ ] Executar `npm install` no ambiente local para gerar/atualizar `package-lock.json`.
 - [ ] Executar `npm run lint` localmente.
 - [ ] Executar `npm run test` localmente.
 - [ ] Executar `npm run build` localmente.
+- [ ] Executar `npx playwright install chromium` quando necessário.
+- [ ] Executar `npm run test:e2e` localmente.
 - [ ] Confirmar CI verde após instalação das dependências e commit do lockfile.
 
 ## 5. Revisão
