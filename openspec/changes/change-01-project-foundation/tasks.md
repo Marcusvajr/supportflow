@@ -24,13 +24,12 @@
 - [x] Criar scripts raiz `dev`, `lint`, `test`, `test:e2e` e `build`.
 - [x] Configurar Playwright para smoke tests de frontend e health check.
 - [x] Criar workflow de CI com verificação estática, teste unitário, build e E2E smoke.
+- [x] Validar no GitHub Actions: instalação de dependências, verificação estática, teste unitário, build, instalação do Chromium e testes E2E smoke concluídos com sucesso.
 - [ ] Executar `npm install` no ambiente local para gerar/atualizar `package-lock.json`.
 - [ ] Executar `npm run lint` localmente.
 - [ ] Executar `npm run test` localmente.
 - [ ] Executar `npm run build` localmente.
-- [ ] Executar `npx playwright install chromium` quando necessário.
 - [ ] Executar `npm run test:e2e` localmente.
-- [ ] Confirmar CI verde após instalação das dependências e commit do lockfile.
 
 ## 5. Revisão
 
@@ -38,4 +37,4 @@
 - [x] Não introduzir regra de negócio no frontend.
 - [x] Documentar riscos e dependências.
 
-> As tarefas que dependem de execução no computador local permanecem abertas até que os comandos sejam efetivamente executados e validados.
+> A fundação já foi validada automaticamente pelo CI. As tarefas locais permanecem abertas apenas para reproduzir a mesma validação no computador de desenvolvimento e gerar o lockfile antes da entrega final.
