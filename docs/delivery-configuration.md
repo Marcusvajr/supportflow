@@ -1,36 +1,42 @@
-# Delivery — Preparação do ambiente (Seções 1, 2 e 3)
+# Delivery — Seções 1 a 6
 
-Este documento aplica ao **SupportFlow** as seções 1, 2 e 3 do roteiro de Delivery e inclui a preparação complementar do ambiente **Open Source AI**.
+Este documento registra a execução das **seções 1 a 6** do roteiro de Delivery aplicada ao projeto **SupportFlow**, incluindo a preparação complementar do ambiente Open Source AI.
 
-> Escopo desta entrega: visão geral do fluxo, orientações gerais, pré-requisitos, configuração do projeto, variáveis de ambiente, README e preparação de OmniRoute/OpenCode. Não inclui etapas posteriores do roteiro de Delivery.
+O objetivo desta entrega incremental é manter rastreáveis: ambiente, agente, mudanças OpenSpec, implementação, validação e evidências de qualidade.
+
+---
 
 ## 1. Visão geral do fluxo
 
-Resultados esperados ao longo do Delivery:
+Resultados previstos pelo roteiro e adotados no SupportFlow:
 
 - roadmap de mudanças;
 - propostas de mudança;
-- planos de testes;
-- casos de teste;
-- incrementos do produto.
+- planos e casos de teste;
+- incrementos de produto;
+- verificação dos incrementos implementados.
 
-Participantes:
+Participantes previstos:
 
 - Designer UX;
 - Desenvolvedor.
 
-Ferramentas previstas:
+Ferramentas utilizadas no fluxo:
 
-- agentes de IA para desenvolvimento, como Google Antigravity e OpenCode;
+- Google Antigravity e OpenCode;
 - OpenSpec para Spec-Driven Development;
-- Playwright para automação de testes;
-- GitHub, Vercel, Supabase, Clerk, Context7 e Google Stitch.
+- Playwright para automação E2E;
+- GitHub;
+- Clerk;
+- Context7;
+- Google Stitch;
+- OmniRoute/OpenRouter no fluxo Open Source AI.
 
-## 2. Orientações gerais
+---
 
-### Pré-requisitos
+## 2. Orientações gerais e pré-requisitos
 
-Devem estar instalados localmente:
+Foram preparados e validados localmente:
 
 - Google Antigravity IDE;
 - Node.js e npm;
@@ -38,54 +44,37 @@ Devem estar instalados localmente:
 - Docker e Docker Compose;
 - OpenSpec;
 - Playwright;
-- VS Code/OpenCode para o fluxo Open Source AI.
+- OpenCode;
+- contas e acessos para GitHub, Vercel, Supabase, Clerk, Context7 e Google Stitch.
 
-Comandos sugeridos para validação:
+O desenvolvimento seguiu o ciclo **pesquisar → planejar → implementar → validar**, com mudanças incrementais e escopo controlado.
 
-```powershell
-node --version
-npm --version
-git --version
-docker --version
-docker compose version
-openspec --version
-npx playwright --version
+As credenciais reais permanecem apenas no arquivo `.env` local e não são versionadas.
+
+### Ambiente Open Source AI
+
+O SupportFlow também foi configurado com:
+
+- OmniRoute executado via Docker;
+- OpenRouter como provider;
+- Prompt Compression habilitado;
+- perfil global `Stacked` (`RTK → Caveman`);
+- OpenCode conectado ao OmniRoute;
+- MCPs Context7, Playwright Test e Stitch conectados.
+
+Endpoint local do OmniRoute utilizado pelo OpenCode:
+
+```text
+http://localhost:20128/v1
 ```
 
-Também devem existir contas e logins ativos em:
-
-- GitHub;
-- Vercel;
-- Supabase;
-- Clerk;
-- Context7;
-- Google Stitch.
-
-### Gerenciamento da janela de contexto
-
-Para cada tarefa relevante, priorizar uma nova conversa no agente de IA. No Antigravity, utilizar o painel **Agent** e iniciar uma nova conversa.
-
-### Ciclo Planejar / Executar
-
-As tarefas devem seguir, sempre que possível, o ciclo:
-
-1. pesquisar e entender o contexto;
-2. planejar a solução;
-3. implementar;
-4. validar o resultado.
-
-No planejamento, priorizar modelos com maior capacidade de raciocínio. Para execução, podem ser utilizados modelos mais rápidos quando adequado.
-
-### Ajuste nos prompts
-
-- substituir valores entre `< >` pelos dados reais do SupportFlow;
-- utilizar `@` para referenciar arquivos, diretórios, regras ou MCP servers disponíveis no agente.
+---
 
 ## 3. Configuração do projeto
 
 ### Documentação geral
 
-O repositório possui a documentação exigida em `docs/`:
+A documentação principal está disponível em `docs/`:
 
 ```text
 docs/
@@ -93,197 +82,224 @@ docs/
 ├── design.md
 ├── prd.md
 ├── problem.md
-└── spec.md
+├── spec.md
+├── auth-clerk.md
+└── presentation-v2.md
 ```
 
 ### Variáveis de ambiente
 
-O repositório mantém apenas o arquivo seguro `.env.example` versionado.
+O repositório versiona apenas `.env.example`. O `.env` real é local e protegido pelo `.gitignore`.
 
-No Windows/PowerShell, criar o arquivo local `.env` com:
+Exemplo de criação local:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-As credenciais reais devem ser preenchidas somente no `.env` local.
+Principais grupos de configuração:
 
-Principais variáveis utilizadas:
-
-```dotenv
-PROJECT_NAME=SupportFlow
-GLOBAL_PREFIX=api/v1
-
-CONTEXT7_API_KEY=
-STITCH_API_KEY=
-VERCEL_API_TOKEN=
-
-SUPABASE_ACCESS_TOKEN=
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-DATABASE_URL=
-DIRECT_URL=
-
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-CLERK_JWT_KEY=""
-
-OMNIROUTE_API_KEY=
-
-FRONTEND_PORT=3000
-BACKEND_PORT=3001
-NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
-```
-
-As chaves podem ser obtidas nos painéis dos respectivos serviços. Nenhum segredo deve ser enviado ao GitHub.
-
-### `.gitignore`
-
-O `.gitignore` do projeto ignora `.env` e suas variantes, mantendo apenas `.env.example` versionado.
+- Context7 e Stitch;
+- Vercel e Supabase;
+- Clerk;
+- OmniRoute;
+- portas do frontend/backend;
+- URL pública da API.
 
 ### README
 
-O `README.md` funciona como porta de entrada do repositório e apresenta:
+O `README.md` funciona como porta de entrada da entrega, contendo:
 
-- objetivo do SupportFlow;
-- documentação do Discovery;
-- protótipo no Stitch;
-- stack priorizada;
+- problema e objetivo;
+- stack;
 - estrutura do projeto;
-- instruções de configuração inicial.
+- status das changes;
+- comandos de execução e validação;
+- links para roadmap, documentação técnica e apresentação textual.
 
 ---
 
-# Preparação complementar — Ambiente Open Source AI
+## 4. Configuração do agente de IA
 
-A preparação Open Source AI segue a orientação complementar indicada no roteiro de Delivery.
+### AGENTS.md
 
-## 1. Providers
+O arquivo `AGENTS.md` foi configurado com diretrizes específicas do SupportFlow, incluindo:
 
-Podem ser utilizadas contas em provedores com modelos gratuitos ou free tier, por exemplo:
+- prioridades de segurança, arquitetura e testes;
+- stack tecnológica;
+- limites arquiteturais;
+- regras de negócio no backend;
+- comandos principais;
+- qualidade e testes;
+- governança e autonomia no terminal;
+- uso do Context7 MCP;
+- referências à documentação do projeto;
+- aprendizado contínuo após mudanças relevantes.
 
-- Ollama Cloud;
-- OpenRouter;
-- AgentRouter;
-- Groq;
-- OpenCode Zen;
-- OpenCode Go;
-- Alibaba Model Studio;
-- NVIDIA Build.
+### Skills
 
-No ambiente validado para o SupportFlow foi utilizado **OpenRouter** como provider conectado ao OmniRoute.
+A estrutura `.agents/skills/` foi criada e contém skills aplicáveis ao projeto, incluindo capacidades para:
 
-As chaves dos providers são configuradas localmente no OmniRoute e não são versionadas no repositório.
+- Clerk;
+- backend/NestJS;
+- frontend;
+- arquitetura;
+- Docker;
+- CI/CD;
+- qualidade de código;
+- OpenSpec.
 
-## 2. OmniRoute
+### MCP Servers
 
-Em Windows, o OmniRoute foi executado via Docker com:
+No ambiente de desenvolvimento foram validados:
+
+- Context7;
+- Playwright Test;
+- Google Stitch.
+
+Os três MCPs foram exibidos como conectados durante a validação no OpenCode.
+
+---
+
+## 5. Criação e execução de mudanças com OpenSpec
+
+O OpenSpec foi configurado no repositório e o planejamento incremental está registrado em:
+
+`openspec/roadmap.md`
+
+As mudanças foram dimensionadas para que tamanho, complexidade e risco não ultrapassem nível médio.
+
+### Change 01 — Project Foundation
+
+A primeira change criou a estrutura inicial do produto:
+
+- monorepo com npm workspaces;
+- frontend Next.js;
+- backend NestJS;
+- health check;
+- testes iniciais;
+- CI base.
+
+### Change 02 — Auth Clerk
+
+A segunda change foi proposta, implementada, verificada e arquivada.
+
+Principais entregas:
+
+- login e logout com Clerk;
+- proteção de rotas privadas;
+- Bearer token entre frontend e backend;
+- validação de token no NestJS;
+- associação da identidade Clerk ao usuário interno;
+- usuários ativos e inativos;
+- RBAC com `AGENT` e `SUPERVISOR`;
+- tratamento de `401`, `403` e indisponibilidade;
+- testes unitários, integração e E2E relacionados à autenticação.
+
+Arquivamento:
+
+`openspec/changes/archive/2026-09-14-change-02-auth-clerk/`
+
+Especificação consolidada:
+
+`openspec/specs/auth-clerk/spec.md`
+
+### Próximas mudanças planejadas
+
+- `change-03-customer-management`
+- `change-04-ticket-lifecycle`
+- `change-05-ticket-activities`
+- `change-06-dashboard-and-search`
+- `change-07-ai-ticket-summary`
+- `change-08-platform-compliance`
+
+O fluxo adotado para as mudanças é:
+
+```text
+proposta → implementação → verificação → arquivamento
+```
+
+---
+
+## 6. Verificação de mudanças
+
+### Verificação manual
+
+O projeto disponibiliza os comandos de qualidade previstos no fluxo:
 
 ```powershell
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 -p 20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
+npm run lint
+npm run test
+npm run build
+npm run dev
+npm run test:e2e
 ```
 
-Dashboard local:
+Aplicação local:
 
 ```text
-http://localhost:20128/
+Frontend: http://localhost:3000
+Backend:  http://localhost:3001
+Health:   http://localhost:3001/api/v1/health
+Usuário:  http://localhost:3001/api/v1/me
 ```
 
-Configuração validada:
+### Playwright
 
-1. API key criada no Gerenciador API;
-2. `OMNIROUTE_API_KEY` preenchida no `.env` local;
-3. OpenRouter configurado como provider;
-4. teste de conexão do provider concluído com sucesso;
-5. Prompt Compression ativado;
-6. perfil global **Stacked** selecionado, executando `RTK → Caveman`.
+O Playwright está configurado no monorepo e foi utilizado para verificar os fluxos da fundação e da autenticação.
 
-## 3. OpenCode
+A autenticação E2E utiliza contas de desenvolvimento do Clerk configuradas por variáveis locais, sem versionar credenciais.
 
-O OpenCode foi instalado e executado dentro do projeto SupportFlow.
+Cenários cobertos incluem:
 
-O arquivo `opencode.json` registra o provider OmniRoute e os MCP servers utilizados pelo projeto.
+- visitante redirecionado de rota privada para login;
+- health do frontend acessível;
+- fundação do frontend;
+- health do backend;
+- preparação do ambiente real do Clerk;
+- login de usuário ativo;
+- acesso de usuário inativo;
+- sessão expirada/retorno `401`.
 
-Modelos disponibilizados:
-
-- `OmniRoute Auto`;
-- `OmniRoute Auto Coding`.
-
-Foi executado um teste real pelo OpenCode com resposta bem-sucedida através do OmniRoute.
-
-## 4. Configuração do agente
-
-O arquivo `opencode.json` na raiz do SupportFlow contém:
-
-- provider OmniRoute;
-- MCP Playwright Test;
-- MCP Google Stitch;
-- MCP Context7.
-
-O endpoint local utilizado pelo OpenCode é:
+Resultado final da execução E2E da Change 02:
 
 ```text
-http://localhost:20128/v1
+8 passed
+0 failed
 ```
 
-Os MCPs **Context7**, **Playwright Test** e **Stitch** foram exibidos como conectados na validação do OpenCode.
+Esse resultado confirmou o fluxo real de autenticação após os ajustes de ambiente e testes.
 
-> Observação: o exemplo disponibilizado no roteiro possui um bloco `mcp` duplicado. No SupportFlow foi utilizada uma estrutura JSON válida, mantendo o objetivo funcional do roteiro.
+---
 
-## 5. Google Antigravity
+## Evidências da entrega incremental
 
-O Google Antigravity foi instalado e validado localmente em duas frentes:
+| Item | Evidência no repositório | Situação |
+|---|---|---|
+| Seções 1–3 | `docs/delivery-configuration.md` e configuração raiz | Concluído |
+| Seção 4 | `AGENTS.md`, `.agents/skills/`, MCPs configurados | Concluído |
+| Seção 5 | `openspec/roadmap.md`, changes e archive | Concluído |
+| Seção 6 | Playwright, testes e comandos de verificação | Concluído |
+| Fundação | `change-01-project-foundation` e código base | Implementado |
+| Autenticação | `change-02-auth-clerk` | Implementado, testado e arquivado |
+| E2E Auth | `apps/web/tests/` | 8 testes aprovados |
+| Segurança | `.env` ignorado e segredos fora do Git | Validado |
 
-- Agent com acesso ao projeto SupportFlow e leitura dos arquivos da pasta `docs/`;
-- Antigravity IDE instalado e aberto com o repositório `SupportFlow` carregado.
+---
 
-## Checklist desta entrega
+## Checklist de segurança
 
-### Repositório
-
-- [x] Documentação `problem.md` disponível.
-- [x] Documentação `prd.md` disponível.
-- [x] Documentação `spec.md` disponível.
-- [x] Documentação `design.md` disponível.
-- [x] Documentação `architecture.md` disponível.
-- [x] `.gitignore` protegendo `.env`.
+- [x] `.env` ignorado pelo Git.
+- [x] `.env` não versionado.
 - [x] `.env.example` sem segredos reais.
-- [x] README disponível e atualizado.
-- [x] `OMNIROUTE_API_KEY` adicionada ao exemplo de ambiente.
-- [x] `opencode.json` criado para a preparação Open Source AI.
+- [x] chaves secretas não expostas no frontend.
+- [x] credenciais de testes E2E somente no ambiente local/CI.
+- [x] autorização aplicada no backend.
 
-### Execução local validada
+---
 
-- [x] Google Antigravity IDE instalado e validado.
-- [x] Antigravity Agent validado com acesso ao SupportFlow.
-- [x] Node.js/npm instalados e validados.
-- [x] Git instalado e validado.
-- [x] Docker/Docker Compose instalados e validados.
-- [x] OpenSpec instalado e validado.
-- [x] Playwright instalado e validado.
-- [x] `.env` local criado.
-- [x] `OMNIROUTE_API_KEY` configurada localmente.
-- [x] Conta OpenRouter utilizada como provider Open Source AI.
-- [x] OmniRoute iniciado via Docker e API key criada.
-- [x] OpenRouter configurado e testado no OmniRoute.
-- [x] Compression Settings configurado com **Stacked (RTK → Caveman)**.
-- [x] OpenCode instalado e reconhecendo o provider OmniRoute.
-- [x] Modelos OmniRoute carregados no OpenCode.
-- [x] Teste real de chamada pelo OpenCode concluído com sucesso.
-- [x] MCPs Context7, Playwright Test e Stitch exibidos como conectados.
+## Conclusão
 
-### Acessos/credenciais validados no ambiente local
+A entrega incremental registra e demonstra a execução das seções **1 a 6** do roteiro de Delivery no SupportFlow.
 
-- [x] Vercel — conta/login e `VERCEL_API_TOKEN` configurados.
-- [x] Supabase — conta/login e `SUPABASE_ACCESS_TOKEN` configurados.
-- [x] Clerk — conta/login e chaves da aplicação configuradas.
-- [x] Context7 — conta/login e `CONTEXT7_API_KEY` configurada no `.env` local.
-- [x] Google Stitch — `STITCH_API_KEY` configurada no `.env` local.
-
-### Segurança das credenciais
-
-- [x] `.env` confirmado como ignorado pelo Git.
-- [x] `.env` não aparece entre os arquivos versionados (`git ls-files .env` sem retorno).
-- [x] Repositório local sem alterações pendentes após a validação (`working tree clean`).
-
-As chaves reais permanecem somente no `.env` local e não são versionadas no GitHub.
+A fundação do projeto foi criada na Change 01 e a autenticação foi implementada de ponta a ponta na Change 02, com validação real via Clerk e Playwright. O roadmap mantém as próximas mudanças planejadas para evolução incremental do produto.
