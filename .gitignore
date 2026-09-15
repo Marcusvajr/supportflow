@@ -31,3 +31,4 @@ Thumbs.db
 # Playwright reports
 playwright-report/
 test-results/
+.playwright-mcp/

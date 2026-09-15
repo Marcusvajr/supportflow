@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const foundationItems = [
   'Monorepo com npm workspaces',
   'Frontend Next.js + TypeScript',
@@ -16,6 +18,7 @@ export default function HomePage() {
         <p className="lead">
           Base técnica para uma central de continuidade de chamados de suporte em provedores de internet.
         </p>
+        <Link className="primary-action" href="/dashboard" prefetch={false}>Entrar no SupportFlow</Link>
       </section>
 
       <section className="panel" aria-labelledby="foundation-title">

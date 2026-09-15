@@ -13,6 +13,7 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
+- [`docs/auth-clerk.md`](docs/auth-clerk.md) — configuração Clerk, usuários fictícios e testes de autenticação.
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente e seções 1 a 3 do Delivery.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — adequações da entrega incremental v2 ao regulamento da disciplina.
 - [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças.
