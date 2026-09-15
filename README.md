@@ -13,7 +13,7 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
-- [`docs/auth-clerk.md`](docs/auth-clerk.md) — configuração Clerk, usuários fictícios e testes de autenticação.
+- [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação, arquitetura, fluxo e testes da autenticação Clerk.
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente e seções 1 a 3 do Delivery.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — adequações da entrega incremental v2 ao regulamento da disciplina.
 - [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças.
@@ -52,6 +52,7 @@ supportflow/
 ├── docs/
 ├── openspec/
 │   ├── changes/
+│   ├── specs/
 │   ├── config.yaml
 │   └── roadmap.md
 ├── scripts/
@@ -69,9 +70,9 @@ supportflow/
 
 A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incremental.
 
-### Change implementada na base do repositório
+### Change 01 — fundação do projeto
 
-`change-01-project-foundation`:
+`change-01-project-foundation` estabeleceu a base técnica do SupportFlow:
 
 - monorepo com npm workspaces;
 - frontend inicial em Next.js;
@@ -80,17 +81,70 @@ A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incrementa
 - teste unitário inicial;
 - pipeline de CI para verificação estática, testes e build.
 
-Os artefatos OpenSpec da change estão em `openspec/changes/change-01-project-foundation/`.
+### Change 02 — autenticação com Clerk
 
-### Changes planejadas
+`change-02-auth-clerk` foi implementada, validada e arquivada no OpenSpec.
 
-1. `change-02-auth-clerk`
-2. `change-03-customer-management`
-3. `change-04-ticket-lifecycle`
-4. `change-05-ticket-activities`
-5. `change-06-dashboard-and-search`
-6. `change-07-ai-ticket-summary`
-7. `change-08-platform-compliance`
+A implementação inclui:
+
+- login e logout com Clerk;
+- proteção de rotas privadas;
+- envio de Bearer token para o backend;
+- validação do token no NestJS;
+- associação entre identidade Clerk e usuário interno;
+- controle de usuários ativos e inativos;
+- autorização por papéis `AGENT` e `SUPERVISOR`;
+- tratamento de `401` e `403`;
+- fluxo de acesso indisponível para usuário inativo;
+- testes automatizados com Playwright.
+
+Resultado da validação E2E:
+
+```text
+8 passed
+0 failed
+```
+
+Documentação técnica e roteiro de explicação:
+
+[`docs/auth-clerk.md`](docs/auth-clerk.md)
+
+Artefatos arquivados:
+
+`openspec/changes/archive/2026-09-14-change-02-auth-clerk/`
+
+Especificação consolidada:
+
+`openspec/specs/auth-clerk/spec.md`
+
+### Fluxo de autenticação
+
+```text
+Usuário
+  ↓
+/sign-in
+  ↓
+Clerk autentica e cria a sessão
+  ↓
+Frontend obtém token
+  ↓
+GET /api/v1/me + Bearer token
+  ↓
+NestJS valida token e resolve o usuário interno
+  ↓
+Ativo → dashboard
+Inativo → /access-unavailable
+401 → retorno ao login
+```
+
+### Próximas changes planejadas
+
+1. `change-03-customer-management`
+2. `change-04-ticket-lifecycle`
+3. `change-05-ticket-activities`
+4. `change-06-dashboard-and-search`
+5. `change-07-ai-ticket-summary`
+6. `change-08-platform-compliance`
 
 Cada proposta informa escopo, dependências, riscos, lint e testes necessários.
 
@@ -124,13 +178,14 @@ As credenciais reais devem existir somente no `.env` local. O arquivo é ignorad
 
 Esse script executa a inicialização do OpenSpec para Antigravity/OpenCode e chama o instalador de skills previsto no roteiro.
 
-### Instalar dependências e validar a fundação
+### Instalar dependências e validar
 
 ```powershell
 npm install
 npm run lint
 npm run test
 npm run build
+npm run test:e2e
 ```
 
 ### Executar aplicações
@@ -142,11 +197,18 @@ npm run dev:web
 npm run dev:api
 ```
 
+Ou, para executar frontend e backend juntos:
+
+```powershell
+npm run dev
+```
+
 Endpoints esperados:
 
 - frontend: `http://localhost:3000`
 - backend: `http://localhost:3001`
 - health: `http://localhost:3001/api/v1/health`
+- usuário autenticado: `http://localhost:3001/api/v1/me`
 
 ## Preparação de ambiente já validada
 
@@ -171,4 +233,5 @@ Nenhum valor real de token ou API key é versionado.
 - nunca expor `CLERK_SECRET_KEY` ou credenciais administrativas no frontend;
 - usar somente dados fictícios de clientes;
 - aplicar autorização no backend;
-- manter regras de negócio fora do frontend.
+- manter regras de negócio fora do frontend;
+- manter segredos somente em variáveis de ambiente locais ou secrets do CI.
