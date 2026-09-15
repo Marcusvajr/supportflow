@@ -6,6 +6,30 @@ Aplicação web para centralização e continuidade de chamados técnicos em pro
 
 O SupportFlow parte da hipótese de que informações técnicas fragmentadas durante o atendimento podem causar retrabalho, repetição de testes e perda de contexto em transferências e escalonamentos.
 
+A proposta é manter o histórico técnico do chamado organizado para que outro atendente consiga entender o que já foi feito e continuar o atendimento sem reconstruir todo o contexto.
+
+## Estado desta entrega
+
+Nesta entrega incremental já estão implementados:
+
+- fundação do monorepo com frontend e backend;
+- health checks;
+- pipeline de CI;
+- autenticação com Clerk;
+- proteção das rotas privadas;
+- validação de Bearer token no NestJS;
+- associação entre identidade Clerk e usuário interno;
+- RBAC com `AGENT` e `SUPERVISOR`;
+- tratamento de usuário ativo/inativo, `401` e `403`;
+- testes unitários, de integração e E2E da autenticação.
+
+A execução local completa dos testes E2E da Change 02 terminou com:
+
+```text
+8 passed
+0 failed
+```
+
 ## Documentação
 
 - [`docs/problem.md`](docs/problem.md) — definição do problema.
@@ -13,11 +37,11 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
-- [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação, arquitetura, fluxo e testes da autenticação Clerk.
+- [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação e testes da autenticação Clerk.
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — execução documentada das seções **1 a 6** do roteiro de Delivery.
-- [`docs/presentation-v2.md`](docs/presentation-v2.md) — apresentação textual da entrega incremental, documentos entregues, achados e observações.
-- [`docs/compliance-v2.md`](docs/compliance-v2.md) — adequações da entrega incremental v2 ao regulamento da disciplina.
-- [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças e situação atual.
+- [`docs/presentation-v2.md`](docs/presentation-v2.md) — apoio textual para apresentação da entrega, com dificuldades e achados reais do desenvolvimento.
+- [`docs/compliance-v2.md`](docs/compliance-v2.md) — requisitos acadêmicos incorporados ao planejamento.
+- [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental e situação atual das changes.
 
 ## Protótipo
 
@@ -27,21 +51,29 @@ Protótipo criado no Google Stitch.
 
 Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado, clientes e detalhes do cliente.
 
-## Stack
+## Tecnologias utilizadas nesta entrega
 
 - Frontend: Next.js + React + TypeScript
 - Backend: Node.js + NestJS + TypeScript
-- Banco: PostgreSQL / Supabase
-- ORM: Prisma
 - Autenticação: Clerk
-- CI/CD: GitHub Actions
-- Deploy frontend: Vercel
-- Observabilidade: Sentry + logs estruturados
-- E2E/aceite: Playwright
+- CI: GitHub Actions
+- Testes E2E/aceite: Playwright
 - Prototipação: Google Stitch
-- Agentes: Google Antigravity / OpenCode
-- SDD: OpenSpec
-- Gateway Open Source AI: OmniRoute + OpenRouter
+- Spec-Driven Development: OpenSpec
+- Agentes/ferramentas de apoio: Google Antigravity + OpenCode
+- Ambiente Open Source AI: OmniRoute + OpenRouter
+
+## Tecnologias previstas nas próximas changes
+
+As tecnologias abaixo fazem parte da arquitetura e do roadmap, mas ainda não devem ser interpretadas como funcionalidades concluídas nesta entrega:
+
+- PostgreSQL / Supabase;
+- Prisma;
+- Vercel para publicação;
+- Sentry;
+- containers OCI;
+- Infraestrutura como Código;
+- IA assistiva para resumo de contexto técnico.
 
 ## Estrutura atual
 
@@ -69,50 +101,36 @@ supportflow/
 
 ## Entrega incremental v2
 
-A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incremental e registra as evidências no próprio repositório.
+A v2 documenta e executa as seções **1 a 6** do roteiro de Delivery, mantendo as evidências no próprio repositório.
 
-### Change 01 — fundação do projeto
+### Change 01 — Project Foundation
 
-`change-01-project-foundation` estabeleceu a base técnica do SupportFlow:
+`change-01-project-foundation` criou a base técnica:
 
-- monorepo com npm workspaces;
-- frontend inicial em Next.js;
-- backend inicial em NestJS;
+- npm workspaces;
+- frontend Next.js;
+- backend NestJS;
 - health check em `GET /api/v1/health`;
-- teste unitário inicial;
-- pipeline de CI para verificação estática, testes e build.
+- testes iniciais;
+- pipeline de CI.
 
-### Change 02 — autenticação com Clerk
+Status: **implementada**.
 
-`change-02-auth-clerk` foi implementada, validada e arquivada no OpenSpec.
+### Change 02 — Auth Clerk
 
-A implementação inclui:
+`change-02-auth-clerk` implementou autenticação e autorização:
 
-- login e logout com Clerk;
+- login e logout;
 - proteção de rotas privadas;
-- envio de Bearer token para o backend;
-- validação do token no NestJS;
-- associação entre identidade Clerk e usuário interno;
-- controle de usuários ativos e inativos;
-- autorização por papéis `AGENT` e `SUPERVISOR`;
+- Bearer token entre frontend e backend;
+- validação de token no NestJS;
+- usuário interno resolvido por `externalAuthId`;
+- usuários ativos e inativos;
+- papéis `AGENT` e `SUPERVISOR`;
 - tratamento de `401` e `403`;
-- fluxo de acesso indisponível para usuário inativo;
 - testes automatizados com Playwright.
 
-Resultado da validação E2E:
-
-```text
-8 passed
-0 failed
-```
-
-Documentação técnica:
-
-[`docs/auth-clerk.md`](docs/auth-clerk.md)
-
-Apresentação textual da entrega:
-
-[`docs/presentation-v2.md`](docs/presentation-v2.md)
+Status: **implementada, validada e arquivada**.
 
 Artefatos arquivados:
 
@@ -135,14 +153,16 @@ Frontend obtém token
   ↓
 GET /api/v1/me + Bearer token
   ↓
-NestJS valida token e resolve o usuário interno
+NestJS valida token
+  ↓
+Busca usuário interno por externalAuthId
   ↓
 Ativo → dashboard
 Inativo → /access-unavailable
-401 → retorno ao login
+401 → sessão encerrada e retorno ao login
 ```
 
-### Próximas changes planejadas
+### Próximas changes
 
 1. `change-03-customer-management`
 2. `change-04-ticket-lifecycle`
@@ -151,23 +171,9 @@ Inativo → /access-unavailable
 5. `change-07-ai-ticket-summary`
 6. `change-08-platform-compliance`
 
-Cada proposta informa escopo, dependências, riscos, lint e testes necessários.
+Essas changes estão planejadas e não são apresentadas como funcionalidades já concluídas.
 
-## Conformidade acadêmica
-
-O roadmap contempla:
-
-- testes de unidade, integração e E2E/aceite;
-- dois fluxos de negócio ponta a ponta;
-- IA assistiva para resumo de contexto técnico;
-- evolução para contêineres OCI e Infraestrutura como Código;
-- configuração por variáveis de ambiente e código versionado.
-
-A IA planejada é **assistiva**: não altera automaticamente diagnóstico, status, prioridade ou responsável.
-
-A documentação de Delivery apresenta as seções 1 a 6 e a apresentação textual reúne os documentos incrementais, achados e observações do processo.
-
-## Preparação local
+## Como validar localmente
 
 ### Criar o `.env`
 
@@ -175,70 +181,52 @@ A documentação de Delivery apresenta as seções 1 a 6 e a apresentação text
 Copy-Item .env.example .env
 ```
 
-As credenciais reais devem existir somente no `.env` local. O arquivo é ignorado pelo Git.
+As credenciais reais ficam somente no `.env` local, que é ignorado pelo Git.
 
-### Inicializar artefatos de agente/OpenSpec no ambiente local
-
-```powershell
-./scripts/init-v2.ps1
-```
-
-Esse script executa a inicialização do OpenSpec para Antigravity/OpenCode e chama o instalador de skills previsto no roteiro.
-
-### Instalar dependências e validar
+### Instalar dependências
 
 ```powershell
 npm install
+```
+
+### Executar as verificações
+
+```powershell
 npm run lint
 npm run test
 npm run build
 npm run test:e2e
 ```
 
-### Executar aplicações
+O comando `npm run test:e2e` executa também os cenários reais de autenticação e, por isso, exige as contas fictícias de desenvolvimento do Clerk configuradas no `.env`.
 
-Em terminais separados:
+No GitHub Actions, o pipeline padrão executa os smoke tests que não dependem dessas credenciais externas.
+
+### Executar a aplicação
+
+```powershell
+npm run dev
+```
+
+Ou em terminais separados:
 
 ```powershell
 npm run dev:web
 npm run dev:api
 ```
 
-Ou, para executar frontend e backend juntos:
-
-```powershell
-npm run dev
-```
-
-Endpoints esperados:
+Endpoints locais:
 
 - frontend: `http://localhost:3000`
 - backend: `http://localhost:3001`
 - health: `http://localhost:3001/api/v1/health`
 - usuário autenticado: `http://localhost:3001/api/v1/me`
 
-## Preparação de ambiente já validada
-
-Foram validados localmente durante a preparação:
-
-- Google Antigravity;
-- Node.js/npm;
-- Git;
-- Docker/Docker Compose;
-- OpenSpec;
-- Playwright;
-- OpenCode;
-- OmniRoute/OpenRouter;
-- MCPs Context7, Playwright Test e Stitch;
-- credenciais locais de Vercel, Supabase, Clerk, Context7 e Stitch.
-
-Nenhum valor real de token ou API key é versionado.
-
 ## Segurança
 
-- nunca commitar `.env`;
-- nunca expor `CLERK_SECRET_KEY` ou credenciais administrativas no frontend;
-- usar somente dados fictícios de clientes;
-- aplicar autorização no backend;
-- manter regras de negócio fora do frontend;
-- manter segredos somente em variáveis de ambiente locais ou secrets do CI.
+- `.env` não é versionado;
+- `CLERK_SECRET_KEY` não é exposta no frontend;
+- autorização é aplicada no backend;
+- papéis não são aceitos de dados enviados pelo cliente;
+- logs de falha não registram tokens;
+- o ambiente acadêmico utiliza somente dados fictícios.
