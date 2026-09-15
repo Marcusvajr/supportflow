@@ -1,10 +1,10 @@
 # Change 04 — Ticket Lifecycle
 
-## Objetivo
+## Why
 
-Implementar o ciclo principal do chamado técnico: criação, protocolo, prioridade, transições de status e resolução.
+O chamado técnico é o fluxo central do SupportFlow. Depois de identidade e clientes, o sistema precisa registrar um atendimento com protocolo, prioridade, status e resolução de forma consistente e auditável.
 
-## Escopo funcional
+## What Changes
 
 - persistência `Ticket` via Prisma;
 - geração de protocolo `SF-YYYY-NNNNNN` no backend;
@@ -15,6 +15,10 @@ Implementar o ciclo principal do chamado técnico: criação, protocolo, priorid
 - resolução com texto obrigatório e `resolvedAt`;
 - auditoria das alterações críticas.
 
+## Impact
+
+A mudança introduz as principais regras de negócio do domínio de chamados e cria a base necessária para atividades, escalonamento, dashboard e fluxos ponta a ponta.
+
 ## Dependências
 
 - `change-02-auth-clerk`;
@@ -22,7 +26,7 @@ Implementar o ciclo principal do chamado técnico: criação, protocolo, priorid
 
 ## Riscos
 
-- **Transições de status inválidas — Médio.** Mitigação: máquina de estados/regra centralizada no serviço.
+- **Transições de status inválidas — Médio.** Mitigação: regra centralizada no serviço.
 - **Protocolo duplicado — Médio.** Mitigação: geração transacional e restrição única.
 
 ## Lint
