@@ -1,10 +1,10 @@
 # Change 05 — Ticket Activities
 
-## Objetivo
+## Why
 
-Implementar o histórico técnico estruturado do chamado, garantindo continuidade entre atendentes e supervisores.
+O valor principal do SupportFlow está em preservar o contexto técnico entre atendimentos. Para isso, o chamado precisa registrar testes, diagnósticos, reatribuições e eventos em uma linha do tempo consistente.
 
-## Escopo funcional
+## What Changes
 
 - persistência `TicketActivity` e `AuditEvent`;
 - registrar notas, testes e diagnósticos;
@@ -13,6 +13,10 @@ Implementar o histórico técnico estruturado do chamado, garantindo continuidad
 - destacar diagnóstico mais recente;
 - montar linha do tempo cronológica;
 - permitir reabertura por supervisor conforme regra de negócio.
+
+## Impact
+
+A mudança transforma o chamado em um histórico técnico rastreável e viabiliza os dois fluxos ponta a ponta planejados no roadmap, além de fornecer contexto para busca, dashboard e resumo assistivo por IA.
 
 ## Dependências
 
