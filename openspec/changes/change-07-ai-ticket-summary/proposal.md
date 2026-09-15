@@ -1,10 +1,10 @@
 # Change 07 — AI Ticket Summary
 
-## Objetivo
+## Why
 
-Incorporar um recurso de inteligência artificial assistiva para resumir o contexto técnico de chamados longos, reduzindo o tempo necessário para compreender atendimentos transferidos ou escalonados.
+Chamados longos e transferidos acumulam contexto técnico que pode ser demorado para ler. Um resumo assistivo pode reduzir esse tempo sem substituir o diagnóstico nem tomar decisões operacionais pelo atendente.
 
-## Escopo funcional
+## What Changes
 
 - endpoint protegido para solicitar resumo do chamado;
 - composição do contexto somente com dados já registrados no ticket e atividades;
@@ -12,6 +12,10 @@ Incorporar um recurso de inteligência artificial assistiva para resumir o conte
 - retorno de resumo contendo fatos registrados, últimos testes, diagnóstico mais recente e pendências;
 - indicação explícita de que a saída é assistiva e deve ser revisada pelo atendente;
 - nenhuma alteração automática de status, prioridade, diagnóstico ou responsável.
+
+## Impact
+
+A mudança adiciona um recurso opcional de IA sobre dados já existentes. O fluxo normal de atendimento continua funcionando sem o provedor de IA e nenhuma decisão de negócio é delegada ao modelo.
 
 ## Dependências
 
