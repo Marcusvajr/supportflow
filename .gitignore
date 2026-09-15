@@ -24,3 +24,10 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# TypeScript incremental build
+*.tsbuildinfo
+
+# Playwright reports
+playwright-report/
+test-results/

@@ -25,11 +25,11 @@
 - [x] Configurar Playwright para smoke tests de frontend e health check.
 - [x] Criar workflow de CI com verificação estática, teste unitário, build e E2E smoke.
 - [x] Validar no GitHub Actions: instalação de dependências, verificação estática, teste unitário, build, instalação do Chromium e testes E2E smoke concluídos com sucesso.
-- [ ] Executar `npm install` no ambiente local para gerar/atualizar `package-lock.json`.
-- [ ] Executar `npm run lint` localmente.
-- [ ] Executar `npm run test` localmente.
-- [ ] Executar `npm run build` localmente.
-- [ ] Executar `npm run test:e2e` localmente.
+- [x] Executar `npm install` no ambiente local para gerar/atualizar `package-lock.json`.
+- [x] Executar `npm run lint` localmente.
+- [x] Executar `npm run test` localmente.
+- [x] Executar `npm run build` localmente.
+- [x] Executar `npm run test:e2e` localmente.
 
 ## 5. Revisão
 
@@ -37,4 +37,4 @@
 - [x] Não introduzir regra de negócio no frontend.
 - [x] Documentar riscos e dependências.
 
-> A fundação já foi validada automaticamente pelo CI. As tarefas locais permanecem abertas apenas para reproduzir a mesma validação no computador de desenvolvimento e gerar o lockfile antes da entrega final.
+> A fundação foi validada localmente e pelo CI, incluindo instalação de dependências, geração do lockfile, lint, testes unitários, build e testes E2E com Playwright.
