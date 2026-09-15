@@ -27,6 +27,15 @@
       ],
       "enabled": true
     },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true
+    },
     "stitch": {
       "type": "remote",
       "url": "https://stitch.googleapis.com/mcp",
@@ -42,6 +51,30 @@
       "headers": {
         "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
       }
+    },
+    "sonarqube": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "--init",
+        "--pull=always",
+        "-i",
+        "--rm",
+        "-e",
+        "SONARQUBE_TOKEN",
+        "-e",
+        "SONARQUBE_URL",
+        "-e",
+        "SONARQUBE_PROJECT_KEY",
+        "sonarsource/sonarqube-mcp"
+      ],
+      "environment": {
+        "SONARQUBE_TOKEN": "{env:SONARQUBE_TOKEN}",
+        "SONARQUBE_URL": "{env:SONARQUBE_MCP_URL}",
+        "SONARQUBE_PROJECT_KEY": "{env:SONARQUBE_PROJECT_KEY}"
+      },
+      "enabled": false
     }
   }
 }
