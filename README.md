@@ -21,7 +21,9 @@ Nesta entrega incremental já estão implementados:
 - associação entre identidade Clerk e usuário interno;
 - RBAC com `AGENT` e `SUPERVISOR`;
 - tratamento de usuário ativo/inativo, `401` e `403`;
-- testes unitários, de integração e E2E da autenticação.
+- testes unitários, de integração e E2E da autenticação;
+- plano e casos de teste do fluxo de login;
+- configuração versionável para inspeção com SonarQube.
 
 A execução local completa dos testes E2E da Change 02 terminou com:
 
@@ -29,6 +31,10 @@ A execução local completa dos testes E2E da Change 02 terminou com:
 8 passed
 0 failed
 ```
+
+### Pendência antes do ZIP final
+
+A única etapa da seção 6 que ainda depende do computador local é **executar o scan do SonarQube**, pois ele exige servidor Docker local e token gerado no próprio SonarQube. O repositório já contém configuração, scripts e instruções em [`docs/sonarqube.md`](docs/sonarqube.md).
 
 ## Documentação
 
@@ -38,9 +44,12 @@ A execução local completa dos testes E2E da Change 02 terminou com:
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
 - [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação e testes da autenticação Clerk.
-- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — execução documentada das seções **1 a 6** do roteiro de Delivery.
+- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — rastreabilidade das seções **1 a 6** do roteiro de Delivery.
 - [`docs/presentation-v2.md`](docs/presentation-v2.md) — apoio textual para apresentação da entrega, com dificuldades e achados reais do desenvolvimento.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — requisitos acadêmicos incorporados ao planejamento.
+- [`docs/sonarqube.md`](docs/sonarqube.md) — preparação e execução da inspeção de código.
+- [`specs/login-flow-test-plan.md`](specs/login-flow-test-plan.md) — plano de testes do login.
+- [`specs/login-flow-test-cases.md`](specs/login-flow-test-cases.md) — casos de teste e rastreabilidade.
 - [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental e situação atual das changes.
 
 ## Protótipo
@@ -62,6 +71,7 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 - Spec-Driven Development: OpenSpec
 - Agentes/ferramentas de apoio: Google Antigravity + OpenCode
 - Ambiente Open Source AI: OmniRoute + OpenRouter
+- Inspeção de código: SonarQube (configurado; scan local a executar antes da entrega final)
 
 ## Tecnologias previstas nas próximas changes
 
@@ -71,7 +81,7 @@ As tecnologias abaixo fazem parte da arquitetura e do roadmap, mas ainda não de
 - Prisma;
 - Vercel para publicação;
 - Sentry;
-- containers OCI;
+- containers OCI da aplicação;
 - Infraestrutura como Código;
 - IA assistiva para resumo de contexto técnico.
 
@@ -83,6 +93,7 @@ supportflow/
 │   ├── web/
 │   └── api/
 ├── docs/
+├── specs/
 ├── openspec/
 │   ├── changes/
 │   ├── specs/
@@ -90,8 +101,10 @@ supportflow/
 │   └── roadmap.md
 ├── scripts/
 ├── .agents/
+├── .opencode/
 ├── .github/workflows/
 ├── AGENTS.md
+├── sonar-project.properties
 ├── package.json
 ├── .env.example
 ├── .gitignore
@@ -101,7 +114,7 @@ supportflow/
 
 ## Entrega incremental v2
 
-A v2 documenta e executa as seções **1 a 6** do roteiro de Delivery, mantendo as evidências no próprio repositório.
+As seções **1 a 5** estão executadas e documentadas. Na seção **6**, a parte de Playwright está concluída e a parte de SonarQube está preparada para a execução local final.
 
 ### Change 01 — Project Foundation
 
@@ -229,4 +242,5 @@ Endpoints locais:
 - autorização é aplicada no backend;
 - papéis não são aceitos de dados enviados pelo cliente;
 - logs de falha não registram tokens;
+- tokens do SonarQube também ficam fora do Git;
 - o ambiente acadêmico utiliza somente dados fictícios.
