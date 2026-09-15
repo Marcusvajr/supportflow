@@ -2,82 +2,89 @@
 
 ## Context
 
-A fundação (`change-01`) entregou o monorepo com `apps/web` (Next.js 16, App Router) e `apps/api` (NestJS 11) com health check em `api/v1`, CI com lint/test/build e E2E smoke do Playwright. Não há banco de dados nem Prisma ainda; o modelo `User` (`externalAuthId`, `role`, `active`) está definido em `docs/spec.md` e o módulo `users/` é previsto pela arquitetura, mas inexistente no código.
+A fundação (`change-01`) entregou o monorepo com `apps/web` (Next.js 16, App Router) e `apps/api` (NestJS 11) com health check em `api/v1`, CI com lint/test/build e smoke tests do Playwright. Nesta change ainda não há banco de dados nem Prisma; o modelo `User` (`externalAuthId`, `role`, `active`) está definido em `docs/spec.md` e é representado por um repositório em memória com dados fictícios.
 
-Fluxo de referência em `docs/architecture.md`: Next.js → Clerk → token → `Authorization: Bearer` → NestJS valida → serviço de negócio. A autorização é responsabilidade exclusiva do backend; o frontend apenas reflete permissões para UX.
+Fluxo de referência: Next.js → Clerk → token → `Authorization: Bearer` → NestJS valida → usuário interno → regra de autorização. A autenticação comprova a identidade; a autorização continua sendo responsabilidade do backend.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- Autenticação completa no frontend via Clerk com proteção de rotas privadas.
-- Validação de token e resolução de usuário interno no NestJS.
-- `GET /api/v1/me` funcional conforme contrato da API do MVP.
-- Guards/policies RBAC reutilizáveis para `AGENT`/`SUPERVISOR` que as changes 03–06 consumirão.
-- Tratamento do caso "autenticado porém inativo" com resposta 403 e tela apropriada.
+- autenticação no frontend via Clerk;
+- proteção das rotas privadas no recurso de servidor;
+- validação do token e resolução de usuário interno no NestJS;
+- `GET /api/v1/me` funcional conforme contrato da API do MVP;
+- guards/policies RBAC reutilizáveis para `AGENT`/`SUPERVISOR`;
+- tratamento do caso "autenticado porém inativo" com resposta `403` e tela apropriada;
+- tratamento consistente de sessão expirada e logout.
 
 **Non-Goals:**
 
-- Criação de CRUD de usuários ou sincronização automática Clerk → banco (associação de usuário é provisionada por seed/fixture acadêmica).
-- Migrações do Prisma (o Prisma entra na change-03; aqui a resolução de usuário usa porta de repositório sem implementação de persistência).
-- Rate limiting, MFA customizado, organização/multi-tenancy do Clerk.
-- Gestão de convites ou self-signup; os usuários de teste são criados no dashboard do Clerk.
+- CRUD de usuários ou sincronização automática Clerk → banco;
+- migrações do Prisma, previstas para uma mudança posterior;
+- rate limiting, MFA customizado ou multi-tenancy;
+- gestão de convites ou self-signup; os usuários de teste são provisionados previamente no Clerk e nas fixtures acadêmicas.
 
 ## Decisions
 
 ### D1 — Integração Clerk no Next.js com `@clerk/nextjs`
 
-Uso do SDK oficial (`ClerkProvider` no layout raiz, `clerkMiddleware`, `<SignIn>`/`<SignedIn>`/`<SignedOut>`) com rotas `/sign-in` hospedadas na aplicação.
+O SDK oficial é usado com `ClerkProvider`, página `/sign-in` e `clerkMiddleware`. A proteção efetiva das rotas privadas fica no layout de servidor do grupo `(private)` por meio de `auth.protect()`, mantendo a checagem próxima ao recurso protegido.
 
-- *Alternativa: Sign-in por popup/redirecionamento hospedado no Clerk* — descartada por complicar os testes E2E locais e reduzir controle visual descrito em `docs/design.md`.
-- *Alternativa: auth própria* — contraria a decisão de arquitetura de identidade delegada.
+O `proxy.ts` mantém a integração necessária do Clerk e exceções técnicas de health/icon, mas não é a única barreira de segurança.
 
-### D2 — Validação no NestJS com verificação de token no backend
+- *Alternativa: proteger tudo apenas por matcher no middleware* — descartada para evitar depender de correspondência de caminho como única barreira de autenticação.
+- *Alternativa: autenticação própria* — contraria a decisão arquitetural de identidade delegada.
 
-A API valida o Bearer token por middleware/guard do módulo `auth` (integração com a API Backend do Clerk para verificar a sessão/token), sem confiar em headers não verificados.
+### D2 — Validação do Bearer token no NestJS
 
-- *Alternativa: `clerk-sdk-node` deprecated* — descartada.
-- *Alternativa: validar apenas no frontend* — viola "autorização é aplicada no NestJS".
+A API usa `@clerk/backend` para verificar o token recebido em `Authorization: Bearer`. O verificador confere assinatura, issuer, sessão e origem autorizada antes de aceitar a identidade.
 
-### D3 — `externalAuthId` como chave de associação
+- *Alternativa: confiar em headers ou dados enviados pelo frontend* — insegura, porque o cliente pode ser manipulado.
+- *Alternativa: validar apenas no frontend* — viola a regra de autorização no backend.
 
-O módulo `users` expõe `UsersService.findByExternalAuthId(clerkUserId)`. Em `claims` do token, o papel (`AGENT`/`SUPERVISOR`) é lido de metadados públicos do Clerk, mas o backend revalida contra o registro interno do usuário (fonte de verdade do papel e do `active`).
+### D3 — `externalAuthId` como única associação de identidade
 
-- *Alternativa: confiar apenas na claim de papel do token* — permite papel divergente do registro interno e impede desativar acesso de forma confiável.
-- *Alternativa: sincronizar usuário via webhook* — adianta dependência de webhook/infra; fica para evolução futura.
+O backend usa o `sub` validado do token Clerk como `externalAuthId` e procura o usuário interno por esse identificador. O papel não é aceito de claims, metadados ou valores enviados pelo cliente. `role` e `active` vêm somente do registro interno do SupportFlow.
 
-### D4 — Porta de repositório para `UsersService` antes do Prisma
+- *Alternativa: confiar em role do token* — descartada para impedir divergência entre identidade externa e autorização interna.
+- *Alternativa: sincronizar usuário automaticamente por webhook* — amplia o escopo e depende de infraestrutura adicional.
 
-O módulo `auth` depende de uma interface `UsersRepository` com implementação em memória (fixtures fictícias de usuários ativos/inativos) nesta change. Quando o Prisma chegar (change-03), a implementação é substituída sem alterar o módulo de auth.
+### D4 — Porta de repositório antes do Prisma
 
-- *Alternativa: introduzir Prisma + migration nesta change* — amplia escopo e antecipa mudança de schema prevista para a change-03 (que requer auth pronto).
+O módulo `auth` depende de `UsersRepository`. Nesta change, a implementação é em memória com fixtures fictícias de usuários ativos/inativos. A futura implementação Prisma poderá substituir essa porta sem alterar o contrato de autenticação.
 
-### D5 — RBAC com decorador de metadados + guard
+- *Alternativa: introduzir Prisma nesta change* — ampliaria o escopo antes da etapa de persistência.
 
-`@Roles('AGENT', 'SUPERVISOR')` + `RolesGuard` globalmente habilitado via `APP_GUARD` após o guard de autenticação. Sem papéis no endpoint, exige apenas autenticação. Erros seguem Problem Details (401/403) já no formato padrão da API.
+### D5 — RBAC com metadados e guard
 
-- *Alternativa: `CASL`* — excedente ao MVP de dois papéis fixos.
+`@Roles('AGENT', 'SUPERVISOR')` + `RolesGuard` aplicam a autorização no NestJS. `SUPERVISOR` herda as permissões de `AGENT`. Endpoints sem papel específico continuam exigindo autenticação, exceto recursos marcados explicitamente como públicos.
+
+- *Alternativa: biblioteca de autorização mais complexa* — desnecessária para os dois papéis atuais.
 
 ### D6 — Cliente HTTP encapsulado no frontend
 
-Camada única `apiClient` que injeta `Authorization: Bearer <session token>` e centraliza tratamento de 401/403 (redirecionar ao login / tela de acesso indisponível).
+Uma única camada `apiClient` injeta o Bearer token e centraliza os tratamentos de `401` e `403`.
 
-- *Alternativa: fetch espalhado pelos componentes* — risco de requisição sem token e tratamento inconsistente.
+- *Alternativa: `fetch` espalhado pelos componentes* — aumentaria o risco de chamadas sem token ou tratamento inconsistente.
 
 ## Risks / Trade-offs
 
-- [Configuração incorreta de chaves/issuer] → chaves somente por variáveis de ambiente (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`), `.env.example` atualizado, teste de integração cobrindo 401/403, CI valida builds sem segredos.
-- [Usuários sem registro interno no primeiro login] → sem self-signup: usuários de teste são criados no Clerk e no repositório interno por seed; `GET /me` e rotas negam com 403 para `externalAuthId` desconhecido, coberto por teste.
-- [Porta em memória diverge do banco futuro] → contrato da interface `UsersRepository` espelha os campos de `docs/spec.md` (id, externalAuthId, name, email, role, active), minimizando a troca na change-03.
-- [Middleware do Clerk interfere no health check] → rotas públicas (`/api/health`, `/sign-in`) explicitamente isentadas na configuração do middleware e cobertas pelo smoke test existente.
-- [Divergência entre papel do token e do registro interno] → backend usa sempre o papel do registro interno resolvido, nunca da claim; teste cobre a divergência.
+- **Configuração incorreta de chaves/issuer** → variáveis de ambiente, falha fechada e testes de configuração.
+- **Usuário autenticado sem registro interno** → acesso negado com `403`; não há criação automática.
+- **Repositório em memória divergir do banco futuro** → interface espelha os campos definidos em `docs/spec.md` para facilitar substituição por Prisma.
+- **Sessão expirada gerar loop de navegação** → `401` encerra a sessão no frontend antes de retornar ao login.
+- **Segredo ou token aparecer em log** → erros do SDK não são propagados diretamente; logs de falha não registram token.
 
 ## Migration Plan
 
-- Adicionar dependências (`@clerk/nextjs`, SDK de verificação do Clerk no backend) e variáveis em `.env.example`; nenhum dado existente é migrado.
-- Rollback: remover módulo `auth` do `AppModule` e providers do layout; a fundação segue funcionando pois o health check permanece público.
-- CI: segredos não são usados em build; os testes de integração usam mocks de verificação de token.
+- adicionar as dependências oficiais do Clerk e as variáveis de ambiente em `.env.example`;
+- configurar `ClerkProvider`, login e proteção do grupo privado;
+- adicionar os módulos `auth` e `users` no backend;
+- habilitar `/api/v1/me`, guards e RBAC;
+- validar primeiro por testes unitários/HTTP e depois pelo fluxo E2E real;
+- rollback possível removendo os módulos de autenticação sem comprometer o health check público da fundação.
 
-## Open Questions
+## Final State
 
-- Nenhuma que bloqueie specs ou tarefas; a escolha exata do SDK de verificação do backend pode ser confirmada na implementação consultando a documentação atual do Clerk (Context7), sem alterar os contratos definidos aqui.
+A implementação final foi validada localmente com **8 testes E2E aprovados**. Os testes autenticados usam contas fictícias de desenvolvimento do Clerk. O CI padrão executa os smoke tests sem segredos; o fluxo E2E completo é executado em ambiente com as credenciais de teste configuradas.
