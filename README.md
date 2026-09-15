@@ -14,9 +14,10 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
 - [`docs/design.md`](docs/design.md) — design system.
 - [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação, arquitetura, fluxo e testes da autenticação Clerk.
-- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — preparação do ambiente e seções 1 a 3 do Delivery.
+- [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — execução documentada das seções **1 a 6** do roteiro de Delivery.
+- [`docs/presentation-v2.md`](docs/presentation-v2.md) — apresentação textual da entrega incremental, documentos entregues, achados e observações.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — adequações da entrega incremental v2 ao regulamento da disciplina.
-- [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças.
+- [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental de mudanças e situação atual.
 
 ## Protótipo
 
@@ -68,7 +69,7 @@ supportflow/
 
 ## Entrega incremental v2
 
-A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incremental.
+A v2 desenvolve as seções **1 a 6** do roteiro de Delivery de forma incremental e registra as evidências no próprio repositório.
 
 ### Change 01 — fundação do projeto
 
@@ -105,9 +106,13 @@ Resultado da validação E2E:
 0 failed
 ```
 
-Documentação técnica e roteiro de explicação:
+Documentação técnica:
 
 [`docs/auth-clerk.md`](docs/auth-clerk.md)
+
+Apresentação textual da entrega:
+
+[`docs/presentation-v2.md`](docs/presentation-v2.md)
 
 Artefatos arquivados:
 
@@ -159,6 +164,8 @@ O roadmap contempla:
 - configuração por variáveis de ambiente e código versionado.
 
 A IA planejada é **assistiva**: não altera automaticamente diagnóstico, status, prioridade ou responsável.
+
+A documentação de Delivery apresenta as seções 1 a 6 e a apresentação textual reúne os documentos incrementais, achados e observações do processo.
 
 ## Preparação local
 
