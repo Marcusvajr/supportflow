@@ -1,10 +1,10 @@
 # Change 08 — Platform Compliance
 
-## Objetivo
+## Why
 
-Completar os requisitos não funcionais de observabilidade, portabilidade e implantação automatizada previstos no regulamento da disciplina.
+O regulamento da disciplina exige requisitos não funcionais de portabilidade, observabilidade e implantação reproduzível. Esta mudança concentra esses itens para evitar espalhar decisões de infraestrutura pelas changes funcionais.
 
-## Escopo funcional/técnico
+## What Changes
 
 - logs estruturados e correlação por `request_id` no backend;
 - captura de erros no Sentry;
@@ -14,6 +14,10 @@ Completar os requisitos não funcionais de observabilidade, portabilidade e impl
 - Infraestrutura como Código para os recursos selecionados para a demonstração acadêmica;
 - documentação de implantação e recriação de ambiente;
 - pipeline com lint, testes, build e validações de infraestrutura.
+
+## Impact
+
+A mudança afeta a forma de empacotar, observar e recriar o ambiente, sem alterar as regras de negócio. Ela fecha os requisitos técnicos de plataforma previstos para a evolução acadêmica do projeto.
 
 ## Dependências
 
