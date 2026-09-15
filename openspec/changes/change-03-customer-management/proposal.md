@@ -1,10 +1,10 @@
 # Change 03 — Customer Management
 
-## Objetivo
+## Why
 
-Implementar cadastro e consulta de clientes fictícios necessários para os fluxos de atendimento.
+Os fluxos de chamados precisam de clientes de referência para que o atendimento tenha contexto e possa ser demonstrado de ponta a ponta. Esta mudança introduz somente dados fictícios, preservando o caráter acadêmico do projeto.
 
-## Escopo funcional
+## What Changes
 
 - persistência `Customer` em PostgreSQL/Supabase via Prisma;
 - `GET /api/v1/customers` com paginação e busca;
@@ -14,6 +14,10 @@ Implementar cadastro e consulta de clientes fictícios necessários para os flux
 - telas de lista, detalhe e formulário de cliente;
 - validações de nome, código de referência e campos mascarados.
 
+## Impact
+
+A mudança introduz persistência relacional e passa a exigir Prisma/Supabase no fluxo de dados. As próximas changes de chamados passam a depender de clientes válidos criados por esta camada.
+
 ## Dependências
 
 - `change-01-project-foundation`;
@@ -22,7 +26,7 @@ Implementar cadastro e consulta de clientes fictícios necessários para os flux
 ## Riscos
 
 - **Uso acidental de dados reais — Médio.** Mitigação: somente dados fictícios e indicação explícita na UI/seed.
-- **Código de referência duplicado — Baixo.** Mitigação: índice único e resposta 409.
+- **Código de referência duplicado — Baixo.** Mitigação: índice único e resposta `409`.
 
 ## Lint
 
@@ -38,7 +42,7 @@ Obrigatório.
 
 - CRUD permitido;
 - paginação e busca;
-- 404 e 409.
+- `404` e `409`.
 
 ## Testes E2E/aceite
 
