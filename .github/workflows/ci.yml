@@ -35,5 +35,8 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
+      # O fluxo autenticado real usa contas de desenvolvimento do Clerk e
+      # permanece no comando local `npm run test:e2e`. No CI padrão executamos
+      # somente os smoke tests que não dependem de credenciais externas.
       - name: E2E smoke tests
-        run: npm run test:e2e
+        run: npx playwright test --project=chromium
