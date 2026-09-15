@@ -8,7 +8,7 @@ O SupportFlow é uma aplicação web voltada para atendimento técnico em proved
 
 A proposta é concentrar essas informações em um histórico técnico único, permitindo que outro atendente consiga entender o que já aconteceu e continuar o atendimento.
 
-## 2. O que foi entregue nesta etapa
+## 2. O que foi trabalhado nesta etapa
 
 Nesta entrega foram trabalhadas as seções 1 a 6 do roteiro de Delivery. O projeto ficou organizado para evoluir por mudanças pequenas, usando OpenSpec para registrar proposta, design, tarefas, especificações e status.
 
@@ -19,9 +19,12 @@ Os principais documentos são:
 - `docs/spec.md` — regras, fluxos e contratos técnicos;
 - `docs/architecture.md` — decisões de arquitetura;
 - `docs/design.md` — referência visual e de UX;
-- `docs/delivery-configuration.md` — execução das seções 1 a 6 do Delivery;
+- `docs/delivery-configuration.md` — rastreabilidade das seções 1 a 6;
 - `docs/auth-clerk.md` — detalhes da autenticação;
 - `docs/compliance-v2.md` — requisitos acadêmicos incorporados ao roadmap;
+- `docs/sonarqube.md` — preparação da inspeção de código;
+- `specs/login-flow-test-plan.md` — plano de testes do login;
+- `specs/login-flow-test-cases.md` — casos de teste e rastreabilidade;
 - `openspec/roadmap.md` — sequência das mudanças;
 - `openspec/specs/auth-clerk/spec.md` — especificação consolidada da autenticação.
 
@@ -128,7 +131,13 @@ O fluxo autenticado real depende de contas de desenvolvimento do Clerk. Essas cr
 
 Assim o pipeline continua verificando lint, testes, build e integração básica sem exigir que credenciais de teste sejam publicadas.
 
-## 7. Principais decisões que ficaram mais claras
+## 7. Verificação da seção 6
+
+A parte de Playwright foi organizada com plano, casos de teste, prompts de agente e a suíte real da aplicação. A Change 02 foi validada com os oito testes E2E aprovados.
+
+O roteiro também pede inspeção com SonarQube. A configuração necessária já está versionada (`sonar-project.properties`, scripts, variáveis de exemplo e documentação), mas o scan precisa ser executado no computador local porque depende de iniciar o servidor SonarQube e gerar um token local. Essa execução deve ser feita antes de montar o ZIP final.
+
+## 8. Principais decisões que ficaram mais claras
 
 - regras de negócio e autorização ficam no backend;
 - o frontend não acessa o banco diretamente;
@@ -138,7 +147,7 @@ Assim o pipeline continua verificando lint, testes, build e integração básica
 - documentação, código e testes precisam contar a mesma história;
 - IA, quando entrar no projeto, será assistiva e não tomará decisões operacionais pelo atendente.
 
-## 8. Evidências desta entrega
+## 9. Evidências desta entrega
 
 | Evidência | Onde conferir |
 |---|---|
@@ -147,17 +156,21 @@ Assim o pipeline continua verificando lint, testes, build e integração básica
 | Change 01 | `openspec/changes/change-01-project-foundation/` |
 | Change 02 arquivada | `openspec/changes/archive/2026-09-14-change-02-auth-clerk/` |
 | Spec consolidada da autenticação | `openspec/specs/auth-clerk/spec.md` |
+| Plano/casos de login | `specs/` |
 | Implementação frontend | `apps/web/` |
 | Implementação backend | `apps/api/` |
 | Testes de autenticação | `apps/web/tests/` e `apps/api/tests/` |
 | CI | `.github/workflows/ci.yml` |
+| Preparação SonarQube | `docs/sonarqube.md` e `sonar-project.properties` |
 
-## 9. O que ainda não está implementado
+## 10. O que ainda não está implementado
 
 É importante não misturar planejamento com entrega pronta. Nesta versão ainda não estão implementados o CRUD de clientes, persistência real com Prisma/Supabase, ciclo completo dos chamados, dashboard operacional, resumo por IA, Sentry, containers da aplicação e IaC.
 
 Esses itens estão descritos nas próximas changes do roadmap e serão implementados nos incrementos seguintes.
 
-## 10. Resumo para falar em aula
+Também falta apenas uma execução local relacionada à entrega atual: o scan do SonarQube e o registro de sua evidência.
 
-> O SupportFlow foi pensado para evitar perda de contexto em atendimentos técnicos. Nesta entrega eu preparei o ambiente, organizei o roadmap com OpenSpec e implementei os dois primeiros incrementos. A Change 01 criou a fundação com Next.js, NestJS, testes e CI. A Change 02 implementou a autenticação com Clerk e a autorização no backend. O Clerk identifica o usuário, mas quem decide se ele está ativo e qual papel possui é o SupportFlow. Durante os testes eu tive que corrigir problemas reais de configuração, principalmente variáveis de ambiente, uma chave PEM que não estava sendo lida corretamente, usuários ativos e inativos e cenários de sessão expirada. No final, o fluxo completo de autenticação ficou com 8 testes E2E aprovados. As próximas mudanças continuam planejadas no roadmap, mas eu deixei claro no repositório o que já está implementado e o que ainda é evolução futura.
+## 11. Resumo para falar em aula
+
+> O SupportFlow foi pensado para evitar perda de contexto em atendimentos técnicos. Nesta entrega eu preparei o ambiente, organizei o roadmap com OpenSpec e implementei os dois primeiros incrementos. A Change 01 criou a fundação com Next.js, NestJS, testes e CI. A Change 02 implementou a autenticação com Clerk e a autorização no backend. O Clerk identifica o usuário, mas quem decide se ele está ativo e qual papel possui é o SupportFlow. Durante os testes eu tive que corrigir problemas reais de configuração, principalmente variáveis de ambiente, uma chave PEM que não estava sendo lida corretamente, usuários ativos e inativos e cenários de sessão expirada. No final, o fluxo completo de autenticação ficou com 8 testes E2E aprovados. A parte de Playwright da verificação está concluída, e deixei a inspeção SonarQube preparada para a execução local antes da entrega final. As próximas mudanças continuam planejadas no roadmap, sem serem apresentadas como já implementadas.
