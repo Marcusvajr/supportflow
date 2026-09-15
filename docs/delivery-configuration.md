@@ -24,7 +24,8 @@ Resultados previstos pelo roteiro e presentes no repositório:
 - propostas OpenSpec;
 - design, specs e tasks das mudanças;
 - incrementos de produto;
-- testes e verificação dos incrementos.
+- planos e casos de teste;
+- verificação manual, automatizada e CI.
 
 Papéis previstos no roteiro:
 
@@ -40,7 +41,8 @@ Ferramentas usadas nesta etapa:
 - Clerk;
 - Context7;
 - Google Stitch;
-- OmniRoute/OpenRouter no ambiente Open Source AI.
+- OmniRoute/OpenRouter;
+- SonarQube preparado para inspeção local.
 
 ## 2. Orientações gerais e pré-requisitos
 
@@ -88,7 +90,8 @@ docs/
 ├── auth-clerk.md
 ├── compliance-v2.md
 ├── delivery-configuration.md
-└── presentation-v2.md
+├── presentation-v2.md
+└── sonarqube.md
 ```
 
 ### Variáveis de ambiente
@@ -109,7 +112,8 @@ Os grupos de configuração incluem:
 - OmniRoute;
 - portas do frontend/backend;
 - URL da API;
-- observabilidade prevista.
+- observabilidade;
+- SonarQube local.
 
 ### README
 
@@ -131,26 +135,25 @@ O `AGENTS.md` registra diretrizes do SupportFlow para agentes de desenvolvimento
 - limites de autonomia;
 - referências aos documentos do projeto.
 
-### Skills e workflows
+### Skills, workflows e prompts
 
-A estrutura `.agents/` contém skills e workflows instalados para tarefas relacionadas a:
+A estrutura `.agents/` contém skills e workflows relacionados a Clerk, NestJS, frontend, arquitetura, Docker, CI/CD, revisão de código e OpenSpec.
 
-- Clerk;
-- NestJS/backend;
-- frontend;
-- arquitetura;
-- Docker;
-- CI/CD;
-- revisão de código;
-- OpenSpec.
+Os prompts de apoio ao ciclo de testes Playwright estão disponíveis tanto em `.opencode/prompts/` quanto em `.agents/prompts/`:
+
+- `playwright-test-planner.md`;
+- `playwright-test-generator.md`;
+- `playwright-test-healer.md`.
 
 ### MCP Servers
 
-No OpenCode foram validados como conectados:
+Validados anteriormente no OpenCode:
 
 - Context7;
 - Playwright Test;
 - Google Stitch.
+
+A configuração atual também inclui o Playwright MCP oficial (`@playwright/mcp`) e deixa o SonarQube MCP preparado, porém desabilitado até existir servidor e token local.
 
 ## 5. Criação e execução de mudanças com OpenSpec
 
@@ -181,7 +184,7 @@ Status: **implementada, verificada e arquivada**.
 Entregou:
 
 - login e logout;
-- proteção das rotas privadas;
+- proteção de rotas privadas;
 - Bearer token entre frontend e backend;
 - validação do token no NestJS;
 - associação por `externalAuthId`;
@@ -211,7 +214,9 @@ Continuam planejadas, sem serem apresentadas como implementadas:
 
 ## 6. Verificação das mudanças
 
-### Comandos locais
+### Verificação manual
+
+Comandos usados no ciclo de qualidade:
 
 ```powershell
 npm run lint
@@ -229,9 +234,14 @@ Health:   http://localhost:3001/api/v1/health
 Usuário:  http://localhost:3001/api/v1/me
 ```
 
-### Testes da autenticação
+### Playwright
 
-O Playwright valida tanto smoke tests quanto os cenários reais de autenticação. Os E2E autenticados usam contas fictícias da instância de desenvolvimento do Clerk, configuradas somente no ambiente local.
+O Playwright valida smoke tests e cenários reais de autenticação. Os E2E autenticados usam contas fictícias da instância de desenvolvimento do Clerk, configuradas somente no ambiente local.
+
+O planejamento solicitado pelo roteiro está registrado em:
+
+- `specs/login-flow-test-plan.md`;
+- `specs/login-flow-test-cases.md`.
 
 Cenários verificados incluem:
 
@@ -245,7 +255,7 @@ Cenários verificados incluem:
 - logout;
 - sessão expirada e retorno `401`.
 
-Execução local final:
+Execução local final da Change 02:
 
 ```text
 8 passed
@@ -264,6 +274,19 @@ O CI padrão executa:
 
 O fluxo autenticado completo não é executado no CI padrão porque depende de contas Clerk de desenvolvimento. Ele continua disponível por `npm run test:e2e` em ambiente configurado.
 
+### Inspeção com SonarQube
+
+A parte versionável da inspeção de código está preparada:
+
+- `sonar-project.properties`;
+- `scripts/start-sonarqube.ps1`;
+- `scripts/run-sonar.ps1`;
+- variáveis correspondentes em `.env.example`;
+- configuração SonarQube MCP em `opencode.json`;
+- instruções em `docs/sonarqube.md`.
+
+A **execução do scan local ainda depende de gerar um token no SonarQube local** e, por isso, não é registrada como concluída nesta revisão. Antes do ZIP final, deve ser executado o procedimento de `docs/sonarqube.md` e registrada a evidência real do resultado.
+
 ## Evidências da entrega
 
 | Item | Evidência | Situação |
@@ -271,7 +294,8 @@ O fluxo autenticado completo não é executado no CI padrão porque depende de c
 | Seções 1–3 | configuração raiz, documentos e ambiente | Concluído |
 | Seção 4 | `AGENTS.md`, `.agents/`, MCPs | Concluído |
 | Seção 5 | `openspec/roadmap.md`, changes e archive | Concluído |
-| Seção 6 | Playwright, testes e CI | Concluído |
+| Playwright / Seção 6 | testes, prompts, plano, casos e CI | Concluído |
+| SonarQube / Seção 6 | configuração, scripts e documentação | Preparado; scan local pendente |
 | Fundação | `change-01-project-foundation` | Implementada |
 | Autenticação | archive da `change-02-auth-clerk` | Implementada e arquivada |
 | E2E local | `apps/web/tests/` | 8 aprovados, 0 falhas |
@@ -287,7 +311,8 @@ O fluxo autenticado completo não é executado no CI padrão porque depende de c
 - [x] autorização aplicada no backend.
 - [x] role interno não confiado ao navegador.
 - [x] logs de falha sem tokens.
+- [x] token SonarQube mantido fora do Git.
 
 ## Conclusão
 
-As seções **1 a 6** do Delivery estão representadas por artefatos verificáveis no repositório. A Change 01 criou a fundação e a Change 02 levou a autenticação até um fluxo testado de ponta a ponta. As demais changes permanecem planejadas no roadmap e serão tratadas nos próximos incrementos.
+As seções **1 a 5** estão documentadas e executadas, e a maior parte da **seção 6** também está concluída: testes Playwright, plano, casos, prompts e CI estão no repositório. O único item que ainda exige execução local antes da entrega final é o **scan do SonarQube**, porque depende de um token gerado no servidor local.
