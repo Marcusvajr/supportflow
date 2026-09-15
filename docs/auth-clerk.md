@@ -34,7 +34,9 @@ O Clerk é responsável pela autenticação e pela sessão do usuário no fronte
 Authorization: Bearer <token>
 ```
 
-No backend, o NestJS valida o token e usa o claim `sub` do Clerk como `externalAuthId`. Esse identificador é usado para localizar o usuário interno do SupportFlow. A autenticação e a autorização permanecem separadas: o Clerk confirma a identidade; a aplicação decide se o usuário está ativo e qual papel possui.
+No backend, o NestJS valida o token e usa o claim `sub` do Clerk como `externalAuthId`. Esse identificador é usado para localizar o usuário interno do SupportFlow.
+
+A autenticação e a autorização permanecem separadas: o Clerk confirma a identidade; a aplicação decide se o usuário está ativo e qual papel possui. O papel não é aceito de metadados do navegador nem de claims usadas como fonte de autorização.
 
 Fluxo simplificado:
 
@@ -64,19 +66,20 @@ Os comandos dos workspaces carregam o `.env` da raiz. As variáveis de ambiente 
 
 1. Use uma instância **de desenvolvimento** do Clerk com autenticação por e-mail/senha habilitada.
 2. Configure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` e `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in` no `.env` ignorado pelo Git.
-3. Para verificação local de assinatura, `CLERK_JWT_KEY` pode conter a chave **pública PEM completa** da instância. Deixe-a vazia para consultar o JWKS com `CLERK_SECRET_KEY`. Texto de exemplo não é uma chave válida.
+3. `CLERK_JWT_KEY` é opcional. Quando vazia, o backend pode validar o token usando a configuração suportada pelo Clerk com `CLERK_SECRET_KEY`. Se uma chave PEM for usada, ela precisa ser carregada integralmente e não como texto multilinha quebrado no `.env`.
 4. Configure `CLERK_AUTHORIZED_PARTIES` e `FRONTEND_ORIGIN` para a origem do navegador. Localmente, os testes usam `http://localhost:3000`.
 5. Crie previamente contas fictícias no Clerk. Copie seus IDs `user_…` para `DEMO_AGENT_CLERK_ID`, `DEMO_SUPERVISOR_CLERK_ID` e `DEMO_INACTIVE_CLERK_ID`, conforme o perfil desejado.
 
 Os perfis e o campo `active` são definidos nas fixtures internas de `apps/api/src/users/in-memory-users.repository.ts`. A associação é exclusivamente por ID Clerk; metadados e e-mails recebidos do cliente não concedem acesso. IDs desconhecidos e usuários inativos recebem `403`. IDs duplicados na configuração são rejeitados.
 
-Nesta change, o repositório é **em memória**, conforme o design aprovado: apenas três fixtures acadêmicas, sem CRUD ou persistência. Ele será substituído pela implementação Prisma na evolução planejada. Login não cria nem vincula usuários automaticamente.
+Nesta change, o repositório é **em memória**, conforme o design aprovado: apenas fixtures acadêmicas, sem CRUD ou persistência. Ele será substituído pela implementação Prisma na evolução planejada. Login não cria nem vincula usuários automaticamente.
 
 ## Fluxo funcional
 
 - `/` é a página pública da fundação; a ação **Entrar no SupportFlow** leva ao dashboard.
 - `/sign-in` usa o componente oficial do Clerk. Após login, retorna ao destino privado solicitado ou a `/dashboard`.
-- `ClerkProvider` fica no layout raiz; `clerkMiddleware` em `src/proxy.ts` e o layout privado verificam a sessão.
+- `ClerkProvider` fica no layout raiz e `clerkMiddleware` inicializa a integração do Clerk no `proxy.ts`.
+- O grupo de rotas privadas faz a proteção no próprio layout de servidor com `auth.protect()`, mantendo a checagem próxima ao recurso protegido.
 - O dashboard consulta `/api/v1/me` com Bearer token obtido do SDK a cada requisição.
 - `401` encerra a sessão e direciona ao login.
 - `403` apresenta `/access-unavailable`.
@@ -84,7 +87,7 @@ Nesta change, o repositório é **em memória**, conforme o design aprovado: ape
 - **Sair da conta** usa o logout do Clerk.
 - Nenhum token é persistido manualmente em storage.
 
-Ausência de configuração não libera rotas privadas. As páginas públicas informam indisponibilidade da autenticação; a API mantém o health público e recusa acesso protegido.
+Ausência de configuração não libera rotas privadas. A API mantém o health público e recusa acesso protegido quando a autenticação não pode ser validada.
 
 ## API
 
@@ -147,13 +150,21 @@ Para os E2E reais, preencha também no `.env`:
 - `E2E_CLERK_AGENT_EMAIL` e `E2E_CLERK_AGENT_PASSWORD`: conta correspondente a `DEMO_AGENT_CLERK_ID`.
 - `E2E_CLERK_INACTIVE_EMAIL` e `E2E_CLERK_INACTIVE_PASSWORD`: conta correspondente a `DEMO_INACTIVE_CLERK_ID`.
 
-Os testes automatizados cobrem login, logout, acesso sem sessão, usuário inativo, health checks e comportamento após `401`. As credenciais permanecem apenas no `.env` local ou em secrets/variables do ambiente de CI; nunca são versionadas.
+Os testes automatizados cobrem login, logout, acesso sem sessão, usuário inativo, health checks e comportamento após `401`. As credenciais do Clerk usadas nos E2E reais permanecem somente no ambiente local (ou em um ambiente dedicado que tenha secrets configurados) e nunca são versionadas.
+
+### CI
+
+O GitHub Actions padrão executa lint, testes unitários/HTTP, build e os smoke tests do Playwright que não precisam de credenciais externas:
+
+```text
+npx playwright test --project=chromium
+```
+
+O comando local `npm run test:e2e` continua sendo a validação completa, incluindo os cenários autenticados com Clerk.
 
 ## Como explicar esta etapa
 
-Em uma apresentação técnica curta, a Change 02 pode ser resumida assim:
-
-> O SupportFlow passou a utilizar Clerk para autenticação. O frontend cria e mantém a sessão, obtém o token e o envia à API. O backend NestJS valida esse token e associa o usuário do Clerk ao usuário interno do SupportFlow. A partir dessa associação, o sistema diferencia autenticação de autorização, permitindo controlar papéis, usuários ativos e inativos, sessão expirada e acesso a rotas privadas. O fluxo foi validado com testes automatizados E2E, com 8 cenários aprovados.
+> O SupportFlow usa o Clerk para confirmar a identidade do usuário. O frontend mantém a sessão e envia o token para a API. O backend valida esse token e localiza o usuário interno pelo ID do Clerk. A partir daí, o próprio SupportFlow decide se o usuário está ativo e qual papel possui. Assim, autenticação e autorização ficam separadas. O fluxo foi testado de ponta a ponta e a execução local final terminou com 8 testes E2E aprovados.
 
 ## Segurança
 
@@ -161,5 +172,6 @@ Em uma apresentação técnica curta, a Change 02 pode ser resumida assim:
 - `CLERK_SECRET_KEY` permanece somente no servidor;
 - o frontend recebe apenas variáveis `NEXT_PUBLIC_*` apropriadas;
 - a autorização é aplicada no backend;
+- papéis não são aceitos do cliente como fonte de verdade;
 - usuários não são criados automaticamente durante o login;
 - nenhuma credencial real é incluída nesta documentação.
