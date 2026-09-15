@@ -20,16 +20,16 @@ graph TD
 
 ## Resumo do planejamento
 
-| # | Change | Escopo funcional | Tam. | Dependências | Lint | Unitários | Integração | E2E/Aceite |
-|---|---|---|:---:|---|:---:|:---:|:---:|:---:|
-| 01 | Project Foundation | npm workspaces, Next.js, NestJS, health check, CI base | P | — | Sim | Sim | Sim | Não |
-| 02 | Auth Clerk | login, sessão, validação de token e RBAC AGENT/SUPERVISOR | M | 01 | Sim | Sim | Sim | Sim |
-| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim |
-| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim |
-| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim |
-| 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim |
-| 07 | AI Ticket Summary | resumo assistivo do histórico técnico, sem diagnóstico autônomo | M | 05 | Sim | Sim | Sim | Sim |
-| 08 | Platform Compliance | observabilidade, containers OCI, automação e IaC | M | 01, 06 | Sim | Sim | Sim | Sim |
+| # | Change | Escopo funcional | Tam. | Dependências | Lint | Unitários | Integração | E2E/Aceite | Status |
+|---|---|---|:---:|---|:---:|:---:|:---:|:---:|---|
+| 01 | Project Foundation | npm workspaces, Next.js, NestJS, health check, CI base | P | — | Sim | Sim | Sim | Não | Implementada |
+| 02 | Auth Clerk | login, sessão, validação de token e RBAC AGENT/SUPERVISOR | M | 01 | Sim | Sim | Sim | Sim | Implementada, validada e arquivada |
+| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Planejada |
+| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Planejada |
+| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Planejada |
+| 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim | Planejada |
+| 07 | AI Ticket Summary | resumo assistivo do histórico técnico, sem diagnóstico autônomo | M | 05 | Sim | Sim | Sim | Sim | Planejada |
+| 08 | Platform Compliance | observabilidade, containers OCI, automação e IaC | M | 01, 06 | Sim | Sim | Sim | Sim | Planejada |
 
 **Legenda:** P = pequeno; M = médio.
 
@@ -37,10 +37,10 @@ graph TD
 
 ```text
 Fase 1 — Fundação
-  └─ change-01-project-foundation
+  └─ change-01-project-foundation ✅
 
 Fase 2 — Identidade
-  └─ change-02-auth-clerk
+  └─ change-02-auth-clerk ✅
 
 Fase 3 — Dados básicos
   └─ change-03-customer-management
@@ -91,5 +91,26 @@ A `change-07-ai-ticket-summary` adicionará **IA assistiva** para produzir um re
 
 ## Status na v2
 
-- `change-01-project-foundation`: artefatos iniciais implementados no repositório; validação automatizada configurada em CI.
-- `change-02` a `change-08`: propostas de mudança planejadas para execução incremental.
+### Implementadas
+
+- `change-01-project-foundation`: estrutura inicial do monorepo, frontend Next.js, backend NestJS, health check, testes e CI base.
+- `change-02-auth-clerk`: autenticação Clerk, sessão, proteção de rotas, validação de token no backend, associação com usuário interno, papéis `AGENT`/`SUPERVISOR`, usuário inativo, logout e tratamento de `401`/`403`.
+
+A `change-02-auth-clerk` foi validada com Playwright, com resultado final de **8 testes E2E aprovados**, e arquivada em:
+
+`openspec/changes/archive/2026-09-14-change-02-auth-clerk/`
+
+Sua especificação consolidada está em:
+
+`openspec/specs/auth-clerk/spec.md`
+
+### Planejadas
+
+- `change-03-customer-management`
+- `change-04-ticket-lifecycle`
+- `change-05-ticket-activities`
+- `change-06-dashboard-and-search`
+- `change-07-ai-ticket-summary`
+- `change-08-platform-compliance`
+
+O desenvolvimento continuará seguindo o ciclo incremental do OpenSpec: proposta → implementação → verificação → arquivamento.
