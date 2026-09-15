@@ -1,10 +1,10 @@
 # Change 06 — Dashboard and Search
 
-## Objetivo
+## Why
 
-Disponibilizar visão operacional dos chamados e recursos de busca, filtros e paginação para atendentes e supervisores.
+Com clientes, chamados e histórico disponíveis, atendentes e supervisores precisam localizar rapidamente o que exige atenção. Busca, filtros, paginação e resumo operacional evitam depender de navegação manual em listas extensas.
 
-## Escopo funcional
+## What Changes
 
 - `GET /api/v1/dashboard/summary`;
 - totais por status e prioridade;
@@ -13,6 +13,10 @@ Disponibilizar visão operacional dos chamados e recursos de busca, filtros e pa
 - filtros por status, prioridade, categoria e responsável;
 - paginação e ordenação;
 - dashboard e lista de chamados no frontend.
+
+## Impact
+
+A mudança adiciona consultas agregadas e recursos de navegação operacional sem alterar as regras centrais do ciclo do chamado. Também prepara a aplicação para os critérios de demonstração e operação previstos no roadmap.
 
 ## Dependências
 
@@ -48,7 +52,7 @@ Obrigatório.
 
 ## Critérios de aceite
 
-- page padrão 1;
-- pageSize padrão 20 e máximo 100;
+- page padrão `1`;
+- pageSize padrão `20` e máximo `100`;
 - filtros podem ser combinados sem quebrar paginação;
 - supervisor consegue identificar chamados críticos e escalonados.
