@@ -23,7 +23,7 @@ Nesta entrega incremental já estão implementados:
 - tratamento de usuário ativo/inativo, `401` e `403`;
 - testes unitários, de integração e E2E da autenticação;
 - plano e casos de teste do fluxo de login;
-- configuração versionável para inspeção com SonarQube.
+- inspeção local de código com SonarQube.
 
 A execução local completa dos testes E2E da Change 02 terminou com:
 
@@ -32,9 +32,7 @@ A execução local completa dos testes E2E da Change 02 terminou com:
 0 failed
 ```
 
-### Pendência antes do ZIP final
-
-A única etapa da seção 6 que ainda depende do computador local é **executar o scan do SonarQube**, pois ele exige servidor Docker local e token gerado no próprio SonarQube. O repositório já contém configuração, scripts e instruções em [`docs/sonarqube.md`](docs/sonarqube.md).
+A inspeção final no SonarQube terminou com **Quality Gate: Passed**, sem novos issues no código analisado, sem Security Hotspots e com duplicação de `0,0%` no novo código. A tela final informou que ainda não havia linhas novas suficientes para calcular cobertura nessa janela de New Code.
 
 ## Documentação
 
@@ -47,7 +45,7 @@ A única etapa da seção 6 que ainda depende do computador local é **executar 
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — rastreabilidade das seções **1 a 6** do roteiro de Delivery.
 - [`docs/presentation-v2.md`](docs/presentation-v2.md) — apoio textual para apresentação da entrega, com dificuldades e achados reais do desenvolvimento.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — requisitos acadêmicos incorporados ao planejamento.
-- [`docs/sonarqube.md`](docs/sonarqube.md) — preparação e execução da inspeção de código.
+- [`docs/sonarqube.md`](docs/sonarqube.md) — execução e resultado da inspeção de código.
 - [`specs/login-flow-test-plan.md`](specs/login-flow-test-plan.md) — plano de testes do login.
 - [`specs/login-flow-test-cases.md`](specs/login-flow-test-cases.md) — casos de teste e rastreabilidade.
 - [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental e situação atual das changes.
@@ -71,7 +69,7 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 - Spec-Driven Development: OpenSpec
 - Agentes/ferramentas de apoio: Google Antigravity + OpenCode
 - Ambiente Open Source AI: OmniRoute + OpenRouter
-- Inspeção de código: SonarQube (configurado; scan local a executar antes da entrega final)
+- Inspeção de código: SonarQube
 
 ## Tecnologias previstas nas próximas changes
 
@@ -114,7 +112,7 @@ supportflow/
 
 ## Entrega incremental v2
 
-As seções **1 a 5** estão executadas e documentadas. Na seção **6**, a parte de Playwright está concluída e a parte de SonarQube está preparada para a execução local final.
+As seções **1 a 6** estão executadas e documentadas. A seção 6 inclui os testes com Playwright e a inspeção local com SonarQube.
 
 ### Change 01 — Project Foundation
 
@@ -234,6 +232,17 @@ Endpoints locais:
 - backend: `http://localhost:3001`
 - health: `http://localhost:3001/api/v1/health`
 - usuário autenticado: `http://localhost:3001/api/v1/me`
+
+### Repetir a inspeção SonarQube
+
+Com Docker e o SonarQube local configurados:
+
+```powershell
+.\scripts\start-sonarqube.ps1
+.\scripts\run-sonar.ps1
+```
+
+O token permanece somente na sessão local e não é versionado.
 
 ## Segurança
 
