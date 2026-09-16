@@ -18,7 +18,7 @@ export function readAuthConfig(env: NodeJS.ProcessEnv): AuthConfig {
     || (env.NODE_ENV !== 'production' ? 'http://localhost:3000,http://127.0.0.1:3000' : '');
   return {
     secretKey: env.CLERK_SECRET_KEY || undefined,
-    jwtKey: env.CLERK_JWT_KEY?.replace(/\\n/g, '\n') || undefined,
+    jwtKey: env.CLERK_JWT_KEY?.replaceAll('\\n', '\n') || undefined,
     issuer,
     authorizedParties: origins.split(',').map((value) => value.trim()).filter(Boolean),
   };
