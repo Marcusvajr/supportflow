@@ -25,7 +25,7 @@ Resultados previstos pelo roteiro e presentes no repositório:
 - design, specs e tasks das mudanças;
 - incrementos de produto;
 - planos e casos de teste;
-- verificação manual, automatizada e CI.
+- verificação manual, automatizada, CI e inspeção estática.
 
 Papéis previstos no roteiro:
 
@@ -42,7 +42,7 @@ Ferramentas usadas nesta etapa:
 - Context7;
 - Google Stitch;
 - OmniRoute/OpenRouter;
-- SonarQube preparado para inspeção local.
+- SonarQube.
 
 ## 2. Orientações gerais e pré-requisitos
 
@@ -153,7 +153,7 @@ Validados anteriormente no OpenCode:
 - Playwright Test;
 - Google Stitch.
 
-A configuração atual também inclui o Playwright MCP oficial (`@playwright/mcp`) e deixa o SonarQube MCP preparado, porém desabilitado até existir servidor e token local.
+A configuração atual também inclui o Playwright MCP oficial (`@playwright/mcp`) e mantém o SonarQube MCP preparado para uso local quando houver servidor/token configurado.
 
 ## 5. Criação e execução de mudanças com OpenSpec
 
@@ -276,16 +276,28 @@ O fluxo autenticado completo não é executado no CI padrão porque depende de c
 
 ### Inspeção com SonarQube
 
-A parte versionável da inspeção de código está preparada:
+A inspeção foi executada localmente em 15/09/2026 usando o servidor SonarQube em Docker e o scanner configurado pelo projeto.
+
+Artefatos usados:
 
 - `sonar-project.properties`;
 - `scripts/start-sonarqube.ps1`;
 - `scripts/run-sonar.ps1`;
 - variáveis correspondentes em `.env.example`;
-- configuração SonarQube MCP em `opencode.json`;
 - instruções em `docs/sonarqube.md`.
 
-A **execução do scan local ainda depende de gerar um token no SonarQube local** e, por isso, não é registrada como concluída nesta revisão. Antes do ZIP final, deve ser executado o procedimento de `docs/sonarqube.md` e registrada a evidência real do resultado.
+No primeiro scan foram identificados três apontamentos de baixo impacto relacionados a legibilidade/consistência do código. Eles foram corrigidos e o scan foi executado novamente.
+
+Resultado final observado no painel:
+
+- **Quality Gate: Passed**;
+- **New issues: 0**;
+- **Accepted issues: 0**;
+- **Security Hotspots: 0**;
+- **Duplications em New Code: 0,0%**;
+- cobertura do New Code: sem linhas novas suficientes para cálculo nessa janela.
+
+A execução e os ajustes estão documentados em `docs/sonarqube.md`.
 
 ## Evidências da entrega
 
@@ -295,7 +307,7 @@ A **execução do scan local ainda depende de gerar um token no SonarQube local*
 | Seção 4 | `AGENTS.md`, `.agents/`, MCPs | Concluído |
 | Seção 5 | `openspec/roadmap.md`, changes e archive | Concluído |
 | Playwright / Seção 6 | testes, prompts, plano, casos e CI | Concluído |
-| SonarQube / Seção 6 | configuração, scripts e documentação | Preparado; scan local pendente |
+| SonarQube / Seção 6 | scan local + `docs/sonarqube.md` | Concluído — Quality Gate Passed |
 | Fundação | `change-01-project-foundation` | Implementada |
 | Autenticação | archive da `change-02-auth-clerk` | Implementada e arquivada |
 | E2E local | `apps/web/tests/` | 8 aprovados, 0 falhas |
@@ -315,4 +327,4 @@ A **execução do scan local ainda depende de gerar um token no SonarQube local*
 
 ## Conclusão
 
-As seções **1 a 5** estão documentadas e executadas, e a maior parte da **seção 6** também está concluída: testes Playwright, plano, casos, prompts e CI estão no repositório. O único item que ainda exige execução local antes da entrega final é o **scan do SonarQube**, porque depende de um token gerado no servidor local.
+As seções **1 a 6** estão documentadas e executadas para esta entrega incremental. O ciclo de verificação inclui testes Playwright, plano e casos de teste, CI e inspeção SonarQube com correção dos achados encontrados e **Quality Gate final aprovado**.
