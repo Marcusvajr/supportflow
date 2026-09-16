@@ -1,22 +1,24 @@
 # SonarQube — inspeção de código
 
-Esta etapa complementa a **seção 6 do roteiro de Delivery**. A configuração foi preparada no repositório, mas o scan precisa ser executado localmente porque depende de um servidor SonarQube e de um token gerado no ambiente do aluno.
+Esta etapa complementa a **seção 6 do roteiro de Delivery**. O scan é executado localmente porque depende de um servidor SonarQube e de um token gerado no ambiente do aluno.
 
-## O que já está versionado
+## O que está versionado
 
 - `sonar-project.properties` — escopo da análise;
 - `scripts/start-sonarqube.ps1` — inicializa o SonarQube via Docker;
-- `scripts/run-sonar.ps1` — executa o scanner sem gravar token no comando do repositório;
+- `scripts/run-sonar.ps1` — executa o scanner sem gravar token no repositório;
 - variáveis de exemplo em `.env.example`;
-- configuração do MCP SonarQube em `opencode.json`, deixada desabilitada até existir token local.
+- configuração do MCP SonarQube em `opencode.json`, deixada desabilitada por padrão.
 
-## 1. Atualizar o projeto local
+## Como repetir a análise
+
+### 1. Atualizar o projeto local
 
 ```powershell
 git pull
 ```
 
-## 2. Iniciar o SonarQube
+### 2. Iniciar o SonarQube
 
 Com o Docker Desktop aberto:
 
@@ -24,67 +26,64 @@ Com o Docker Desktop aberto:
 .\scripts\start-sonarqube.ps1
 ```
 
-Depois acesse:
+A interface local fica disponível em:
 
 ```text
 http://localhost:9000
 ```
 
-Na primeira execução, entre com as credenciais iniciais do SonarQube, altere a senha quando solicitado e crie um projeto local para o SupportFlow.
+### 3. Configurar o token somente na sessão local
 
-Sugestão de chave do projeto:
+O token do projeto deve permanecer fora do repositório.
 
-```text
-supportflow
-```
-
-## 3. Gerar o token
-
-No SonarQube, gere um token para a análise local. O token é segredo e **não deve ser colado em arquivos versionados**.
-
-No PowerShell da sessão atual:
+Uma forma segura de carregá-lo no PowerShell é:
 
 ```powershell
-$env:SONARQUBE_TOKEN="SEU_TOKEN_LOCAL"
-$env:SONARQUBE_HOST="http://localhost:9000"
-$env:SONARQUBE_PROJECT_KEY="supportflow"
+$secureToken = Read-Host "Cole o token do SonarQube" -AsSecureString
+$env:SONARQUBE_TOKEN = [System.Net.NetworkCredential]::new("", $secureToken).Password
+$env:SONARQUBE_HOST = "http://localhost:9000"
+$env:SONARQUBE_PROJECT_KEY = "supportflow"
+Remove-Variable secureToken
 ```
 
-O valor real do token não deve aparecer em prints, commits ou documentação.
-
-## 4. Instalar o scanner
-
-Caso ainda não esteja instalado:
+### 4. Instalar o scanner, se necessário
 
 ```powershell
 npm install -g @sonar/scan
 ```
 
-## 5. Executar a análise
+O script aceita os comandos disponíveis nas instalações atuais do scanner, incluindo `sonar-scanner-npm`.
+
+### 5. Executar a análise
 
 ```powershell
 .\scripts\run-sonar.ps1
 ```
 
-Ao final, abra novamente o projeto no SonarQube e revise:
+## Resultado observado em 15/09/2026
 
-- bugs;
-- vulnerabilidades;
-- security hotspots;
-- code smells;
-- duplicações;
-- quality gate, quando disponível.
+O primeiro scan identificou três apontamentos de baixo impacto:
 
-## 6. Registrar a evidência
+1. preferência por `String#replaceAll()` em `apps/api/src/auth/auth.config.ts`;
+2. props do componente `CurrentUserPanel` deveriam ser somente leitura;
+3. preferência por raw string no trecho que normaliza quebras de linha da configuração do Clerk.
 
-Para a entrega, basta registrar o resultado sem expor o token. Exemplos de evidência útil:
+Os três pontos foram revisados e corrigidos no código. Após novo scan, o painel do SonarQube apresentou:
 
-- print da página do projeto no SonarQube;
-- quantidade de issues por categoria;
-- principais achados e correções realizadas;
-- resultado do Quality Gate, se disponível.
+- **Quality Gate: Passed**;
+- **New issues: 0**;
+- **Accepted issues: 0**;
+- **Security Hotspots: 0**;
+- **Duplications em New Code: 0,0%**;
+- cobertura em New Code: o SonarQube informou que **não havia linhas novas suficientes para calcular a cobertura** naquela janela.
 
-Depois do scan, este documento pode receber uma pequena seção **Resultado da análise** com a data e os achados realmente observados.
+O resultado final demonstra que a inspeção não foi tratada apenas como formalidade: os apontamentos encontrados foram analisados, corrigidos e verificados em nova execução.
+
+## Observação sobre cobertura
+
+A aplicação possui testes unitários, HTTP e E2E, incluindo uma execução local da Change 02 com `8 passed` e `0 failed`.
+
+O painel final do SonarQube não calculou cobertura para o pequeno conjunto de linhas classificadas como New Code. Isso não deve ser interpretado como ausência de testes; são métricas diferentes. Caso o projeto evolua para exigir cobertura consolidada no SonarQube, o próximo passo é gerar relatórios LCOV durante a execução dos testes e informá-los em `sonar.javascript.lcov.reportPaths` / `sonar.typescript.lcov.reportPaths`, conforme a ferramenta de cobertura adotada.
 
 ## MCP SonarQube
 
@@ -94,9 +93,9 @@ O `opencode.json` contém um servidor `sonarqube` preparado com a imagem oficial
 sonarsource/sonarqube-mcp
 ```
 
-Ele permanece desabilitado por padrão para não quebrar o ambiente de quem ainda não possui servidor/token local.
+Ele permanece desabilitado por padrão para não quebrar o ambiente de quem não possui servidor/token local configurado.
 
-Para usar o MCP no Docker Desktop, as variáveis esperadas são:
+Variáveis esperadas pelo MCP:
 
 ```text
 SONARQUBE_TOKEN=
@@ -104,8 +103,8 @@ SONARQUBE_MCP_URL=http://host.docker.internal:9000
 SONARQUBE_PROJECT_KEY=supportflow
 ```
 
-Depois de configurar as variáveis no ambiente, altere `enabled` para `true` no bloco `sonarqube` do `opencode.json` e reinicie o OpenCode.
+O token real nunca deve ser versionado, exibido em documentação ou incluído em prints da entrega.
 
-## Situação nesta revisão
+## Situação final
 
-A parte versionável da inspeção de código está pronta. **A execução do scan local ainda precisa ser feita antes da entrega final/ZIP para que a seção 6 tenha evidência completa de SonarQube.**
+A inspeção SonarQube da seção 6 foi **executada e concluída**, os achados de baixo impacto foram corrigidos e o último scan registrado apresentou **Quality Gate Passed**.
