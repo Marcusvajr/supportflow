@@ -219,6 +219,7 @@ Continuam planejadas, sem serem apresentadas como implementadas:
 Comandos usados no ciclo de qualidade:
 
 ```powershell
+npm audit --omit=dev --audit-level=high
 npm run lint
 npm run test
 npm run build
@@ -266,11 +267,14 @@ Execução local final da Change 02:
 
 O CI padrão executa:
 
-- instalação das dependências;
+- instalação reproduzível das dependências com `npm ci`;
+- auditoria das dependências de produção com `npm audit --omit=dev --audit-level=high`;
 - lint/verificação estática;
 - testes unitários e HTTP;
 - build;
 - smoke tests Playwright sem credenciais externas.
+
+Na revisão final, a auditoria detectou uma vulnerabilidade transitiva do `multer` trazida pela versão anterior da plataforma NestJS. A dependência de origem foi atualizada para NestJS `12.0.3`, que utiliza a versão corrigida do `multer`. A execução seguinte do CI registrou **0 vulnerabilidades**, 4 testes unitários do frontend aprovados, 18 testes do backend aprovados, build aprovado e 4 smoke tests Playwright aprovados.
 
 O fluxo autenticado completo não é executado no CI padrão porque depende de contas Clerk de desenvolvimento. Ele continua disponível por `npm run test:e2e` em ambiente configurado.
 
@@ -307,6 +311,7 @@ A execução e os ajustes estão documentados em `docs/sonarqube.md`.
 | Seção 4 | `AGENTS.md`, `.agents/`, MCPs | Concluído |
 | Seção 5 | `openspec/roadmap.md`, changes e archive | Concluído |
 | Playwright / Seção 6 | testes, prompts, plano, casos e CI | Concluído |
+| Auditoria de dependências | `.github/workflows/ci.yml` | Concluído — 0 vulnerabilidades no CI final |
 | SonarQube / Seção 6 | scan local + `docs/sonarqube.md` | Concluído — Quality Gate Passed |
 | Fundação | `change-01-project-foundation` | Implementada |
 | Autenticação | archive da `change-02-auth-clerk` | Implementada e arquivada |
@@ -324,7 +329,9 @@ A execução e os ajustes estão documentados em `docs/sonarqube.md`.
 - [x] role interno não confiado ao navegador.
 - [x] logs de falha sem tokens.
 - [x] token SonarQube mantido fora do Git.
+- [x] auditoria de dependências de produção incluída no CI.
+- [x] CI final sem vulnerabilidades conhecidas pelo `npm audit`.
 
 ## Conclusão
 
-As seções **1 a 6** estão documentadas e executadas para esta entrega incremental. O ciclo de verificação inclui testes Playwright, plano e casos de teste, CI e inspeção SonarQube com correção dos achados encontrados e **Quality Gate final aprovado**.
+As seções **1 a 6** estão documentadas e executadas para esta entrega incremental. O ciclo de verificação inclui testes Playwright, plano e casos de teste, CI com auditoria de dependências e inspeção SonarQube com correção dos achados encontrados e **Quality Gate final aprovado**.
