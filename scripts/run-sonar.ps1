@@ -16,7 +16,7 @@ foreach ($candidate in $scannerCandidates) {
 }
 
 if (-not $scanner) {
-  throw 'Scanner Sonar não encontrado. Instale com: npm install -g @sonar/scan'
+  throw 'Scanner Sonar nao encontrado. Instale com: npm install -g @sonar/scan'
 }
 
 if ([string]::IsNullOrWhiteSpace($env:SONARQUBE_TOKEN)) {
@@ -42,7 +42,7 @@ $scannerCommand = if (-not [string]::IsNullOrWhiteSpace($scanner.Source)) {
 }
 
 Write-Host "Scanner encontrado: $($scanner.Name)"
-Write-Host "Executando análise SonarQube em $hostUrl para o projeto $projectKey..."
+Write-Host "Executando analise SonarQube em $hostUrl para o projeto $projectKey..."
 
 & $scannerCommand `
   "-Dsonar.host.url=$hostUrl" `
@@ -50,7 +50,7 @@ Write-Host "Executando análise SonarQube em $hostUrl para o projeto $projectKey
   "-Dsonar.projectKey=$projectKey"
 
 if ($LASTEXITCODE -ne 0) {
-  throw "A análise SonarQube terminou com código $LASTEXITCODE."
+  throw "A analise SonarQube terminou com codigo $LASTEXITCODE."
 }
 
-Write-Host 'Análise concluída. Abra o projeto no SonarQube para revisar os achados.'
+Write-Host 'Analise concluida. Abra o projeto no SonarQube para revisar os achados.'
