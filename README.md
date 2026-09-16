@@ -23,7 +23,8 @@ Nesta entrega incremental já estão implementados:
 - tratamento de usuário ativo/inativo, `401` e `403`;
 - testes unitários, de integração e E2E da autenticação;
 - plano e casos de teste do fluxo de login;
-- inspeção local de código com SonarQube.
+- inspeção local de código com SonarQube;
+- auditoria de dependências de produção no CI.
 
 A execução local completa dos testes E2E da Change 02 terminou com:
 
@@ -33,6 +34,8 @@ A execução local completa dos testes E2E da Change 02 terminou com:
 ```
 
 A inspeção final no SonarQube terminou com **Quality Gate: Passed**, sem novos issues no código analisado, sem Security Hotspots e com duplicação de `0,0%` no novo código. A tela final informou que ainda não havia linhas novas suficientes para calcular cobertura nessa janela de New Code.
+
+Na revisão final de dependências, uma vulnerabilidade transitiva do `multer` foi identificada na versão anterior da plataforma NestJS. O backend foi atualizado para NestJS `12.0.3`, que utiliza a versão corrigida do `multer`. Após a atualização, o CI executou `npm audit --omit=dev --audit-level=high` com **0 vulnerabilidades**, além de lint, testes, build e smoke tests com sucesso.
 
 ## Documentação
 
@@ -197,12 +200,15 @@ As credenciais reais ficam somente no `.env` local, que é ignorado pelo Git.
 ### Instalar dependências
 
 ```powershell
-npm install
+npm ci
 ```
+
+O `npm ci` usa o `package-lock.json` versionado e reproduz exatamente as versões validadas no CI.
 
 ### Executar as verificações
 
 ```powershell
+npm audit --omit=dev --audit-level=high
 npm run lint
 npm run test
 npm run build
@@ -211,7 +217,7 @@ npm run test:e2e
 
 O comando `npm run test:e2e` executa também os cenários reais de autenticação e, por isso, exige as contas fictícias de desenvolvimento do Clerk configuradas no `.env`.
 
-No GitHub Actions, o pipeline padrão executa os smoke tests que não dependem dessas credenciais externas.
+No GitHub Actions, o pipeline padrão executa auditoria das dependências de produção, lint, testes unitários/HTTP, build e os smoke tests que não dependem de credenciais externas.
 
 ### Executar a aplicação
 
@@ -252,4 +258,6 @@ O token permanece somente na sessão local e não é versionado.
 - papéis não são aceitos de dados enviados pelo cliente;
 - logs de falha não registram tokens;
 - tokens do SonarQube também ficam fora do Git;
+- dependências de produção passam por `npm audit` no CI;
+- a revisão final do CI registrou **0 vulnerabilidades**;
 - o ambiente acadêmico utiliza somente dados fictícios.
