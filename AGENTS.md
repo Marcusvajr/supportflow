@@ -13,15 +13,25 @@
 - Para APIs/frameworks atuais, consulte Context7 antes de assumir comportamento incerto.
 - Faça mudanças pequenas e relacionadas à tarefa atual.
 
-## Stack
-- Frontend: Next.js + React + TypeScript + Tailwind CSS.
+## Estado da stack
+
+### Em uso nesta entrega
+- Frontend: Next.js + React + TypeScript.
 - Backend: Node.js + NestJS + TypeScript.
+- Auth: Clerk com RBAC `AGENT` e `SUPERVISOR` aplicado no backend.
+- Testes E2E/aceite: Playwright.
+- CI: GitHub Actions.
+- Inspeção de código: SonarQube.
+
+### Planejada para as próximas changes
+- Estilização: Tailwind CSS.
 - Banco: PostgreSQL no Supabase.
 - ORM: Prisma.
-- Auth: Clerk com RBAC `AGENT` e `SUPERVISOR`.
 - Observabilidade: Sentry + logs estruturados.
-- E2E: Playwright.
-- CI/CD: GitHub Actions; frontend na Vercel.
+- Publicação do frontend: Vercel.
+- Containers da aplicação e Infraestrutura como Código.
+
+Não trate itens planejados como já implementados. O estado atual da entrega está resumido no `README.md` e em `docs/delivery-configuration.md`.
 
 ## Estrutura alvo
 ```text
@@ -37,8 +47,8 @@ openspec/
 ### Sempre faça
 - Valide entrada e autorização no backend.
 - Mantenha regras de negócio no NestJS.
-- Use migrations do Prisma para alterações de schema.
-- Registre mudanças relevantes do chamado no histórico/auditoria.
+- Quando a persistência com Prisma estiver implementada, use migrations para alterações de schema.
+- Registre mudanças relevantes do chamado no histórico/auditoria quando esse domínio estiver implementado.
 - Use apenas dados fictícios no ambiente acadêmico.
 
 ### Pergunte antes
@@ -70,26 +80,25 @@ openspec/
 5. Corrija falhas antes de concluir.
 6. Resuma alterações, testes e riscos restantes.
 
-## Comandos alvo
-> Use estes comandos somente após os scripts correspondentes existirem no monorepo.
+## Comandos atuais
 
 ```bash
-npm install
+npm ci
 npm run dev
 npm run lint
 npm run test
 npm run test:e2e
 npm run build
-npx prisma migrate dev
-npx prisma generate
 ```
 
+Comandos de Prisma (`prisma migrate`, `prisma generate`) só passam a fazer parte do fluxo quando a persistência correspondente for implementada.
+
 ## Qualidade e testes
-- Backend: meta inicial de 70% nas camadas de negócio.
+- Backend: meta inicial de 70% nas camadas de negócio quando houver cobertura instrumentada.
 - Toda regra relevante deve cobrir Happy Path, Sad Path e Edge Cases.
 - Fluxos críticos devem ter E2E no Playwright.
 - Mudança funcional não é concluída sem testes correspondentes.
-- Evite `console.log()` como logging de produção; use logs estruturados.
+- Evite `console.log()` como logging de produção; use logs estruturados quando a camada de observabilidade for implementada.
 
 ## Terminal e autonomia
 - Pode ler arquivos, criar arquivos de implementação, executar lint/test/build e comandos Git não destrutivos sem confirmação.
@@ -105,8 +114,9 @@ npx prisma generate
 - `docs/problem.md`: problema e evidências.
 - `docs/prd.md`: requisitos e escopo.
 - `docs/spec.md`: regras, fluxos e contratos.
-- `docs/architecture.md`: decisões técnicas e segurança.
+- `docs/architecture.md`: arquitetura-alvo e segurança.
 - `docs/design.md`: design system e interfaces.
+- `docs/delivery-configuration.md`: estado executado das seções 1 a 6.
 
 ## Aprendizado contínuo
 Ao concluir uma mudança relevante:
