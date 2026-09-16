@@ -13,15 +13,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Static checks
         run: npm run lint
@@ -36,7 +37,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # O fluxo autenticado real usa contas de desenvolvimento do Clerk e
-      # permanece no comando local `npm run test:e2e`. No CI padrão executamos
-      # somente os smoke tests que não dependem de credenciais externas.
+      # permanece no comando local `npm run test:e2e`. No CI padrao executamos
+      # somente os smoke tests que nao dependem de credenciais externas.
       - name: E2E smoke tests
         run: npx playwright test --project=chromium
