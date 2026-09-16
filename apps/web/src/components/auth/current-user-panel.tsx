@@ -1,6 +1,10 @@
 import type { CurrentUser } from '../../lib/api-client';
 
-export function CurrentUserPanel({ user }: { user: CurrentUser }) {
+type CurrentUserPanelProps = Readonly<{
+  user: CurrentUser;
+}>;
+
+export function CurrentUserPanel({ user }: CurrentUserPanelProps) {
   return (
     <section className="auth-panel" aria-labelledby="current-user-title">
       <p className="eyebrow">Seu acesso está ativo</p>
