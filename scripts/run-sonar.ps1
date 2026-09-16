@@ -1,6 +1,21 @@
 $ErrorActionPreference = 'Stop'
 
-if (-not (Get-Command sonar -ErrorAction SilentlyContinue)) {
+$scannerCandidates = @(
+  'sonar',
+  'sonar-scanner',
+  'sonar-scanner-npm.cmd',
+  'sonar-scanner-npm'
+)
+
+$scanner = $null
+foreach ($candidate in $scannerCandidates) {
+  $scanner = Get-Command $candidate -ErrorAction SilentlyContinue | Select-Object -First 1
+  if ($scanner) {
+    break
+  }
+}
+
+if (-not $scanner) {
   throw 'Scanner Sonar não encontrado. Instale com: npm install -g @sonar/scan'
 }
 
@@ -20,9 +35,16 @@ $projectKey = if ([string]::IsNullOrWhiteSpace($env:SONARQUBE_PROJECT_KEY)) {
   $env:SONARQUBE_PROJECT_KEY
 }
 
+$scannerCommand = if (-not [string]::IsNullOrWhiteSpace($scanner.Source)) {
+  $scanner.Source
+} else {
+  $scanner.Name
+}
+
+Write-Host "Scanner encontrado: $($scanner.Name)"
 Write-Host "Executando análise SonarQube em $hostUrl para o projeto $projectKey..."
 
-& sonar `
+& $scannerCommand `
   "-Dsonar.host.url=$hostUrl" `
   "-Dsonar.token=$env:SONARQUBE_TOKEN" `
   "-Dsonar.projectKey=$projectKey"
