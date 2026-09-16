@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  throw 'Docker não encontrado. Inicie o Docker Desktop antes de executar este script.'
+  throw 'Docker nao encontrado. Inicie o Docker Desktop antes de executar este script.'
 }
 
 $existing = docker ps -a --filter 'name=^/sonarqube$' --format '{{.Names}}'
@@ -12,7 +12,7 @@ if ($existing -eq 'sonarqube') {
     docker start sonarqube | Out-Null
     Write-Host 'Container sonarqube iniciado.'
   } else {
-    Write-Host 'Container sonarqube já está em execução.'
+    Write-Host 'Container sonarqube ja esta em execucao.'
   }
 } else {
   docker run -d `
@@ -24,4 +24,4 @@ if ($existing -eq 'sonarqube') {
 }
 
 Write-Host 'Aguarde o SonarQube ficar pronto e acesse http://localhost:9000.'
-Write-Host 'Na primeira execução, configure o projeto local e gere um token antes do scan.'
+Write-Host 'Na primeira execucao, configure o projeto local e gere um token antes do scan.'
