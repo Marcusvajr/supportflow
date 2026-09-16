@@ -131,6 +131,21 @@ O fluxo autenticado real depende de contas de desenvolvimento do Clerk. Essas cr
 
 Assim o pipeline continua verificando lint, testes, build e integração básica sem exigir que credenciais de teste sejam publicadas.
 
+### Revisão final das dependências
+
+Na conferência final foi acrescentada uma auditoria das dependências de produção ao CI. Essa etapa encontrou vulnerabilidades de severidade alta no `multer`, trazido de forma transitiva pela versão anterior do NestJS.
+
+Em vez de aplicar um `npm audit fix --force` sem avaliar o impacto, a dependência de origem foi revisada e o backend foi atualizado para NestJS `12.0.3`, que utiliza a versão corrigida do `multer`. Depois da atualização, o pipeline completo foi executado novamente e terminou com:
+
+- **0 vulnerabilidades** na instalação e na auditoria de produção;
+- lint aprovado;
+- 4 testes unitários do frontend aprovados;
+- 18 testes do backend aprovados;
+- build do frontend e do backend aprovado;
+- 4 smoke tests Playwright aprovados.
+
+Esse ajuste foi um achado da revisão final e não fazia parte do planejamento inicial da autenticação.
+
 ### SonarQube encontrou problemas pequenos, mas úteis
 
 A inspeção com SonarQube também trouxe retorno prático. No primeiro scan apareceram três apontamentos de baixo impacto:
@@ -154,7 +169,9 @@ A parte de Playwright foi organizada com plano, casos de teste, prompts de agent
 
 A inspeção SonarQube também foi executada localmente. Ela não ficou apenas preparada: o scan foi realizado, os três apontamentos encontrados foram corrigidos e a última execução apresentou **Quality Gate Passed**.
 
-Assim, a seção 6 desta entrega ficou com evidências tanto de testes funcionais quanto de inspeção estática.
+A revisão de dependências passou a fazer parte do pipeline, e a execução final do CI registrou **0 vulnerabilidades** nas dependências instaladas e na auditoria de produção.
+
+Assim, a seção 6 desta entrega ficou com evidências de testes funcionais, inspeção estática e verificação automatizada das dependências.
 
 ## 8. Principais decisões que ficaram mais claras
 
@@ -165,6 +182,7 @@ Assim, a seção 6 desta entrega ficou com evidências tanto de testes funcionai
 - cada change deve ter escopo pequeno o suficiente para ser testada antes da próxima;
 - documentação, código e testes precisam contar a mesma história;
 - análise estática é mais útil quando os apontamentos são revisados e corrigidos, e não apenas coletados;
+- alertas de dependência devem ser investigados na origem antes de aplicar correções forçadas;
 - IA, quando entrar no projeto, será assistiva e não tomará decisões operacionais pelo atendente.
 
 ## 9. Evidências desta entrega
@@ -180,7 +198,7 @@ Assim, a seção 6 desta entrega ficou com evidências tanto de testes funcionai
 | Implementação frontend | `apps/web/` |
 | Implementação backend | `apps/api/` |
 | Testes de autenticação | `apps/web/tests/` e `apps/api/tests/` |
-| CI | `.github/workflows/ci.yml` |
+| CI e auditoria de dependências | `.github/workflows/ci.yml` |
 | SonarQube | `docs/sonarqube.md`, `sonar-project.properties` e scripts em `scripts/` |
 
 ## 10. O que ainda não está implementado
@@ -191,4 +209,4 @@ Esses itens estão descritos nas próximas changes do roadmap e serão implement
 
 ## 11. Resumo para falar em aula
 
-> O SupportFlow foi pensado para evitar perda de contexto em atendimentos técnicos. Nesta entrega eu preparei o ambiente, organizei o roadmap com OpenSpec e implementei os dois primeiros incrementos. A Change 01 criou a fundação com Next.js, NestJS, testes e CI. A Change 02 implementou a autenticação com Clerk e a autorização no backend. O Clerk identifica o usuário, mas quem decide se ele está ativo e qual papel possui é o SupportFlow. Durante os testes eu tive que corrigir problemas reais de configuração, principalmente variáveis de ambiente, uma chave PEM que não estava sendo lida corretamente, usuários ativos e inativos e cenários de sessão expirada. No final, o fluxo completo de autenticação ficou com 8 testes E2E aprovados. Também executei a inspeção com SonarQube, corrigi os apontamentos encontrados e finalizei com Quality Gate aprovado. As próximas mudanças continuam planejadas no roadmap, sem serem apresentadas como já implementadas.
+> O SupportFlow foi pensado para evitar perda de contexto em atendimentos técnicos. Nesta entrega eu preparei o ambiente, organizei o roadmap com OpenSpec e implementei os dois primeiros incrementos. A Change 01 criou a fundação com Next.js, NestJS, testes e CI. A Change 02 implementou a autenticação com Clerk e a autorização no backend. O Clerk identifica o usuário, mas quem decide se ele está ativo e qual papel possui é o SupportFlow. Durante os testes eu tive que corrigir problemas reais de configuração, principalmente variáveis de ambiente, uma chave PEM que não estava sendo lida corretamente, usuários ativos e inativos e cenários de sessão expirada. No final, o fluxo completo de autenticação ficou com 8 testes E2E aprovados. Também executei a inspeção com SonarQube, corrigi os apontamentos encontrados e finalizei com Quality Gate aprovado. Na revisão final das dependências, o audit encontrou uma vulnerabilidade transitiva; atualizei a dependência de origem e o CI final passou com 0 vulnerabilidades, testes e build aprovados. As próximas mudanças continuam planejadas no roadmap, sem serem apresentadas como já implementadas.
