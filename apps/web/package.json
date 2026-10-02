@@ -6,7 +6,8 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "lint": "tsc --noEmit",
-    "test": "tsx --test tests/unit/*.test.ts"
+    "test": "tsx --test tests/unit/*.test.ts",
+    "start": "next start"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.2",
