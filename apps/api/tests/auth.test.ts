@@ -33,8 +33,8 @@ test('Clerk verifier rejects invalid signature, expired/future sessions, wrong o
   }
 });
 
-test('Clerk verifier accepts a valid signed session when azp is absent', async () => {
-  assert.deepEqual(await verifier.verify(sessionToken({ azp: undefined })), { externalAuthId: users[0].externalAuthId });
+test('Clerk verifier rejects a session without azp when authorized parties are enforced', async () => {
+  await assert.rejects(verifier.verify(sessionToken({ azp: undefined })), UnauthorizedException);
 });
 
 test('missing verifier configuration fails closed', async () => {
