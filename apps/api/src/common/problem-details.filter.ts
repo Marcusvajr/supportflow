@@ -8,6 +8,7 @@ const errors: Record<number, [string, string]> = {
   401: ['authentication_error', 'Não autenticado'],
   403: ['authorization_error', 'Acesso negado'],
   404: ['not_found', 'Recurso não encontrado'],
+  409: ['conflict', 'Conflito'],
   503: ['service_unavailable', 'Serviço indisponível'],
 };
 
