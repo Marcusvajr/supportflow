@@ -6,17 +6,21 @@ Os fluxos de chamados precisam de clientes de referência para que o atendimento
 
 ## What Changes
 
-- persistência `Customer` em PostgreSQL/Supabase via Prisma;
+- persistência `Customer` em PostgreSQL/Supabase;
+- acesso ao banco exclusivamente pelo backend NestJS usando a API REST/PostgREST do Supabase;
 - `GET /api/v1/customers` com paginação e busca;
 - `GET /api/v1/customers/:id`;
 - `POST /api/v1/customers`;
 - `PATCH /api/v1/customers/:id`;
 - telas de lista, detalhe e formulário de cliente;
-- validações de nome, código de referência e campos mascarados.
+- validações de nome, código de referência e campos mascarados;
+- migration e seed com dados exclusivamente fictícios.
 
 ## Impact
 
-A mudança introduz persistência relacional e passa a exigir Prisma/Supabase no fluxo de dados. As próximas changes de chamados passam a depender de clientes válidos criados por esta camada.
+A mudança introduz persistência relacional real no SupportFlow. As próximas changes de chamados passam a depender de clientes válidos criados por esta camada.
+
+A comunicação com o Supabase permanece isolada no backend. O frontend não recebe chaves de serviço e continua consumindo apenas a API versionada do SupportFlow.
 
 ## Dependências
 
@@ -26,7 +30,8 @@ A mudança introduz persistência relacional e passa a exigir Prisma/Supabase no
 ## Riscos
 
 - **Uso acidental de dados reais — Médio.** Mitigação: somente dados fictícios e indicação explícita na UI/seed.
-- **Código de referência duplicado — Baixo.** Mitigação: índice único e resposta `409`.
+- **Código de referência duplicado — Baixo.** Mitigação: restrição única no PostgreSQL e resposta `409`.
+- **Indisponibilidade/configuração incorreta do banco — Médio.** Mitigação: falha controlada `503`, health separado e segredos em variáveis de ambiente.
 
 ## Lint
 
@@ -40,17 +45,21 @@ Obrigatório.
 
 ## Testes de integração
 
-- CRUD permitido;
+- criação, consulta, listagem e atualização pela API;
 - paginação e busca;
-- `404` e `409`.
+- proteção de endpoints;
+- `400`, `404` e `409`.
 
 ## Testes E2E/aceite
 
 - usuário autenticado cria cliente fictício e o encontra na listagem;
+- usuário abre o detalhe e altera os dados;
 - formulário rejeita campos obrigatórios inválidos.
 
 ## Critérios de aceite
 
 - frontend não acessa o banco diretamente;
 - dados persistidos via API NestJS;
+- PostgreSQL/Supabase é a fonte de persistência;
+- segredos do Supabase permanecem somente no backend;
 - nenhuma informação real de assinantes no projeto acadêmico.

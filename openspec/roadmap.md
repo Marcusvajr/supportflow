@@ -24,7 +24,7 @@ graph TD
 |---|---|---|:---:|---|:---:|:---:|:---:|:---:|---|
 | 01 | Project Foundation | npm workspaces, Next.js, NestJS, health check, CI base | P | — | Sim | Sim | Sim | Não | Implementada |
 | 02 | Auth Clerk | login, sessão, validação de token e RBAC AGENT/SUPERVISOR | M | 01 | Sim | Sim | Sim | Sim | Implementada, validada e arquivada |
-| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Planejada |
+| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Em implementação na V3 |
 | 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Planejada |
 | 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Planejada |
 | 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim | Planejada |
@@ -89,6 +89,13 @@ A `change-07-ai-ticket-summary` adicionará **IA assistiva** para produzir um re
 - nenhum dado real de assinante no ambiente acadêmico;
 - documentação atualizada quando a mudança alterar contrato, arquitetura ou fluxo.
 
+## Status atual
+
+### V3 em desenvolvimento
+
+- `change-03-customer-management`: código de backend, migration/seed, API e telas de clientes implementados; aplicação da migration no Supabase, configuração do Render e validação publicada ainda pendentes.
+- Artefatos adicionais do regulamento adicionados em `docs/lean-canvas.md`, `docs/personas.md`, `docs/user-journey.md`, `docs/story-map.md` e `docs/architecture-models.md`.
+
 ## Status na v2
 
 ### Implementadas
@@ -104,9 +111,8 @@ Sua especificação consolidada está em:
 
 `openspec/specs/auth-clerk/spec.md`
 
-### Planejadas
+### Planejadas após a Change 03
 
-- `change-03-customer-management`
 - `change-04-ticket-lifecycle`
 - `change-05-ticket-activities`
 - `change-06-dashboard-and-search`
