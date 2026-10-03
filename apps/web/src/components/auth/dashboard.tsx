@@ -56,7 +56,10 @@ export function Dashboard() {
           <CurrentUserPanel user={state.user} />
           <section className="auth-panel workspace-actions">
             <div><h2>Atendimento</h2><p>Clientes fictícios e chamados da demonstração acadêmica.</p></div>
-            <Link className="primary-action" href="/customers">Abrir clientes</Link>
+            <div className="header-actions">
+              <Link className="secondary-action" href="/customers">Clientes</Link>
+              <Link className="primary-action" href="/tickets">Chamados</Link>
+            </div>
           </section>
         </>
       )}
