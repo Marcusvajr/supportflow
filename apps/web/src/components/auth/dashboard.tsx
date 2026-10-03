@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth, useClerk } from '@clerk/nextjs';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ApiError, createApiClient, type CurrentUser } from '../../lib/api-client';
@@ -50,7 +51,15 @@ export function Dashboard() {
         || (state.status === 'ready' && state.clerkUserId !== userId)) && (
         <section className="auth-panel" role="status" aria-live="polite">Verificando seu acesso…</section>
       )}
-      {isLoaded && isSignedIn && state.status === 'ready' && state.clerkUserId === userId && <CurrentUserPanel user={state.user} />}
+      {isLoaded && isSignedIn && state.status === 'ready' && state.clerkUserId === userId && (
+        <>
+          <CurrentUserPanel user={state.user} />
+          <section className="auth-panel workspace-actions">
+            <div><h2>Atendimento</h2><p>Clientes fictícios e chamados da demonstração acadêmica.</p></div>
+            <Link className="primary-action" href="/customers">Abrir clientes</Link>
+          </section>
+        </>
+      )}
       {isLoaded && isSignedIn && state.status === 'error' && (
         <section className="auth-panel" role="alert">
           <h2>Não foi possível carregar seu acesso</h2>
