@@ -53,6 +53,16 @@ Na revisão final de dependências, uma vulnerabilidade transitiva do `multer` f
 - [`specs/login-flow-test-cases.md`](specs/login-flow-test-cases.md) — casos de teste e rastreabilidade.
 - [`openspec/roadmap.md`](openspec/roadmap.md) — roadmap incremental e situação atual das changes.
 
+## Publicação
+
+Ambiente de demonstração da entrega incremental:
+
+- Frontend (Vercel): https://supportflow-pi.vercel.app
+- API (Render): https://supportflow-api-fu00.onrender.com/api/v1
+- Health da API: https://supportflow-api-fu00.onrender.com/api/v1/health
+
+A publicação utiliza variáveis de ambiente gerenciadas pelas plataformas de hospedagem. Segredos e credenciais não são versionados no repositório.
+
 ## Protótipo
 
 Protótipo criado no Google Stitch.
@@ -80,7 +90,6 @@ As tecnologias abaixo fazem parte da arquitetura e do roadmap, mas ainda não de
 
 - PostgreSQL / Supabase;
 - Prisma;
-- Vercel para publicação;
 - Sentry;
 - containers OCI da aplicação;
 - Infraestrutura como Código;
