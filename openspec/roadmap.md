@@ -25,8 +25,8 @@ graph TD
 | 01 | Project Foundation | npm workspaces, Next.js, NestJS, health check, CI base | P | — | Sim | Sim | Sim | Não | Implementada |
 | 02 | Auth Clerk | login, sessão, validação de token e RBAC AGENT/SUPERVISOR | M | 01 | Sim | Sim | Sim | Sim | Implementada, validada e arquivada |
 | 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Em implementação na V3 |
-| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Planejada |
-| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Planejada |
+| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Implementada em código; aceite cloud pendente |
+| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Parcial: atividades/linha do tempo implementadas |
 | 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim | Planejada |
 | 07 | AI Ticket Summary | resumo assistivo do histórico técnico, sem diagnóstico autônomo | M | 05 | Sim | Sim | Sim | Sim | Planejada |
 | 08 | Platform Compliance | observabilidade, containers OCI, automação e IaC | M | 01, 06 | Sim | Sim | Sim | Sim | Planejada |
@@ -94,6 +94,9 @@ A `change-07-ai-ticket-summary` adicionará **IA assistiva** para produzir um re
 ### V3 em desenvolvimento
 
 - `change-03-customer-management`: código de backend, migration/seed, API e telas de clientes implementados; aplicação da migration no Supabase, configuração do Render e validação publicada ainda pendentes.
+- `change-04-ticket-lifecycle`: API, regras de status/prioridade/resolução, auditoria, testes e telas implementados; aceite cloud depende do banco.
+- `change-05-ticket-activities`: NOTE/TEST/DIAGNOSIS, auditoria e linha do tempo implementados; reatribuição/escalonamento continuam pendentes para o segundo fluxo.
+- CI validou o núcleo do fluxo de chamado com lint, testes, build e smoke tests antes da integração visual final.
 - Artefatos adicionais do regulamento adicionados em `docs/lean-canvas.md`, `docs/personas.md`, `docs/user-journey.md`, `docs/story-map.md` e `docs/architecture-models.md`.
 
 ## Status na v2
@@ -111,10 +114,9 @@ Sua especificação consolidada está em:
 
 `openspec/specs/auth-clerk/spec.md`
 
-### Planejadas após a Change 03
+### Próximas etapas após o primeiro fluxo da V3
 
-- `change-04-ticket-lifecycle`
-- `change-05-ticket-activities`
+- concluir reatribuição/escalonamento de `change-05-ticket-activities`;
 - `change-06-dashboard-and-search`
 - `change-07-ai-ticket-summary`
 - `change-08-platform-compliance`

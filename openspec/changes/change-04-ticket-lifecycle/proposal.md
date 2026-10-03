@@ -6,14 +6,16 @@ O chamado técnico é o fluxo central do SupportFlow. Depois de identidade e cli
 
 ## What Changes
 
-- persistência `Ticket` via Prisma;
-- geração de protocolo `SF-YYYY-NNNNNN` no backend;
+- persistência `Ticket` em PostgreSQL/Supabase;
+- acesso à persistência isolado no backend por repositório;
+- geração transacional de protocolo `SF-YYYY-NNNNNN` por sequence/trigger PostgreSQL;
 - criação de chamado;
-- listagem e detalhe básico;
+- listagem e detalhe;
 - alteração de prioridade;
 - transições de status conforme `docs/spec.md`;
 - resolução com texto obrigatório e `resolvedAt`;
-- auditoria das alterações críticas.
+- auditoria das alterações críticas;
+- telas de lista, criação e detalhe do chamado.
 
 ## Impact
 
@@ -27,7 +29,8 @@ A mudança introduz as principais regras de negócio do domínio de chamados e c
 ## Riscos
 
 - **Transições de status inválidas — Médio.** Mitigação: regra centralizada no serviço.
-- **Protocolo duplicado — Médio.** Mitigação: geração transacional e restrição única.
+- **Protocolo duplicado — Médio.** Mitigação: sequence PostgreSQL e restrição única.
+- **Mudança sem rastreabilidade — Médio.** Mitigação: trigger de auditoria para alterações críticas.
 
 ## Lint
 
@@ -35,9 +38,10 @@ Obrigatório.
 
 ## Testes unitários
 
-- geração de protocolo;
+- criação;
 - transições válidas e inválidas;
 - resolução obrigatória;
+- reabertura exclusiva do supervisor;
 - prioridade válida.
 
 ## Testes de integração
@@ -46,7 +50,7 @@ Obrigatório.
 - `PATCH /tickets/:id/status`;
 - `PATCH /tickets/:id/priority`;
 - `POST /tickets/:id/resolve`;
-- persistência e auditoria atômicas.
+- fluxo HTTP até resolução.
 
 ## Testes E2E/aceite
 
@@ -59,4 +63,5 @@ Obrigatório.
 
 - backend é fonte única das regras;
 - chamado não é excluído fisicamente;
-- resolução registra status, data e histórico.
+- resolução registra status, data e histórico;
+- frontend usa somente a API REST do SupportFlow.
