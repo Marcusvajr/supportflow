@@ -4,7 +4,7 @@ import { UsersRepository } from './users.repository';
 // Associação explícita às identidades Clerk; nenhum usuário é criado no login.
 export function demoUsers(env: NodeJS.ProcessEnv): User[] {
   const fixtures: User[] = [
-    { id: 'demo-agent', externalAuthId: env.DEMO_AGENT_CLERK_ID ?? '', name: 'Ana Atendente', email: 'ana@example.test', role: 'AGENT', active: true },
+    { id: 'demo-agent', externalAuthId: env.DEMO_AGENT_CLERK_ID ?? '', name: 'Projetos Integrados', email: 'projetos.integrados+clerk_test@example.com', role: 'AGENT', active: true },
     { id: 'demo-supervisor', externalAuthId: env.DEMO_SUPERVISOR_CLERK_ID ?? '', name: 'Sofia Supervisora', email: 'sofia@example.test', role: 'SUPERVISOR', active: true },
     { id: 'demo-inactive', externalAuthId: env.DEMO_INACTIVE_CLERK_ID ?? '', name: 'Igor Inativo', email: 'igor@example.test', role: 'AGENT', active: false },
   ];
