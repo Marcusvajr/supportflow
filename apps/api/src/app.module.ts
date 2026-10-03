@@ -5,9 +5,10 @@ import { AccessLogger } from './common/access-logger';
 import { ProblemDetailsFilter } from './common/problem-details.filter';
 import { CustomersModule } from './customers/customers.module';
 import { HealthController } from './health/health.controller';
+import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
-  imports: [AuthModule, CustomersModule],
+  imports: [AuthModule, CustomersModule, TicketsModule],
   controllers: [HealthController],
   providers: [AccessLogger, { provide: APP_FILTER, useClass: ProblemDetailsFilter }],
 })
