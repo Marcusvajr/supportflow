@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import type { CreateCustomerInput, UpdateCustomerInput } from './customer';
 import { CustomersService } from './customers.service';
 
 @Controller('customers')
 export class CustomersController {
-  constructor(private readonly customers: CustomersService) {}
+  constructor(@Inject(CustomersService) private readonly customers: CustomersService) {}
 
   @Get()
   list(@Query('q') q?: string, @Query('page') page?: string, @Query('pageSize') pageSize?: string) {
