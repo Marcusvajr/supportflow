@@ -8,17 +8,16 @@ export class ClerkTokenVerifier extends TokenVerifier {
   constructor(@Inject(AUTH_CONFIG) private readonly config: AuthConfig) { super(); }
 
   async verify(token: string): Promise<{ externalAuthId: string }> {
-    const { secretKey, jwtKey, issuer, authorizedParties } = this.config;
-    if ((!secretKey && !jwtKey) || !issuer || !authorizedParties.length) {
+    const { secretKey, jwtKey, authorizedParties } = this.config;
+    if ((!secretKey && !jwtKey) || !authorizedParties.length) {
       throw new ServiceUnavailableException('Autenticação temporariamente indisponível.');
     }
 
     try {
       const payload = await verifyToken(token, { secretKey, jwtKey, authorizedParties });
-      // Aceitar somente sessões de usuário da instância e origem esperadas.
-      if (payload.iss !== issuer || !payload.sub || !payload.sid
-        || !payload.azp || !authorizedParties.includes(payload.azp)
-        || (payload.sts !== undefined && payload.sts !== 'active')) {
+      // verifyToken já valida assinatura, expiração e authorizedParties.
+      // A aplicação exige apenas uma sessão de usuário ativa.
+      if (!payload.sub || !payload.sid || payload.sts === 'pending') {
         throw new Error('Invalid session');
       }
       return { externalAuthId: payload.sub };

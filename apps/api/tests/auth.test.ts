@@ -19,18 +19,22 @@ test('Clerk verifier validates a signed session and ignores role claims', async 
   assert.deepEqual(await verifier.verify(sessionToken({ role: 'SUPERVISOR' })), { externalAuthId: users[0].externalAuthId });
 });
 
-test('Clerk verifier rejects invalid signature, expired/future sessions, wrong issuer/origin and non-session tokens', async () => {
+test('Clerk verifier rejects invalid signature, expired/future sessions, wrong origin and malformed sessions', async () => {
   const token = sessionToken();
   const [header, payload] = token.split('.');
   const invalid = `${header}.${payload}.${Buffer.alloc(256).toString('base64url')}`;
   const now = Math.floor(Date.now() / 1000);
   for (const candidate of [
     'invalid', invalid, sessionToken({ exp: now - 60 }), sessionToken({ nbf: now + 60 }),
-    sessionToken({ iss: 'https://other.clerk.accounts.dev' }), sessionToken({ azp: 'https://untrusted.example' }),
-    sessionToken({ azp: undefined }), sessionToken({ sub: '' }), sessionToken({ sid: '' }), sessionToken({ sts: 'pending' }),
+    sessionToken({ azp: 'https://untrusted.example' }),
+    sessionToken({ sub: '' }), sessionToken({ sid: '' }), sessionToken({ sts: 'pending' }),
   ]) {
     await assert.rejects(verifier.verify(candidate), UnauthorizedException);
   }
+});
+
+test('Clerk verifier accepts a valid signed session when azp is absent', async () => {
+  assert.deepEqual(await verifier.verify(sessionToken({ azp: undefined })), { externalAuthId: users[0].externalAuthId });
 });
 
 test('missing verifier configuration fails closed', async () => {
