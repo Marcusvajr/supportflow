@@ -5,15 +5,27 @@ type CurrentUserPanelProps = Readonly<{
 }>;
 
 export function CurrentUserPanel({ user }: CurrentUserPanelProps) {
+  const initials = user.name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+
   return (
-    <section className="auth-panel" aria-labelledby="current-user-title">
-      <p className="eyebrow">Seu acesso está ativo</p>
-      <h2 id="current-user-title">Olá, {user.name}</h2>
-      <dl className="profile-details">
-        <div><dt>E-mail</dt><dd>{user.email}</dd></div>
-        <div><dt>Perfil</dt><dd>{user.role === 'SUPERVISOR' ? 'Supervisor' : 'Atendente'}</dd></div>
-      </dl>
-      <p>Este é o ponto de entrada da sua central. Os indicadores e a fila de chamados serão disponibilizados nas próximas etapas.</p>
+    <section className="welcome-card" aria-labelledby="current-user-title">
+      <div className="welcome-copy">
+        <p className="page-kicker">Seu acesso está ativo</p>
+        <h2 id="current-user-title">Olá, {user.name}</h2>
+        <p>Continue de onde parou ou abra um novo atendimento técnico.</p>
+      </div>
+      <div className="user-summary">
+        <span className="user-avatar" aria-hidden="true">{initials || 'SF'}</span>
+        <div>
+          <strong>{user.name}</strong>
+          <span>{user.role === 'SUPERVISOR' ? 'Supervisor' : 'Atendente'} · {user.email}</span>
+        </div>
+      </div>
     </section>
   );
 }
