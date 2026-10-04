@@ -5,7 +5,7 @@
 - [x] criar `ticket_activities`;
 - [x] criar `audit_events`;
 - [x] criar trigger de auditoria para atividades;
-- [ ] aplicar migration no Supabase.
+- [x] aplicar migration no Supabase.
 
 ## Backend
 

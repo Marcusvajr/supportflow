@@ -24,7 +24,12 @@ Nesta entrega incremental já estão implementados:
 - testes unitários, de integração e E2E da autenticação;
 - plano e casos de teste do fluxo de login;
 - inspeção local de código com SonarQube;
-- auditoria de dependências de produção no CI.
+- auditoria de dependências de produção no CI;
+- persistência PostgreSQL gerenciada pelo Supabase;
+- cadastro, busca e atualização de clientes fictícios;
+- criação e consulta de chamados com protocolo, status, prioridade e resolução;
+- registro de observações, testes e diagnósticos;
+- linha do tempo com atividades técnicas e eventos de auditoria.
 
 A execução local completa dos testes E2E da Change 02 terminou com:
 
@@ -43,6 +48,12 @@ Na revisão final de dependências, uma vulnerabilidade transitiva do `multer` f
 - [`docs/prd.md`](docs/prd.md) — requisitos do produto.
 - [`docs/spec.md`](docs/spec.md) — especificação técnica.
 - [`docs/architecture.md`](docs/architecture.md) — arquitetura.
+- [`docs/architecture-models.md`](docs/architecture-models.md) — modelos de contexto, contêineres, componentes, classes e implantação.
+- [`docs/lean-canvas.md`](docs/lean-canvas.md) — Lean Canvas do produto.
+- [`docs/personas.md`](docs/personas.md) — personas priorizadas.
+- [`docs/user-journey.md`](docs/user-journey.md) — jornada do usuário.
+- [`docs/story-map.md`](docs/story-map.md) — mapeamento de histórias e releases.
+- [`docs/supabase.md`](docs/supabase.md) — persistência, RLS e integração segura do backend com Supabase.
 - [`docs/design.md`](docs/design.md) — design system.
 - [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação e testes da autenticação Clerk.
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — rastreabilidade das seções **1 a 6** do roteiro de Delivery.
@@ -83,13 +94,13 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 - Agentes/ferramentas de apoio: Google Antigravity + OpenCode
 - Ambiente Open Source AI: OmniRoute + OpenRouter
 - Inspeção de código: SonarQube
+- Persistência: PostgreSQL / Supabase
+- Integração com banco: Supabase Data API (PostgREST) isolada no backend
 
 ## Tecnologias previstas nas próximas changes
 
-As tecnologias abaixo fazem parte da arquitetura e do roadmap, mas ainda não devem ser interpretadas como funcionalidades concluídas nesta entrega:
+As tecnologias abaixo continuam no roadmap e ainda não devem ser interpretadas como funcionalidades concluídas nesta etapa:
 
-- PostgreSQL / Supabase;
-- Prisma;
 - Sentry;
 - containers OCI da aplicação;
 - Infraestrutura como Código;

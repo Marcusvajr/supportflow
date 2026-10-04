@@ -8,8 +8,8 @@
 - [x] definir variáveis de ambiente do Supabase;
 - [x] implementar repositório abstrato;
 - [x] implementar repositório Supabase/PostgREST;
-- [ ] aplicar migration no projeto Supabase;
-- [ ] configurar credenciais do banco no Render.
+- [x] aplicar migration no projeto Supabase;
+- [x] configurar credenciais do banco no Render.
 
 ## Backend
 
@@ -33,7 +33,7 @@
 
 ## Qualidade
 
-- [ ] CI verde após a implementação;
+- [x] CI verde após a implementação;
 - [ ] validar aplicação publicada;
 - [ ] executar aceite com conta demo;
 - [ ] registrar evidências em `verification.md`;

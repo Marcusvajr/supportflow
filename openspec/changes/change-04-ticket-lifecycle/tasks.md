@@ -6,7 +6,7 @@
 - [x] criar sequence e trigger de protocolo;
 - [x] criar auditoria de mudanças críticas;
 - [x] criar índices de status, prioridade e cliente;
-- [ ] aplicar migration no Supabase.
+- [x] aplicar migration no Supabase.
 
 ## Backend
 
