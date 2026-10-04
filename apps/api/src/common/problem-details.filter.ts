@@ -1,7 +1,7 @@
-import { Catch, HttpException, Inject, type ArgumentsHost, type ExceptionFilter } from '@nestjs/common';
+import { Catch, HttpException, type ArgumentsHost, type ExceptionFilter } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type { Request, Response } from 'express';
-import { AccessLogger } from './access-logger';
+import type { Response } from 'express';
+import type { ContextRequest } from './request-context.middleware';
 
 const errors: Record<number, [string, string]> = {
   400: ['validation_error', 'Dados inválidos'],
@@ -14,17 +14,14 @@ const errors: Record<number, [string, string]> = {
 
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
-  constructor(@Inject(AccessLogger) private readonly logger: AccessLogger) {}
-
   catch(exception: unknown, host: ArgumentsHost): void {
     const context = host.switchToHttp();
-    const request = context.getRequest<Request>();
+    const request = context.getRequest<ContextRequest>();
     const response = context.getResponse<Response>();
     const status = exception instanceof HttpException ? exception.getStatus() : 500;
     const [type, title] = errors[status] ?? ['internal_error', 'Erro interno'];
-    const instance = request.path; // Excluir query string, inclusive tokens enviados incorretamente na URL.
-    const requestId = randomUUID();
-    this.logger.write({ request_id: requestId, route: request.route?.path ?? 'unmatched', method: request.method, status });
+    const instance = request.path;
+    const requestId = request.requestId ?? randomUUID();
     response.setHeader('X-Request-Id', requestId);
     response.setHeader('Cache-Control', 'no-store');
     response.setHeader('Content-Type', 'application/problem+json');
@@ -33,6 +30,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       type, title, status,
       detail: status < 500 && exception instanceof HttpException ? exception.message : 'Não foi possível concluir a solicitação.',
       instance,
+      request_id: requestId,
     });
   }
 }

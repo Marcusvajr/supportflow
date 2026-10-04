@@ -63,6 +63,12 @@ jobs:
           path: build-output.txt
           retention-days: 3
 
+      - name: Build API container
+        run: docker build -f apps/api/Dockerfile -t supportflow-api:ci .
+
+      - name: Build web container
+        run: docker build -f apps/web/Dockerfile -t supportflow-web:ci .
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 

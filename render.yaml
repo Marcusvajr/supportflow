@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: supportflow-api
+    runtime: node
+    plan: free
+    region: virginia
+    branch: main
+    autoDeploy: true
+    buildCommand: npm ci && npm run build --workspace=@supportflow/api
+    startCommand: npm run start --workspace=@supportflow/api
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: GLOBAL_PREFIX
+        value: api/v1
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_JWT_KEY
+        sync: false
+      - key: CLERK_ISSUER
+        sync: false
+      - key: CLERK_AUTHORIZED_PARTIES
+        sync: false
+      - key: DEMO_AGENT_CLERK_ID
+        sync: false
+      - key: DEMO_SUPERVISOR_CLERK_ID
+        sync: false
+      - key: DEMO_INACTIVE_CLERK_ID
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_BACKEND_KEY
+        sync: false
+      - key: AI_PROVIDER_URL
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
