@@ -50,7 +50,7 @@ export function Dashboard() {
       api.request<CustomerPage>('/customers?page=1&pageSize=100', { signal: controller.signal }),
     ])
       .then(([user, tickets, customers]) => {
-        if (!controller.signal.aborted) setState({ status: 'ready', data: { user, tickets, customers, clerkUserId: userId } });
+        if (!controller.signal.aborted) setState({ status: 'ready', data: { user, tickets, customers, clerkUserId: userId ?? '' } });
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
