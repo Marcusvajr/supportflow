@@ -101,7 +101,7 @@ export function TicketDetailScreen() {
   return (
     <main className="workspace-shell">
       <header className="workspace-header">
-        <div><Link className="brand" href="/dashboard">SupportFlow</Link><h1>{ticket?.protocol ?? 'Chamado'}</h1></div>
+        <div><p className="page-kicker">Atendimento técnico</p><h1>{ticket?.protocol ?? 'Chamado'}</h1><p className="section-lead">{ticket ? `${ticket.customerName} · ${statusLabels[ticket.status]}` : 'Carregando contexto do atendimento…'}</p></div>
         <Link className="secondary-action" href="/tickets">Voltar para chamados</Link>
       </header>
 
