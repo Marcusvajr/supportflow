@@ -59,3 +59,14 @@ export type AuditEvent = {
 export type TimelineItem =
   | { id: string; kind: 'activity'; type: TicketActivityType; actorUserId: string; description: string; createdAt: string }
   | { id: string; kind: 'audit'; action: string; actorUserId: string; metadata: Record<string, unknown>; createdAt: string };
+
+export type DashboardSummary = {
+  total: number;
+  open: number;
+  diagnosing: number;
+  escalated: number;
+  resolved: number;
+  criticalActive: number;
+  highActive: number;
+  recent: Ticket[];
+};

@@ -1,7 +1,8 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CustomersService } from '../customers/customers.service';
 import type { User } from '../users/user';
-import { activityTypes, ticketCategories, ticketPriorities, ticketStatuses, type CreateTicketInput, type Ticket, type TicketActivityType, type TicketPage, type TicketPriority, type TicketStatus, type TimelineItem } from './ticket';
+import { UsersService } from '../users/users.service';
+import { activityTypes, ticketCategories, ticketPriorities, ticketStatuses, type CreateTicketInput, type DashboardSummary, type Ticket, type TicketActivityType, type TicketCategory, type TicketPage, type TicketPriority, type TicketStatus, type TimelineItem } from './ticket';
 import { TicketsRepository } from './tickets.repository';
 
 const transitions: Record<TicketStatus, TicketStatus[]> = {
@@ -16,14 +17,42 @@ export class TicketsService {
   constructor(
     @Inject(TicketsRepository) private readonly repository: TicketsRepository,
     @Inject(CustomersService) private readonly customers: CustomersService,
+    @Inject(UsersService) private readonly users: UsersService,
   ) {}
 
-  async list(q?: string, statusValue?: string, priorityValue?: string, pageValue?: string, pageSizeValue?: string): Promise<TicketPage> {
+  async list(
+    q?: string,
+    statusValue?: string,
+    priorityValue?: string,
+    categoryValue?: string,
+    assignedToUserId?: string,
+    pageValue?: string,
+    pageSizeValue?: string,
+    sortByValue?: string,
+    sortDirectionValue?: string,
+  ): Promise<TicketPage> {
     const status = statusValue ? this.enumValue(statusValue, ticketStatuses, 'status') : undefined;
     const priority = priorityValue ? this.enumValue(priorityValue, ticketPriorities, 'prioridade') : undefined;
+    const category = categoryValue ? this.enumValue(categoryValue, ticketCategories, 'categoria') as TicketCategory : undefined;
     const page = this.positiveInteger(pageValue, 1, 100000);
     const pageSize = this.positiveInteger(pageSizeValue, 20, 100);
-    return await this.repository.list({ q: q?.trim().slice(0, 80) || undefined, status, priority, page, pageSize });
+    const sortBy = sortByValue === undefined ? 'updatedAt' : this.enumValue(sortByValue, ['updatedAt', 'createdAt'] as const, 'ordenação');
+    const sortDirection = sortDirectionValue === undefined ? 'desc' : this.enumValue(sortDirectionValue, ['asc', 'desc'] as const, 'direção');
+    return await this.repository.list({
+      q: q?.trim().slice(0, 80) || undefined,
+      status,
+      priority,
+      category,
+      assignedToUserId: assignedToUserId?.trim() || undefined,
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    });
+  }
+
+  summary(): Promise<DashboardSummary> {
+    return this.repository.summary();
   }
 
   async get(id: string): Promise<Ticket> {
@@ -53,7 +82,12 @@ export class TicketsService {
     if (ticket.status === 'RESOLVED' && next === 'DIAGNOSING' && user.role !== 'SUPERVISOR') {
       throw new ForbiddenException('Somente supervisor pode reabrir um chamado resolvido.');
     }
-    const updated = await this.repository.update(id, { status: next, resolution: next === 'DIAGNOSING' ? null : undefined, resolvedAt: next === 'DIAGNOSING' ? null : undefined, lastModifiedByUserId: user.id });
+    const updated = await this.repository.update(id, {
+      status: next,
+      resolution: ticket.status === 'RESOLVED' && next === 'DIAGNOSING' ? null : undefined,
+      resolvedAt: ticket.status === 'RESOLVED' && next === 'DIAGNOSING' ? null : undefined,
+      lastModifiedByUserId: user.id,
+    });
     if (!updated) throw new NotFoundException('Chamado não encontrado.');
     return updated;
   }
@@ -62,6 +96,21 @@ export class TicketsService {
     await this.get(id);
     const priority = this.enumValue(value, ticketPriorities, 'prioridade');
     const updated = await this.repository.update(id, { priority, lastModifiedByUserId: user.id });
+    if (!updated) throw new NotFoundException('Chamado não encontrado.');
+    return updated;
+  }
+
+  async assign(user: User, id: string, assignedToUserIdValue: unknown): Promise<Ticket> {
+    if (user.role !== 'SUPERVISOR') {
+      throw new ForbiddenException('Somente supervisor pode reatribuir chamados.');
+    }
+    const ticket = await this.get(id);
+    if (ticket.status === 'RESOLVED') {
+      throw new BadRequestException('Reabra o chamado antes de alterar o responsável.');
+    }
+    const assignedToUserId = this.requiredText(assignedToUserIdValue, 'responsável', 1, 128);
+    const target = await this.users.findActiveById(assignedToUserId);
+    const updated = await this.repository.update(id, { assignedToUserId: target.id, lastModifiedByUserId: user.id });
     if (!updated) throw new NotFoundException('Chamado não encontrado.');
     return updated;
   }
@@ -78,7 +127,8 @@ export class TicketsService {
   }
 
   async addActivity(user: User, id: string, typeValue: unknown, descriptionValue: unknown) {
-    await this.get(id);
+    const ticket = await this.get(id);
+    if (ticket.status === 'RESOLVED') throw new BadRequestException('Reabra o chamado para registrar nova atividade.');
     const type = this.enumValue(typeValue, activityTypes, 'tipo de atividade') as TicketActivityType;
     const description = this.requiredText(descriptionValue, 'descrição da atividade', 2, 5000);
     return await this.repository.addActivity(id, user.id, type, description);

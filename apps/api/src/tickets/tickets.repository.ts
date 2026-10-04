@@ -1,11 +1,15 @@
-import type { AuditEvent, CreateTicketInput, Ticket, TicketActivity, TicketActivityType, TicketPage, TicketPriority, TicketStatus } from './ticket';
+import type { AuditEvent, CreateTicketInput, DashboardSummary, Ticket, TicketActivity, TicketActivityType, TicketCategory, TicketPage, TicketPriority, TicketStatus } from './ticket';
 
 export type TicketListQuery = {
   q?: string;
   status?: TicketStatus;
   priority?: TicketPriority;
+  category?: TicketCategory;
+  assignedToUserId?: string;
   page: number;
   pageSize: number;
+  sortBy: 'updatedAt' | 'createdAt';
+  sortDirection: 'asc' | 'desc';
 };
 
 export type PersistTicketInput = CreateTicketInput & {
@@ -24,6 +28,7 @@ export type UpdateTicketPatch = {
 
 export abstract class TicketsRepository {
   abstract list(query: TicketListQuery): Promise<TicketPage>;
+  abstract summary(): Promise<DashboardSummary>;
   abstract findById(id: string): Promise<Ticket | null>;
   abstract create(input: PersistTicketInput): Promise<Ticket>;
   abstract update(id: string, patch: UpdateTicketPatch): Promise<Ticket | null>;

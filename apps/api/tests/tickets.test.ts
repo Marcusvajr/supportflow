@@ -4,6 +4,7 @@ import { HttpException } from '@nestjs/common';
 import type { Customer } from '../src/customers/customer';
 import type { CustomersService } from '../src/customers/customers.service';
 import type { User } from '../src/users/user';
+import type { UsersService } from '../src/users/users.service';
 import type { AuditEvent, CreateTicketInput, Ticket, TicketActivity, TicketActivityType, TicketPage } from '../src/tickets/ticket';
 import type { PersistTicketInput, TicketListQuery, UpdateTicketPatch } from '../src/tickets/tickets.repository';
 import { TicketsRepository } from '../src/tickets/tickets.repository';
@@ -19,6 +20,17 @@ const customers = { get: async (id: string) => {
 } } as CustomersService;
 const agent: User = { id: 'agent', externalAuthId: 'user_agent', name: 'Agente', email: 'agent@example.test', role: 'AGENT', active: true };
 const supervisor: User = { ...agent, id: 'supervisor', externalAuthId: 'user_supervisor', role: 'SUPERVISOR' };
+const userDirectory = {
+  findActiveById: async (id: string) => {
+    if (id === agent.id) return agent;
+    if (id === supervisor.id) return supervisor;
+    throw new Error('not found');
+  },
+  listAssignable: async () => [
+    { id: agent.id, name: agent.name, role: agent.role },
+    { id: supervisor.id, name: supervisor.name, role: supervisor.role },
+  ],
+} as UsersService;
 
 class MemoryTicketsRepository extends TicketsRepository {
   readonly items = new Map<string, Ticket>();
@@ -32,6 +44,19 @@ class MemoryTicketsRepository extends TicketsRepository {
     if (query.priority) items = items.filter((item) => item.priority === query.priority);
     if (query.q) items = items.filter((item) => item.protocol.includes(query.q!) || item.title.includes(query.q!));
     return { items, page: query.page, pageSize: query.pageSize, total: items.length };
+  }
+  async summary() {
+    const items = [...this.items.values()];
+    return {
+      total: items.length,
+      open: items.filter((item) => item.status === 'OPEN').length,
+      diagnosing: items.filter((item) => item.status === 'DIAGNOSING').length,
+      escalated: items.filter((item) => item.status === 'ESCALATED').length,
+      resolved: items.filter((item) => item.status === 'RESOLVED').length,
+      criticalActive: items.filter((item) => item.priority === 'CRITICAL' && item.status !== 'RESOLVED').length,
+      highActive: items.filter((item) => item.priority === 'HIGH' && item.status !== 'RESOLVED').length,
+      recent: items.slice(-5).reverse(),
+    };
   }
   async findById(id: string) { return this.items.get(id) ?? null; }
   async create(input: PersistTicketInput): Promise<Ticket> {
@@ -76,7 +101,7 @@ function validInput(overrides: Partial<CreateTicketInput> = {}): CreateTicketInp
 
 test('ticket service executes creation, diagnosis and resolution flow', async () => {
   const repository = new MemoryTicketsRepository();
-  const service = new TicketsService(repository, customers);
+  const service = new TicketsService(repository, customers, userDirectory);
   const created = await service.create(agent, validInput());
   assert.equal(created.status, 'OPEN');
   assert.equal(created.assignedToUserId, agent.id);
@@ -95,7 +120,7 @@ test('ticket service executes creation, diagnosis and resolution flow', async ()
 
 test('ticket service blocks invalid transitions and requires supervisor to reopen', async () => {
   const repository = new MemoryTicketsRepository();
-  const service = new TicketsService(repository, customers);
+  const service = new TicketsService(repository, customers, userDirectory);
   const created = await service.create(agent, validInput());
   await assert.rejects(service.resolve(agent, created.id, 'Texto de resolução válido para o teste.'), (error: unknown) => error instanceof HttpException && error.getStatus() === 400);
   await service.changeStatus(agent, created.id, 'DIAGNOSING');
@@ -106,9 +131,19 @@ test('ticket service blocks invalid transitions and requires supervisor to reope
 
 test('ticket service validates fields and filters', async () => {
   const repository = new MemoryTicketsRepository();
-  const service = new TicketsService(repository, customers);
+  const service = new TicketsService(repository, customers, userDirectory);
   await assert.rejects(service.create(agent, validInput({ title: 'x' })), (error: unknown) => error instanceof HttpException && error.getStatus() === 400);
   const created = await service.create(agent, validInput({ priority: 'CRITICAL' }));
   const page = await service.list(created.protocol, 'OPEN', 'CRITICAL', '1', '20');
   assert.equal(page.total, 1);
+});
+
+test('ticket service allows only supervisor to reassign an active ticket', async () => {
+  const repository = new MemoryTicketsRepository();
+  const service = new TicketsService(repository, customers, userDirectory);
+  const created = await service.create(agent, validInput());
+  await service.changeStatus(agent, created.id, 'ESCALATED');
+  await assert.rejects(service.assign(agent, created.id, supervisor.id), (error: unknown) => error instanceof HttpException && error.getStatus() === 403);
+  const reassigned = await service.assign(supervisor, created.id, supervisor.id);
+  assert.equal(reassigned.assignedToUserId, supervisor.id);
 });

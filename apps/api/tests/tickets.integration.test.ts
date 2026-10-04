@@ -32,6 +32,19 @@ class MemoryTicketsRepository extends TicketsRepository {
   activities: TicketActivity[] = [];
   audits: AuditEvent[] = [];
   async list(query: TicketListQuery): Promise<TicketPage> { return { items: this.item ? [this.item] : [], page: query.page, pageSize: query.pageSize, total: this.item ? 1 : 0 }; }
+  async summary() {
+    const items = this.item ? [this.item] : [];
+    return {
+      total: items.length,
+      open: items.filter((item) => item.status === 'OPEN').length,
+      diagnosing: items.filter((item) => item.status === 'DIAGNOSING').length,
+      escalated: items.filter((item) => item.status === 'ESCALATED').length,
+      resolved: items.filter((item) => item.status === 'RESOLVED').length,
+      criticalActive: items.filter((item) => item.priority === 'CRITICAL' && item.status !== 'RESOLVED').length,
+      highActive: items.filter((item) => item.priority === 'HIGH' && item.status !== 'RESOLVED').length,
+      recent: items,
+    };
+  }
   async findById(id: string) { return this.item?.id === id ? this.item : null; }
   async create(input: PersistTicketInput): Promise<Ticket> {
     const now = new Date().toISOString();
@@ -49,6 +62,7 @@ class MemoryTicketsRepository extends TicketsRepository {
       ...this.item,
       ...(patch.status !== undefined ? { status: patch.status } : {}),
       ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
+      ...(patch.assignedToUserId !== undefined ? { assignedToUserId: patch.assignedToUserId } : {}),
       ...(patch.resolution !== undefined ? { resolution: patch.resolution } : {}),
       ...(patch.resolvedAt !== undefined ? { resolvedAt: patch.resolvedAt } : {}),
       updatedAt: new Date().toISOString(),
@@ -81,9 +95,9 @@ before(async () => {
 });
 after(async () => { await app?.close(); });
 
-function request(path: string, init: RequestInit = {}) {
+function request(path: string, init: RequestInit = {}, externalAuthId = users[0].externalAuthId) {
   const headers = new Headers(init.headers);
-  headers.set('Authorization', `Bearer ${sessionToken()}`);
+  headers.set('Authorization', `Bearer ${sessionToken({ sub: externalAuthId })}`);
   return fetch(`${baseUrl}${path}`, { ...init, headers });
 }
 
@@ -117,4 +131,29 @@ test('HTTP ticket endpoints reject invalid business input', async () => {
     body: JSON.stringify({ customerId: customer.id, title: 'x', description: 'curta', category: 'INVALID', priority: 'HIGH' }),
   });
   assert.equal(invalid.status, 400);
+});
+
+test('HTTP escalation and reassignment flow enforces supervisor role', async () => {
+  const createdResponse = await request('/tickets', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId: customer.id, title: 'Intermitência recorrente', description: 'Cliente relata quedas recorrentes durante o período noturno.', category: 'INTERMITTENCE', priority: 'HIGH' }),
+  });
+  const created = await createdResponse.json() as Ticket;
+  assert.equal((await request(`/tickets/${created.id}/status`, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'ESCALATED' }),
+  })).status, 200);
+
+  const denied = await request(`/tickets/${created.id}/assignee`, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ assignedToUserId: users[1].id }),
+  });
+  assert.equal(denied.status, 403);
+
+  const reassigned = await request(`/tickets/${created.id}/assignee`, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ assignedToUserId: users[1].id }),
+  }, users[1].externalAuthId);
+  assert.equal(reassigned.status, 200);
+  assert.equal(((await reassigned.json()) as Ticket).assignedToUserId, users[1].id);
+
+  const summary = await request('/dashboard/summary');
+  assert.equal(summary.status, 200);
 });

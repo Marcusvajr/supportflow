@@ -9,8 +9,18 @@ export class TicketsController {
   constructor(@Inject(TicketsService) private readonly tickets: TicketsService) {}
 
   @Get()
-  list(@Query('q') q?: string, @Query('status') status?: string, @Query('priority') priority?: string, @Query('page') page?: string, @Query('pageSize') pageSize?: string) {
-    return this.tickets.list(q, status, priority, page, pageSize);
+  list(
+    @Query('q') q?: string,
+    @Query('status') status?: string,
+    @Query('priority') priority?: string,
+    @Query('category') category?: string,
+    @Query('assignedTo') assignedTo?: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortDirection') sortDirection?: string,
+  ) {
+    return this.tickets.list(q, status, priority, category, assignedTo, page, pageSize, sortBy, sortDirection);
   }
 
   @Post()
@@ -31,6 +41,11 @@ export class TicketsController {
   @Patch(':id/priority')
   changePriority(@CurrentUser() user: User, @Param('id') id: string, @Body('priority') priority: unknown) {
     return this.tickets.changePriority(user, id, priority);
+  }
+
+  @Patch(':id/assignee')
+  assign(@CurrentUser() user: User, @Param('id') id: string, @Body('assignedToUserId') assignedToUserId: unknown) {
+    return this.tickets.assign(user, id, assignedToUserId);
   }
 
   @Post(':id/resolve')

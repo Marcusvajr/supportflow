@@ -1,5 +1,5 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import type { AuditEvent, Ticket, TicketActivity, TicketPage } from './ticket';
+import type { AuditEvent, DashboardSummary, Ticket, TicketActivity, TicketPage } from './ticket';
 import type { PersistTicketInput, TicketListQuery, UpdateTicketPatch } from './tickets.repository';
 import { TicketsRepository } from './tickets.repository';
 
@@ -67,20 +67,49 @@ export class SupabaseTicketsRepository extends TicketsRepository {
   }
 
   async list(query: TicketListQuery): Promise<TicketPage> {
+    const orderColumn = query.sortBy === 'createdAt' ? 'created_at' : 'updated_at';
     const params = new URLSearchParams({
-      select: this.select(), order: 'updated_at.desc', limit: String(query.pageSize), offset: String((query.page - 1) * query.pageSize),
+      select: this.select(),
+      order: `${orderColumn}.${query.sortDirection}`,
+      limit: String(query.pageSize),
+      offset: String((query.page - 1) * query.pageSize),
     });
     if (query.q) {
       const term = query.q.replace(/[,%()]/g, '').slice(0, 80);
-      params.set('or', `(protocol.ilike.*${term}*,title.ilike.*${term}*)`);
+      const customerIds = await this.customerIdsMatching(term);
+      const clauses = [`protocol.ilike.*${term}*`, `title.ilike.*${term}*`];
+      if (customerIds.length > 0) clauses.push(`customer_id.in.(${customerIds.join(',')})`);
+      params.set('or', `(${clauses.join(',')})`);
     }
     if (query.status) params.set('status', `eq.${query.status}`);
     if (query.priority) params.set('priority', `eq.${query.priority}`);
+    if (query.category) params.set('category', `eq.${query.category}`);
+    if (query.assignedToUserId) params.set('assigned_to_user_id', `eq.${query.assignedToUserId}`);
     const response = await this.fetch(`tickets?${params.toString()}`, { headers: { Prefer: 'count=exact' } });
     const items = (await this.records<TicketRecord>(response)).map((record) => this.map(record));
     const range = response.headers.get('content-range');
     const total = range?.includes('/') ? Number(range.split('/')[1]) : items.length;
     return { items, page: query.page, pageSize: query.pageSize, total: Number.isFinite(total) ? total : items.length };
+  }
+
+  async summary(): Promise<DashboardSummary> {
+    const params = new URLSearchParams({ select: 'status,priority', limit: '1000' });
+    const rows = await this.records<Array<{ status: Ticket['status']; priority: Ticket['priority'] }>[number]>(
+      await this.fetch(`tickets?${params.toString()}`),
+    );
+    const recent = await this.list({
+      page: 1, pageSize: 5, sortBy: 'updatedAt', sortDirection: 'desc',
+    });
+    return {
+      total: rows.length,
+      open: rows.filter((item) => item.status === 'OPEN').length,
+      diagnosing: rows.filter((item) => item.status === 'DIAGNOSING').length,
+      escalated: rows.filter((item) => item.status === 'ESCALATED').length,
+      resolved: rows.filter((item) => item.status === 'RESOLVED').length,
+      criticalActive: rows.filter((item) => item.priority === 'CRITICAL' && item.status !== 'RESOLVED').length,
+      highActive: rows.filter((item) => item.priority === 'HIGH' && item.status !== 'RESOLVED').length,
+      recent: recent.items,
+    };
   }
 
   async findById(id: string): Promise<Ticket | null> {
@@ -148,6 +177,16 @@ export class SupabaseTicketsRepository extends TicketsRepository {
     return (await this.records<AuditRecord>(await this.fetch(`audit_events?${params.toString()}`))).map((record) => ({
       id: record.id, action: record.action, actorUserId: record.actor_user_id, metadata: record.metadata ?? {}, createdAt: record.created_at,
     }));
+  }
+
+  private async customerIdsMatching(term: string): Promise<string[]> {
+    const params = new URLSearchParams({
+      select: 'id',
+      or: `(name.ilike.*${term}*,reference_code.ilike.*${term}*)`,
+      limit: '50',
+    });
+    const rows = await this.records<Array<{ id: string }>[number]>(await this.fetch(`customers?${params.toString()}`));
+    return rows.map((row) => row.id);
   }
 
   private mapActivity(record: ActivityRecord): TicketActivity {
