@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('visitante é redirecionado de uma rota privada para o login', async ({ page }) => {
   await page.goto('/dashboard');
   await expect(page).toHaveURL(/\/sign-in/);
-  await expect(page.getByRole('heading', { name: 'Acesse sua central de suporte' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bem-vindo de volta' })).toBeVisible();
   if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     await expect(page.getByLabel('Email address', { exact: true })).toBeVisible();
   } else {
