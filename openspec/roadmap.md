@@ -91,12 +91,15 @@ A `change-07-ai-ticket-summary` adicionará **IA assistiva** para produzir um re
 
 ## Status atual
 
-### V3 em desenvolvimento
+### V3 implementada
 
-- `change-03-customer-management`: backend, migration/seed, API, telas, Supabase e variáveis do Render configurados; aceite publicado com conta demo ainda pendente.
-- `change-04-ticket-lifecycle`: API, regras de status/prioridade/resolução, auditoria, testes, telas e migration aplicados; aceite cloud ponta a ponta ainda pendente.
-- `change-05-ticket-activities`: NOTE/TEST/DIAGNOSIS, auditoria e linha do tempo implementados; reatribuição/escalonamento continuam pendentes para o segundo fluxo.
-- CI permanece verde com lint, testes automatizados, build e smoke tests após a integração com Supabase.
+- `change-03-customer-management`: backend, migration/seed, API, telas e persistência Supabase implementados e verificados.
+- `change-04-ticket-lifecycle`: protocolo, status, prioridade, resolução, auditoria e fluxo principal implementados e verificados.
+- `change-05-ticket-activities`: NOTE/TEST/DIAGNOSIS, linha do tempo, escalonamento e reatribuição com RBAC implementados; regras cobertas por testes automatizados.
+- `change-06-dashboard-and-search`: resumo operacional, busca, filtros, ordenação e paginação implementados e verificados.
+- `change-07-ai-ticket-summary`: resumo assistivo implementado e testado com provider fake; resposta real depende de credencial externa.
+- `change-08-platform-compliance`: observabilidade, containers OCI, IaC e CI/CD implementados e verificados.
+- CI final verde com audit de dependências, lint, 38 testes unitários/HTTP, builds, dois builds OCI e Playwright smoke.
 - Artefatos adicionais do regulamento adicionados em `docs/lean-canvas.md`, `docs/personas.md`, `docs/user-journey.md`, `docs/story-map.md` e `docs/architecture-models.md`. O Supabase está em `sa-east-1`, com RLS habilitado e checagem adicional de chave do backend antes do Data API.
 
 ## Status na v2

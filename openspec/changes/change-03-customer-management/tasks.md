@@ -36,5 +36,5 @@
 - [x] CI verde após a implementação;
 - [x] validar aplicação publicada;
 - [x] executar aceite com conta demo;
-- [ ] registrar evidências em `verification.md`;
+- [x] registrar evidências em `verification.md`;
 - [ ] arquivar a change após conclusão.

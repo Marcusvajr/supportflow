@@ -8,7 +8,7 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 
 A proposta é manter o histórico técnico do chamado organizado para que outro atendente consiga entender o que já foi feito e continuar o atendimento sem reconstruir todo o contexto.
 
-## Estado desta entrega
+## Estado da V3
 
 Nesta entrega incremental já estão implementados:
 
@@ -99,14 +99,11 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 - Persistência: PostgreSQL / Supabase
 - Integração com banco: Supabase Data API (PostgREST) isolada no backend
 
-## Tecnologias previstas nas próximas changes
+## Plataforma e evolução
 
-As tecnologias abaixo continuam no roadmap e ainda não devem ser interpretadas como funcionalidades concluídas nesta etapa:
+Nesta V3 também foram concluídos os **containers OCI**, a **Infraestrutura como Código**, a **observabilidade/rastreabilidade** e o **recurso assistivo de IA**. A integração de IA é compatível com provedor OpenAI-compatible e degrada com segurança quando não há credencial configurada.
 
-- Sentry;
-- containers OCI da aplicação;
-- Infraestrutura como Código;
-- IA assistiva para resumo de contexto técnico.
+A única dependência externa não versionada é a credencial de um provedor real de IA, necessária apenas para demonstrar uma resposta gerada ao vivo.
 
 ## Estrutura atual
 
@@ -198,16 +195,16 @@ Inativo → /access-unavailable
 401 → sessão encerrada e retorno ao login
 ```
 
-### Próximas changes
+### Changes da V3
 
-1. `change-03-customer-management`
-2. `change-04-ticket-lifecycle`
-3. `change-05-ticket-activities`
-4. `change-06-dashboard-and-search`
-5. `change-07-ai-ticket-summary`
-6. `change-08-platform-compliance`
+- `change-03-customer-management` — implementada e verificada;
+- `change-04-ticket-lifecycle` — implementada e verificada;
+- `change-05-ticket-activities` — implementada e verificada em código/testes, incluindo RBAC de reatribuição;
+- `change-06-dashboard-and-search` — implementada e verificada;
+- `change-07-ai-ticket-summary` — implementada e testada; credencial real de provedor permanece externa;
+- `change-08-platform-compliance` — implementada e verificada.
 
-Essas changes estão planejadas e não são apresentadas como funcionalidades já concluídas.
+O relatório consolidado da bateria final está em [`docs/test-report-v3.md`](docs/test-report-v3.md).
 
 ## Como validar localmente
 

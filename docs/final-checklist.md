@@ -36,6 +36,21 @@
 - [x] Recurso assistivo de IA implementado
 - [ ] Credencial de provedor de IA real no ambiente publicado
 
+## Validação técnica final
+- [x] `npm audit --omit=dev --audit-level=high`
+- [x] lint/TypeScript
+- [x] 4 testes unitários do frontend
+- [x] 34 testes unitários/HTTP do backend
+- [x] build Next.js
+- [x] build NestJS
+- [x] build do container OCI da API
+- [x] build do container OCI do frontend
+- [x] Playwright smoke
+- [x] Vercel com status de deploy bem-sucedido
+- [x] Render em estado `live`
+- [x] Supabase Database Advisor sem alertas de segurança
+- [x] ZIP final gerado automaticamente pelo CI
+
 ## Antes da entrega
 - [ ] liberar acesso ao professor no repositório;
 - [ ] anexar o ZIP final gerado pelo CI;
