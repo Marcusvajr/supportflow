@@ -63,7 +63,7 @@ export function CustomerDetailScreen() {
   return (
     <main className="workspace-shell">
       <header className="workspace-header">
-        <div><Link className="brand" href="/dashboard">SupportFlow</Link><h1>Detalhes do cliente</h1></div>
+        <div><p className="page-kicker">Cliente</p><h1>{customer?.name ?? 'Detalhes do cliente'}</h1><p className="section-lead">Atualize os dados fictícios usados nos atendimentos.</p></div>
         <Link className="secondary-action" href="/customers">Voltar para clientes</Link>
       </header>
       {status === 'loading' && <section className="auth-panel" role="status">Carregando cliente…</section>}
