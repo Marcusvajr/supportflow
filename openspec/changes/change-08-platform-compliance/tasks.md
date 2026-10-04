@@ -35,4 +35,4 @@
 
 ## Aceite
 
-- [ ] registrar evidência final do último CI verde e dos deploys publicados.
+- [x] registrar evidência final do último CI verde e dos deploys publicados.

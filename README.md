@@ -57,7 +57,9 @@ Na revisão final de dependências, uma vulnerabilidade transitiva do `multer` f
 - [`docs/design.md`](docs/design.md) — design system.
 - [`docs/auth-clerk.md`](docs/auth-clerk.md) — implementação e testes da autenticação Clerk.
 - [`docs/delivery-configuration.md`](docs/delivery-configuration.md) — rastreabilidade das seções **1 a 6** do roteiro de Delivery.
-- [`docs/presentation-v2.md`](docs/presentation-v2.md) — apoio textual para apresentação da entrega, com dificuldades e achados reais do desenvolvimento.
+- [`docs/presentation-v2.md`](docs/presentation-v2.md) — histórico da apresentação da V2.
+- [`docs/presentation-v3.md`](docs/presentation-v3.md) — roteiro atualizado da V3/final.
+- [`docs/final-checklist.md`](docs/final-checklist.md) — checklist dos requisitos da disciplina.
 - [`docs/compliance-v2.md`](docs/compliance-v2.md) — requisitos acadêmicos incorporados ao planejamento.
 - [`docs/sonarqube.md`](docs/sonarqube.md) — execução e resultado da inspeção de código.
 - [`specs/login-flow-test-plan.md`](specs/login-flow-test-plan.md) — plano de testes do login.

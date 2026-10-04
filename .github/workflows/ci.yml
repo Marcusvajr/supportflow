@@ -77,3 +77,16 @@ jobs:
       # somente os smoke tests que nao dependem de credenciais externas.
       - name: E2E smoke tests
         run: npx playwright test --project=chromium
+
+
+      - name: Package final delivery
+        if: success()
+        run: git archive --format=zip --output=SupportFlow-v3.zip HEAD
+
+      - name: Upload final delivery
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SupportFlow-v3
+          path: SupportFlow-v3.zip
+          retention-days: 14

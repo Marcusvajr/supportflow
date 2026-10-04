@@ -29,12 +29,12 @@
 - [x] criar rota de detalhe;
 - [x] permitir atualização;
 - [x] adicionar acesso a clientes pelo dashboard;
-- [ ] validar fluxo completo no ambiente publicado.
+- [x] validar fluxo completo no ambiente publicado.
 
 ## Qualidade
 
 - [x] CI verde após a implementação;
-- [ ] validar aplicação publicada;
-- [ ] executar aceite com conta demo;
+- [x] validar aplicação publicada;
+- [x] executar aceite com conta demo;
 - [ ] registrar evidências em `verification.md`;
 - [ ] arquivar a change após conclusão.

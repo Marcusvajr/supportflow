@@ -25,4 +25,4 @@
 
 - [x] testes unitários/integrados das regras centrais;
 - [x] lint e build;
-- [ ] registrar evidência final do ambiente publicado.
+- [x] registrar evidência final do ambiente publicado.

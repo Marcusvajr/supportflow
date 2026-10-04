@@ -14,8 +14,8 @@
 - [x] consultar auditoria;
 - [x] montar linha do tempo cronológica;
 - [x] testes do fluxo técnico;
-- [ ] implementar reatribuição para outro usuário;
-- [ ] concluir fluxo de escalonamento com supervisor.
+- [x] implementar reatribuição para outro usuário;
+- [x] concluir fluxo de escalonamento com supervisor.
 
 ## Frontend
 
@@ -23,7 +23,7 @@
 - [x] registro de teste;
 - [x] registro de diagnóstico;
 - [x] linha do tempo;
-- [ ] UI de reatribuição;
+- [x] UI de reatribuição;
 - [ ] aceite do escalonamento com conta supervisor.
 
 ## Qualidade
@@ -31,4 +31,4 @@
 - [x] lint;
 - [x] testes automatizados;
 - [x] build;
-- [ ] validação publicada com persistência real.
+- [x] validação publicada com persistência real.

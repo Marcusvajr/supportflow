@@ -29,7 +29,7 @@
 - [x] abrir detalhes;
 - [x] alterar prioridade e status;
 - [x] resolver chamado;
-- [ ] validar fluxo completo no ambiente publicado.
+- [x] validar fluxo completo no ambiente publicado.
 
 ## Qualidade
 
@@ -37,4 +37,4 @@
 - [x] testes automatizados;
 - [x] build;
 - [x] smoke tests;
-- [ ] aceite publicado com banco real.
+- [x] aceite publicado com banco real.

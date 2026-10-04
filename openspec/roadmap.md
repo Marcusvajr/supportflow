@@ -24,12 +24,12 @@ graph TD
 |---|---|---|:---:|---|:---:|:---:|:---:|:---:|---|
 | 01 | Project Foundation | npm workspaces, Next.js, NestJS, health check, CI base | P | — | Sim | Sim | Sim | Não | Implementada |
 | 02 | Auth Clerk | login, sessão, validação de token e RBAC AGENT/SUPERVISOR | M | 01 | Sim | Sim | Sim | Sim | Implementada, validada e arquivada |
-| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Implementada; aceite publicado pendente |
-| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Implementada em código; aceite cloud pendente |
-| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Parcial: atividades/linha do tempo implementadas |
-| 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim | Planejada |
-| 07 | AI Ticket Summary | resumo assistivo do histórico técnico, sem diagnóstico autônomo | M | 05 | Sim | Sim | Sim | Sim | Planejada |
-| 08 | Platform Compliance | observabilidade, containers OCI, automação e IaC | M | 01, 06 | Sim | Sim | Sim | Sim | Planejada |
+| 03 | Customer Management | cadastro e consulta de clientes fictícios | P | 01, 02 | Sim | Sim | Sim | Sim | Implementada e verificada |
+| 04 | Ticket Lifecycle | criar chamado, protocolo, status, prioridade e resolução | M | 02, 03 | Sim | Sim | Sim | Sim | Implementada e verificada |
+| 05 | Ticket Activities | testes, diagnósticos, reatribuição e linha do tempo | M | 04 | Sim | Sim | Sim | Sim | Implementada e verificada |
+| 06 | Dashboard and Search | resumo operacional, busca, filtros e paginação | M | 05 | Sim | Sim | Sim | Sim | Implementada e verificada |
+| 07 | AI Ticket Summary | resumo assistivo do histórico técnico, sem diagnóstico autônomo | M | 05 | Sim | Sim | Sim | Sim | Implementada; credencial real opcional pendente |
+| 08 | Platform Compliance | observabilidade, containers OCI, automação e IaC | M | 01, 06 | Sim | Sim | Sim | Sim | Implementada e verificada |
 
 **Legenda:** P = pequeno; M = médio.
 
@@ -114,11 +114,10 @@ Sua especificação consolidada está em:
 
 `openspec/specs/auth-clerk/spec.md`
 
-### Próximas etapas após o primeiro fluxo da V3
+### Fechamento da V3
 
-- concluir reatribuição/escalonamento de `change-05-ticket-activities`;
-- `change-06-dashboard-and-search`
-- `change-07-ai-ticket-summary`
-- `change-08-platform-compliance`
+- Changes 03, 04, 05, 06 e 08 implementadas e verificadas.
+- Change 07 implementada e testada; somente a credencial de um provedor real permanece externa ao repositório.
+- Próximo passo acadêmico: empacotar a entrega, liberar o acesso do professor e apresentar os dois fluxos.
 
 O desenvolvimento continuará seguindo o ciclo incremental do OpenSpec: proposta → implementação → verificação → arquivamento.
