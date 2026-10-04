@@ -58,7 +58,7 @@ export function NewTicketScreen() {
   return (
     <main className="workspace-shell">
       <header className="workspace-header">
-        <div><Link className="brand" href="/dashboard">SupportFlow</Link><h1>Novo chamado</h1><p className="section-lead">Registre o contexto inicial do atendimento.</p></div>
+        <div><p className="page-kicker">Novo atendimento</p><h1>Novo chamado</h1><p className="section-lead">Registre o contexto inicial para que qualquer atendente consiga dar continuidade.</p></div>
         <Link className="secondary-action" href="/tickets">Voltar para chamados</Link>
       </header>
 
