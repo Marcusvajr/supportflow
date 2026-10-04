@@ -16,7 +16,7 @@ test('login válido retorna ao dashboard, consulta /me e permite logout', async 
   await signIn(page, 'AGENT');
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByText('Seu acesso está ativo')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Ana Atendente' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Projetos Integrados' })).toBeVisible();
   await page.getByRole('button', { name: 'Sair da conta' }).click();
   await expect(page).toHaveURL(/\/sign-in/);
   await page.goto('/dashboard');
