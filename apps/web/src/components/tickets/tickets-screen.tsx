@@ -52,12 +52,11 @@ export function TicketsScreen() {
     <main className="workspace-shell">
       <header className="workspace-header">
         <div>
-          <Link className="brand" href="/dashboard">SupportFlow</Link>
+          <p className="page-kicker">Atendimento</p>
           <h1>Chamados</h1>
           <p className="section-lead">Acompanhe o ciclo técnico dos atendimentos de demonstração.</p>
         </div>
         <div className="header-actions">
-          <Link className="secondary-action" href="/dashboard">Dashboard</Link>
           <Link className="primary-action" href="/tickets/new">Novo chamado</Link>
         </div>
       </header>
@@ -91,7 +90,13 @@ export function TicketsScreen() {
         {data && state === 'ready' && <p className="muted-text">{data.total} chamado(s)</p>}
         {state === 'loading' && <p role="status">Carregando chamados…</p>}
         {state === 'error' && <div role="alert"><p>Não foi possível carregar os chamados.</p><button className="secondary-action" type="button" onClick={() => void load()}>Tentar novamente</button></div>}
-        {state === 'ready' && data?.items.length === 0 && <p>Nenhum chamado encontrado.</p>}
+        {state === 'ready' && data?.items.length === 0 && (
+          <div className="empty-state compact">
+            <span className="empty-icon">SF</span>
+            <div><strong>Nenhum chamado encontrado</strong><p>Ajuste os filtros ou crie um novo atendimento.</p></div>
+            <Link className="primary-action" href="/tickets/new">Novo chamado</Link>
+          </div>
+        )}
         {state === 'ready' && data && data.items.length > 0 && (
           <div className="table-scroll">
             <table className="data-table">
