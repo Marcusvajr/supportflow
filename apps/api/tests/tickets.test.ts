@@ -134,7 +134,7 @@ test('ticket service validates fields and filters', async () => {
   const service = new TicketsService(repository, customers, userDirectory);
   await assert.rejects(service.create(agent, validInput({ title: 'x' })), (error: unknown) => error instanceof HttpException && error.getStatus() === 400);
   const created = await service.create(agent, validInput({ priority: 'CRITICAL' }));
-  const page = await service.list(created.protocol, 'OPEN', 'CRITICAL', '1', '20');
+  const page = await service.list(created.protocol, 'OPEN', 'CRITICAL', undefined, undefined, '1', '20');
   assert.equal(page.total, 1);
 });
 

@@ -29,6 +29,24 @@ export type TicketPage = {
   total: number;
 };
 
+export type DashboardSummary = {
+  total: number;
+  open: number;
+  diagnosing: number;
+  escalated: number;
+  resolved: number;
+  criticalActive: number;
+  highActive: number;
+  recent: Ticket[];
+};
+
+export type AiTicketSummary = {
+  summary: string;
+  disclaimer: string;
+  generatedAt: string;
+  provider: string;
+};
+
 export type TimelineItem =
   | { id: string; kind: 'activity'; type: TicketActivityType; actorUserId: string; description: string; createdAt: string }
   | { id: string; kind: 'audit'; action: string; actorUserId: string; metadata: Record<string, unknown>; createdAt: string };

@@ -3,16 +3,16 @@
 import { useAuth, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ApiError, createApiClient, type CurrentUser } from '../../lib/api-client';
 import type { CustomerPage } from '../../lib/customer-types';
-import { priorityLabels, statusLabels, type TicketPage } from '../../lib/ticket-types';
+import { priorityLabels, statusLabels, type DashboardSummary } from '../../lib/ticket-types';
 import { CurrentUserPanel } from './current-user-panel';
 
 type DashboardData = {
   user: CurrentUser;
   clerkUserId: string;
-  tickets: TicketPage;
+  summary: DashboardSummary;
   customers: CustomerPage;
 };
 
@@ -46,11 +46,11 @@ export function Dashboard() {
 
     Promise.all([
       api.request<CurrentUser>('/me', { signal: controller.signal }),
-      api.request<TicketPage>('/tickets?page=1&pageSize=100', { signal: controller.signal }),
-      api.request<CustomerPage>('/customers?page=1&pageSize=100', { signal: controller.signal }),
+      api.request<DashboardSummary>('/dashboard/summary', { signal: controller.signal }),
+      api.request<CustomerPage>('/customers?page=1&pageSize=1', { signal: controller.signal }),
     ])
-      .then(([user, tickets, customers]) => {
-        if (!controller.signal.aborted) setState({ status: 'ready', data: { user, tickets, customers, clerkUserId: userId ?? '' } });
+      .then(([user, summary, customers]) => {
+        if (!controller.signal.aborted) setState({ status: 'ready', data: { user, summary, customers, clerkUserId: userId ?? '' } });
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
@@ -60,17 +60,6 @@ export function Dashboard() {
 
     return () => controller.abort();
   }, [isLoaded, isSignedIn, userId, getToken, signOut, router, attempt]);
-
-  const metrics = useMemo(() => {
-    if (state.status !== 'ready') return null;
-    const tickets = state.data.tickets.items;
-    return {
-      open: tickets.filter((ticket) => ticket.status === 'OPEN').length,
-      diagnosing: tickets.filter((ticket) => ticket.status === 'DIAGNOSING').length,
-      escalated: tickets.filter((ticket) => ticket.status === 'ESCALATED').length,
-      critical: tickets.filter((ticket) => ticket.priority === 'CRITICAL' && ticket.status !== 'RESOLVED').length,
-    };
-  }, [state]);
 
   const loading = !isLoaded || !isSignedIn || state.status === 'loading' || state.status === 'redirecting'
     || (state.status === 'ready' && state.data.clerkUserId !== userId);
@@ -91,26 +80,26 @@ export function Dashboard() {
 
       {loading && <section className="surface-card loading-card" role="status" aria-live="polite"><span className="loading-pulse" />Carregando sua central…</section>}
 
-      {state.status === 'ready' && state.data.clerkUserId === userId && metrics && (
+      {state.status === 'ready' && state.data.clerkUserId === userId && (
         <>
           <CurrentUserPanel user={state.data.user} />
 
           <section className="metrics-grid" aria-label="Indicadores da operação">
             <article className="metric-card">
               <span className="metric-icon metric-icon-blue">01</span>
-              <div><p>Chamados abertos</p><strong>{metrics.open}</strong><span>Aguardando ou iniciando tratamento</span></div>
+              <div><p>Chamados abertos</p><strong>{state.data.summary.open}</strong><span>Aguardando ou iniciando tratamento</span></div>
             </article>
             <article className="metric-card">
               <span className="metric-icon metric-icon-purple">02</span>
-              <div><p>Em diagnóstico</p><strong>{metrics.diagnosing}</strong><span>Com análise técnica em andamento</span></div>
+              <div><p>Em diagnóstico</p><strong>{state.data.summary.diagnosing}</strong><span>Com análise técnica em andamento</span></div>
             </article>
             <article className="metric-card">
               <span className="metric-icon metric-icon-orange">03</span>
-              <div><p>Encaminhados</p><strong>{metrics.escalated}</strong><span>Demandas em escalonamento</span></div>
+              <div><p>Encaminhados</p><strong>{state.data.summary.escalated}</strong><span>Demandas aguardando continuidade</span></div>
             </article>
             <article className="metric-card">
               <span className="metric-icon metric-icon-red">!</span>
-              <div><p>Críticos ativos</p><strong>{metrics.critical}</strong><span>Prioridade máxima ainda aberta</span></div>
+              <div><p>Críticos ativos</p><strong>{state.data.summary.criticalActive}</strong><span>Prioridade máxima ainda aberta</span></div>
             </article>
           </section>
 
@@ -121,7 +110,7 @@ export function Dashboard() {
                 <Link className="text-link" href="/tickets">Ver todos</Link>
               </div>
 
-              {state.data.tickets.items.length === 0 ? (
+              {state.data.summary.recent.length === 0 ? (
                 <div className="empty-state compact">
                   <span className="empty-icon">SF</span>
                   <div><strong>Nenhum chamado criado</strong><p>Crie o primeiro atendimento para iniciar a fila.</p></div>
@@ -129,7 +118,7 @@ export function Dashboard() {
                 </div>
               ) : (
                 <div className="recent-list">
-                  {state.data.tickets.items.slice(0, 5).map((ticket) => (
+                  {state.data.summary.recent.map((ticket) => (
                     <Link className="recent-ticket" href={`/tickets/${ticket.id}`} key={ticket.id}>
                       <div className="recent-ticket-main">
                         <span className="protocol">{ticket.protocol}</span>
@@ -151,14 +140,15 @@ export function Dashboard() {
                 <div className="card-heading"><div><p className="page-kicker">Atalhos</p><h2>Ações rápidas</h2></div></div>
                 <Link className="quick-action-link" href="/tickets/new"><span>+</span><div><strong>Novo chamado</strong><small>Iniciar atendimento técnico</small></div></Link>
                 <Link className="quick-action-link" href="/customers"><span>+</span><div><strong>Novo cliente</strong><small>Cadastrar dado fictício</small></div></Link>
-                <Link className="quick-action-link" href="/tickets?status=DIAGNOSING"><span>→</span><div><strong>Em diagnóstico</strong><small>Retomar casos em análise</small></div></Link>
+                <Link className="quick-action-link" href="/tickets"><span>→</span><div><strong>Fila de chamados</strong><small>Buscar, filtrar e continuar atendimentos</small></div></Link>
               </section>
 
               <section className="surface-card environment-card">
                 <div className="environment-card-head"><span className="environment-dot" /><strong>Ambiente operacional</strong></div>
                 <dl>
                   <div><dt>Clientes</dt><dd>{state.data.customers.total}</dd></div>
-                  <div><dt>Chamados</dt><dd>{state.data.tickets.total}</dd></div>
+                  <div><dt>Chamados</dt><dd>{state.data.summary.total}</dd></div>
+                  <div><dt>Resolvidos</dt><dd>{state.data.summary.resolved}</dd></div>
                   <div><dt>Persistência</dt><dd>PostgreSQL</dd></div>
                   <div><dt>Autenticação</dt><dd>Clerk</dd></div>
                 </dl>

@@ -1,4 +1,5 @@
 export type CurrentUser = { id: string; name: string; email: string; role: 'AGENT' | 'SUPERVISOR' };
+export type AssignableUser = { id: string; name: string; role: 'AGENT' | 'SUPERVISOR' };
 
 export class ApiError extends Error {
   constructor(readonly status: number) {

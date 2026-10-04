@@ -4,8 +4,8 @@ import { useAuth, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { ApiError, createApiClient } from '../../lib/api-client';
-import { categoryLabels, priorityLabels, statusLabels, type Ticket, type TicketActivityType, type TicketPriority, type TicketStatus, type TimelineItem } from '../../lib/ticket-types';
+import { ApiError, createApiClient, type AssignableUser, type CurrentUser } from '../../lib/api-client';
+import { categoryLabels, priorityLabels, statusLabels, type AiTicketSummary, type Ticket, type TicketActivityType, type TicketPriority, type TicketStatus, type TimelineItem } from '../../lib/ticket-types';
 
 const activityLabels: Record<TicketActivityType, string> = { NOTE: 'Observação', TEST: 'Teste', DIAGNOSIS: 'Diagnóstico' };
 
@@ -23,10 +23,14 @@ export function TicketDetailScreen() {
   const router = useRouter();
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [assignableUsers, setAssignableUsers] = useState<AssignableUser[]>([]);
   const [state, setState] = useState<'loading' | 'ready' | 'saving' | 'not-found' | 'error'>('loading');
   const [activityType, setActivityType] = useState<TicketActivityType>('TEST');
   const [activityDescription, setActivityDescription] = useState('');
   const [resolution, setResolution] = useState('');
+  const [aiSummary, setAiSummary] = useState<AiTicketSummary | null>(null);
+  const [aiState, setAiState] = useState<'idle' | 'loading' | 'error'>('idle');
 
   const api = useCallback(() => createApiClient({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
@@ -39,12 +43,16 @@ export function TicketDetailScreen() {
     if (!isLoaded || !isSignedIn || !params.id) return;
     setState('loading');
     try {
-      const [ticketResult, timelineResult] = await Promise.all([
+      const [ticketResult, timelineResult, userResult, assignableResult] = await Promise.all([
         api().request<Ticket>(`/tickets/${encodeURIComponent(params.id)}`),
         api().request<TimelineItem[]>(`/tickets/${encodeURIComponent(params.id)}/timeline`),
+        api().request<CurrentUser>('/me'),
+        api().request<AssignableUser[]>('/users/assignable'),
       ]);
       setTicket(ticketResult);
       setTimeline(timelineResult);
+      setCurrentUser(userResult);
+      setAssignableUsers(assignableResult);
       setState('ready');
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) setState('not-found');
@@ -59,9 +67,14 @@ export function TicketDetailScreen() {
     if (ticket.status === 'OPEN') return ['DIAGNOSING', 'ESCALATED'];
     if (ticket.status === 'DIAGNOSING') return ['ESCALATED'];
     if (ticket.status === 'ESCALATED') return ['DIAGNOSING'];
-    if (ticket.status === 'RESOLVED') return ['DIAGNOSING'];
+    if (ticket.status === 'RESOLVED') return currentUser?.role === 'SUPERVISOR' ? ['DIAGNOSING'] : [];
     return [];
-  }, [ticket]);
+  }, [ticket, currentUser]);
+
+  const responsibleName = useMemo(() => {
+    if (!ticket?.assignedToUserId) return 'Não definido';
+    return assignableUsers.find((user) => user.id === ticket.assignedToUserId)?.name ?? ticket.assignedToUserId;
+  }, [assignableUsers, ticket]);
 
   async function update(path: string, method: 'PATCH' | 'POST', body: object) {
     if (!ticket) return;
@@ -70,6 +83,7 @@ export function TicketDetailScreen() {
       await api().request<Ticket>(`/tickets/${encodeURIComponent(ticket.id)}${path}`, {
         method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
+      setAiSummary(null);
       await load();
     } catch (error) {
       if (!(error instanceof ApiError && [401, 403].includes(error.status))) setState('error');
@@ -86,6 +100,7 @@ export function TicketDetailScreen() {
         body: JSON.stringify({ type: activityType, description: activityDescription }),
       });
       setActivityDescription('');
+      setAiSummary(null);
       await load();
     } catch (error) {
       if (!(error instanceof ApiError && [401, 403].includes(error.status))) setState('error');
@@ -96,6 +111,18 @@ export function TicketDetailScreen() {
     event.preventDefault();
     await update('/resolve', 'POST', { resolution });
     setResolution('');
+  }
+
+  async function generateAiSummary() {
+    if (!ticket) return;
+    setAiState('loading');
+    try {
+      const result = await api().request<AiTicketSummary>(`/tickets/${encodeURIComponent(ticket.id)}/ai-summary`, { method: 'POST' });
+      setAiSummary(result);
+      setAiState('idle');
+    } catch (error) {
+      if (!(error instanceof ApiError && [401, 403].includes(error.status))) setAiState('error');
+    }
   }
 
   return (
@@ -120,10 +147,27 @@ export function TicketDetailScreen() {
               <p>{ticket.description}</p>
               <dl className="profile-details">
                 <div><dt>Categoria</dt><dd>{categoryLabels[ticket.category]}</dd></div>
-                <div><dt>Responsável</dt><dd>{ticket.assignedToUserId ?? 'Não definido'}</dd></div>
+                <div><dt>Responsável</dt><dd>{responsibleName}</dd></div>
                 <div><dt>Criado em</dt><dd>{new Date(ticket.createdAt).toLocaleString('pt-BR')}</dd></div>
               </dl>
               {ticket.resolution && <div className="resolution-box"><strong>Resolução</strong><p>{ticket.resolution}</p></div>}
+            </section>
+
+            <section className="auth-panel ai-summary-card">
+              <div className="card-heading">
+                <div><p className="page-kicker">Recurso assistivo</p><h2>Resumo por IA</h2></div>
+                <button className="secondary-action" type="button" disabled={aiState === 'loading'} onClick={() => void generateAiSummary()}>
+                  {aiState === 'loading' ? 'Gerando…' : aiSummary ? 'Gerar novamente' : 'Gerar resumo'}
+                </button>
+              </div>
+              {!aiSummary && aiState === 'idle' && <p className="muted-text">A IA usa apenas o conteúdo registrado neste chamado e não altera status, prioridade, responsável ou diagnóstico.</p>}
+              {aiState === 'error' && <p className="ai-warning" role="alert">O recurso de IA está indisponível neste ambiente. O atendimento continua funcionando normalmente.</p>}
+              {aiSummary && (
+                <div className="ai-result">
+                  <p>{aiSummary.summary}</p>
+                  <small>{aiSummary.disclaimer}</small>
+                </div>
+              )}
             </section>
 
             <section className="auth-panel">
@@ -164,6 +208,19 @@ export function TicketDetailScreen() {
               </label>
               {nextStatuses.length > 0 && <div className="action-list">{nextStatuses.map((status) => <button className="secondary-action" disabled={state === 'saving'} key={status} type="button" onClick={() => void update('/status', 'PATCH', { status })}>{ticket.status === 'RESOLVED' ? 'Reabrir chamado' : `Mover para ${statusLabels[status]}`}</button>)}</div>}
             </section>
+
+            {currentUser?.role === 'SUPERVISOR' && ticket.status !== 'RESOLVED' && (
+              <section className="auth-panel">
+                <p className="page-kicker">Supervisão</p>
+                <h2>Reatribuir responsável</h2>
+                <label className="filter-field">Responsável
+                  <select value={ticket.assignedToUserId ?? ''} onChange={(event) => void update('/assignee', 'PATCH', { assignedToUserId: event.target.value })}>
+                    {assignableUsers.map((user) => <option key={user.id} value={user.id}>{user.name} · {user.role === 'SUPERVISOR' ? 'Supervisor' : 'Atendente'}</option>)}
+                  </select>
+                </label>
+                <p className="muted-text">A alteração fica registrada automaticamente na auditoria do chamado.</p>
+              </section>
+            )}
 
             {ticket.status !== 'RESOLVED' && ['DIAGNOSING', 'ESCALATED'].includes(ticket.status) && (
               <section className="auth-panel">
