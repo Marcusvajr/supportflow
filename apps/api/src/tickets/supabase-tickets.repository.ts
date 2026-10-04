@@ -21,16 +21,19 @@ type AuditRecord = {
 
 @Injectable()
 export class SupabaseTicketsRepository extends TicketsRepository {
-  private config(): { url: string; key: string } {
-    const url = (process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '');
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-    if (!url || !key) throw new ServiceUnavailableException('Persistência de chamados temporariamente indisponível.');
-    return { url, key };
+  private config(): { url: string; publishableKey: string; backendKey: string } {
+    const url = (process.env.SUPABASE_URL ?? '').replace(/\/$/, '');
+    const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY ?? '';
+    const backendKey = process.env.SUPABASE_BACKEND_KEY ?? '';
+    if (!url || !publishableKey || !backendKey) {
+      throw new ServiceUnavailableException('Persistência de chamados temporariamente indisponível.');
+    }
+    return { url, publishableKey, backendKey };
   }
 
   private headers(extra: Record<string, string> = {}): Headers {
-    const { key } = this.config();
-    return new Headers({ apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json', ...extra });
+    const { publishableKey, backendKey } = this.config();
+    return new Headers({ apikey: publishableKey, 'x-app-api-key': backendKey, Accept: 'application/json', ...extra });
   }
 
   private async fetch(path: string, init: RequestInit = {}): Promise<Response> {
