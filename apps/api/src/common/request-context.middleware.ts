@@ -1,4 +1,4 @@
-import { Injectable, type NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, type NestMiddleware } from '@nestjs/common';
 import { randomBytes, randomUUID } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 import { AccessLogger } from './access-logger';
@@ -24,7 +24,7 @@ function traceContext(value: string | undefined): { header: string; traceId: str
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
-  constructor(private readonly logger: AccessLogger) {}
+  constructor(@Inject(AccessLogger) private readonly logger: AccessLogger) {}
 
   use(request: ContextRequest, response: Response, next: NextFunction): void {
     const startedAt = process.hrtime.bigint();
