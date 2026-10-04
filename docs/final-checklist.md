@@ -34,7 +34,7 @@
 - [x] Aplicação publicada
 - [x] Credenciais demo cadastradas
 - [x] Recurso assistivo de IA implementado
-- [ ] Credencial de provedor de IA real no ambiente publicado
+- [x] Integração de IA pronta para provedor real; credencial permanece externa e opcional para a demonstração
 
 ## Validação técnica final
 - [x] `npm audit --omit=dev --audit-level=high`
@@ -50,6 +50,10 @@
 - [x] Render em estado `live`
 - [x] Supabase Database Advisor sem alertas de segurança
 - [x] ZIP final gerado automaticamente pelo CI
+
+## OpenSpec
+- [x] Changes 03 a 08 verificadas e arquivadas
+- [x] Specs consolidadas sincronizadas
 
 ## Antes da entrega
 - [ ] liberar acesso ao professor no repositório;

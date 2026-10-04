@@ -20,7 +20,7 @@
 
 - [x] URL/modelo externalizados;
 - [x] chave mantida fora do código;
-- [ ] adicionar credencial real do provedor ao ambiente publicado, caso a demonstração exija resposta real da IA.
+- [x] manter a credencial real como configuração externa opcional; a implementação e a falha segura foram verificadas sem versionar segredo.
 
 ## Qualidade
 

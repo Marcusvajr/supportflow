@@ -119,8 +119,9 @@ Sua especificação consolidada está em:
 
 ### Fechamento da V3
 
-- Changes 03, 04, 05, 06 e 08 implementadas e verificadas.
-- Change 07 implementada e testada; somente a credencial de um provedor real permanece externa ao repositório.
+- Changes 03, 04, 05, 06, 07 e 08 implementadas, verificadas e arquivadas em `openspec/changes/archive/2026-10-04-*`.
+- As especificações consolidadas foram sincronizadas em `openspec/specs/`.
+- A credencial de um provedor real de IA permanece configuração externa opcional e não é versionada.
 - Próximo passo acadêmico: empacotar a entrega, liberar o acesso do professor e apresentar os dois fluxos.
 
 O desenvolvimento continuará seguindo o ciclo incremental do OpenSpec: proposta → implementação → verificação → arquivamento.

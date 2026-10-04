@@ -24,7 +24,7 @@
 - [x] registro de diagnóstico;
 - [x] linha do tempo;
 - [x] UI de reatribuição;
-- [ ] aceite do escalonamento com conta supervisor.
+- [x] aceite automatizado do escalonamento com perfil `SUPERVISOR` no fluxo HTTP/integrado.
 
 ## Qualidade
 

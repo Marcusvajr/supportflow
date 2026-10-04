@@ -37,4 +37,4 @@
 - [x] validar aplicação publicada;
 - [x] executar aceite com conta demo;
 - [x] registrar evidências em `verification.md`;
-- [ ] arquivar a change após conclusão.
+- [x] arquivar a change após conclusão.

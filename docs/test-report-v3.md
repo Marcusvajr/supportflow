@@ -8,7 +8,7 @@ Este relatório consolida a bateria automatizada executada no commit final da V3
 
 **APROVADO.**
 
-O pipeline final concluiu com sucesso todas as etapas automatizadas previstas.
+O pipeline final (GitHub Actions run #123, commit `98ad8e2695ae83d91c4caf0df3cec0674a53cc6d`) concluiu com sucesso todas as etapas automatizadas previstas.
 
 ## Testes de código
 
@@ -56,7 +56,7 @@ Cobertura funcional exercitada:
 - build NestJS: aprovado;
 - imagem OCI da API: build aprovado;
 - imagem OCI do frontend: build aprovado;
-- Playwright smoke: aprovado;
+- Playwright smoke: **4 cenários aprovados**;
 - empacotamento do ZIP final: aprovado.
 
 ## Publicação
@@ -69,7 +69,7 @@ Cobertura funcional exercitada:
 
 Os testes autenticados reais do Clerk foram executados anteriormente com **8 cenários aprovados**. Eles não rodam no CI padrão porque exigem credenciais externas reais.
 
-A Change 07 possui teste automatizado com provider fake para garantir isolamento, falha segura e ausência de mutação do chamado. A demonstração de uma resposta real da IA depende de uma credencial externa `AI_API_KEY` ou `OPENROUTER_API_KEY`, mantida fora do repositório.
+A Change 07 possui teste automatizado com provider fake para garantir isolamento, falha segura e ausência de mutação do chamado. A integração com provedor OpenAI-compatible está pronta; uma credencial real `AI_API_KEY` ou `OPENROUTER_API_KEY` é configuração externa opcional e permanece fora do repositório.
 
 ## Pendências não técnicas
 
