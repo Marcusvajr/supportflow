@@ -33,8 +33,6 @@ export default function SignInPage() {
                   colorPrimary: '#2563EB',
                   borderRadius: '10px',
                   fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
-                  colorText: '#0F172A',
-                  colorTextSecondary: '#64748B',
                 },
                 elements: {
                   rootBox: { width: '100%' },
