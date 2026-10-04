@@ -53,7 +53,15 @@ jobs:
           retention-days: 3
 
       - name: Build
-        run: npm run build
+        run: npm run build 2>&1 | tee build-output.txt
+
+      - name: Upload build output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build-output.txt
+          retention-days: 3
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
