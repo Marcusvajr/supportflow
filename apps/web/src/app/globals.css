@@ -1572,3 +1572,126 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .preview-metrics { grid-template-columns: 1fr 1fr; }
   .floating-note { position: relative; margin: -16px 12px 0; }
 }
+
+
+/* V3 visual polish — motion, depth and dense operational states */
+
+::selection {
+  color: #0b1630;
+  background: #bfdbfe;
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% -12%, rgba(37, 99, 235, .055), transparent 26%),
+    radial-gradient(circle at 95% 18%, rgba(14, 165, 233, .035), transparent 24%),
+    var(--background);
+}
+
+.surface-card,
+.auth-panel,
+.welcome-card,
+.metric-card {
+  backdrop-filter: saturate(1.05) blur(10px);
+}
+
+.surface-card,
+.auth-panel {
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.surface-card:hover,
+.auth-panel:hover {
+  border-color: #d8e2ef;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, .055);
+}
+
+.page-header::after,
+.workspace-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -14px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(37, 99, 235, .16), rgba(226, 232, 240, .75) 45%, transparent);
+}
+
+.page-header,
+.workspace-header {
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.metric-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -40px;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(37, 99, 235, .07), transparent 68%);
+  pointer-events: none;
+}
+
+.metric-card strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tbody tr td:first-child {
+  position: relative;
+}
+
+.data-table tbody tr:hover td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: var(--primary);
+}
+
+.data-table tbody tr {
+  cursor: default;
+}
+
+.primary-action:active,
+.secondary-action:active {
+  transform: translateY(0) scale(.985);
+}
+
+.sidebar-link,
+.quick-action-link,
+.recent-ticket,
+.primary-action,
+.secondary-action {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.workspace-shell {
+  animation: workspace-enter .24s ease both;
+}
+
+@keyframes workspace-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
