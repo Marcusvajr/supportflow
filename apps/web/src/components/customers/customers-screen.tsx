@@ -78,12 +78,11 @@ export function CustomersScreen() {
     <main className="workspace-shell">
       <header className="workspace-header">
         <div>
-          <Link className="brand" href="/dashboard">SupportFlow</Link>
+          <p className="page-kicker">Relacionamento</p>
           <h1>Clientes</h1>
           <p className="section-lead">Cadastros fictícios usados nos chamados da demonstração acadêmica.</p>
         </div>
         <div className="header-actions">
-          <Link className="secondary-action" href="/dashboard">Dashboard</Link>
           <button className="primary-action" type="button" onClick={() => setShowForm((value) => !value)}>
             {showForm ? 'Cancelar' : 'Novo cliente'}
           </button>
@@ -115,7 +114,12 @@ export function CustomersScreen() {
 
         {status === 'loading' && <p role="status">Carregando clientes…</p>}
         {status === 'error' && <div role="alert"><p>Não foi possível carregar os clientes.</p><button className="secondary-action" type="button" onClick={() => void load()}>Tentar novamente</button></div>}
-        {status === 'ready' && data?.items.length === 0 && <p>Nenhum cliente encontrado.</p>}
+        {status === 'ready' && data?.items.length === 0 && (
+          <div className="empty-state compact">
+            <span className="empty-icon">SF</span>
+            <div><strong>Nenhum cliente encontrado</strong><p>Cadastre um cliente fictício para iniciar um atendimento.</p></div>
+          </div>
+        )}
         {status === 'ready' && data && data.items.length > 0 && (
           <div className="table-scroll">
             <table className="data-table">
