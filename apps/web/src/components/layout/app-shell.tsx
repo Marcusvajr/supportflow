@@ -37,6 +37,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
 
   return (
     <div className="app-frame">
+      <a className="skip-link" href="#workspace-content">Ir para o conteúdo</a>
       <aside className="app-sidebar">
         <div className="sidebar-brand">
           <Link href="/dashboard" aria-label="SupportFlow - Visão geral">
@@ -53,7 +54,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
           {navItems.map((item) => {
             const active = isActive(pathname, item.href);
             return (
-              <Link className={active ? 'sidebar-link active' : 'sidebar-link'} href={item.href} key={item.href}>
+              <Link aria-current={active ? 'page' : undefined} className={active ? 'sidebar-link active' : 'sidebar-link'} href={item.href} key={item.href}>
                 <span className="sidebar-icon"><NavIcon name={item.icon} /></span>
                 <span className="sidebar-link-copy">
                   <strong>{item.label}</strong>
@@ -82,9 +83,9 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
       <div className="app-content">
         <div className="mobile-brandbar">
           <Link href="/dashboard"><span className="brand-mark">SF</span><strong>SupportFlow</strong></Link>
-          <span className="mobile-env">V3</span>
+          <SignOut />
         </div>
-        {children}
+        <div id="workspace-content" tabIndex={-1}>{children}</div>
       </div>
     </div>
   );

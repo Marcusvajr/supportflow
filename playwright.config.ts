@@ -22,13 +22,19 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: '**/auth.spec.ts',
+      testIgnore: ['**/auth.spec.ts', '**/business.spec.ts'],
       use: { ...devices['Desktop Chrome'] },
     },
     { name: 'clerk-setup', testMatch: '**/clerk.setup.ts' },
     {
       name: 'chromium-auth',
       testMatch: '**/auth.spec.ts',
+      dependencies: ['clerk-setup'],
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'chromium-business',
+      testMatch: '**/business.spec.ts',
       dependencies: ['clerk-setup'],
       use: { ...devices['Desktop Chrome'] },
     },
