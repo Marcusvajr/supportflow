@@ -14,6 +14,14 @@ O sistema SHALL disponibilizar um resumo da fila baseado na persistência.
 - **AND** total de críticos ativos
 - **AND** os chamados mais recentes
 
+#### Scenario: volume acima do limite do Data API
+
+- **GIVEN** mais de 1.000 chamados persistidos
+- **WHEN** o usuário consulta o resumo
+- **THEN** os totais abrangem toda a base usando contagem exata no servidor
+- **AND** prioridades críticas e altas excluem chamados resolvidos
+- **AND** falhas de contagem retornam indisponibilidade, sem apresentar totais parciais
+
 ### Requirement: busca textual
 
 O sistema SHALL localizar chamados por protocolo, título ou cliente.

@@ -206,6 +206,8 @@ Inativo → /access-unavailable
 
 O relatório consolidado da bateria final está em [`docs/test-report-v3.md`](docs/test-report-v3.md).
 
+A revisão adicional está em [`docs/revalidation-v3.md`](docs/revalidation-v3.md), com os limites explícitos da validação local e as correções propostas.
+
 ## Como validar localmente
 
 ### Criar o `.env`

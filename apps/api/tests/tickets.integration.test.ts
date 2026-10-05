@@ -154,6 +154,22 @@ test('HTTP escalation and reassignment flow enforces supervisor role', async () 
   assert.equal(reassigned.status, 200);
   assert.equal(((await reassigned.json()) as Ticket).assignedToUserId, users[1].id);
 
+  const mutate = (path: string, body: object, method = 'PATCH', actor = users[1].externalAuthId) => request(`/tickets/${created.id}${path}`, {
+    method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  }, actor);
+  assert.equal((await mutate('/status', { status: 'DIAGNOSING' })).status, 200);
+  assert.equal((await mutate('/activities', { type: 'DIAGNOSIS', description: 'Continuidade: falha intermitente no enlace.' }, 'POST')).status, 201);
+  assert.equal((await mutate('/resolve', { resolution: 'Enlace estabilizado e testes de continuidade aprovados.' }, 'POST')).status, 201);
+  assert.equal((await mutate('/status', { status: 'DIAGNOSING' }, 'PATCH', users[0].externalAuthId)).status, 403);
+  const reopened = await mutate('/status', { status: 'DIAGNOSING' });
+  assert.equal(reopened.status, 200);
+  const reopenedTicket = await reopened.json() as Ticket;
+  assert.equal(reopenedTicket.resolution, null);
+  assert.equal(reopenedTicket.resolvedAt, null);
+  assert.equal((await mutate('/resolve', { resolution: 'Reabertura validada e atendimento concluído novamente.' }, 'POST')).status, 201);
+  const timeline = await (await request(`/tickets/${created.id}/timeline`)).json() as Array<{ description?: string }>;
+  assert.ok(timeline.some((item) => item.description?.includes('Continuidade:')));
+
   const summary = await request('/dashboard/summary');
   assert.equal(summary.status, 200);
 });

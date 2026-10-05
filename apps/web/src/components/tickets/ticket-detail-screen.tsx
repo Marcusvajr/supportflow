@@ -76,6 +76,8 @@ export function TicketDetailScreen() {
     return assignableUsers.find((user) => user.id === ticket.assignedToUserId)?.name ?? ticket.assignedToUserId;
   }, [assignableUsers, ticket]);
 
+  const latestDiagnosis = useMemo(() => timeline.filter((item) => item.kind === 'activity' && item.type === 'DIAGNOSIS').at(-1), [timeline]);
+
   async function update(path: string, method: 'PATCH' | 'POST', body: object) {
     if (!ticket) return;
     setState('saving');
@@ -151,6 +153,7 @@ export function TicketDetailScreen() {
                 <div><dt>Criado em</dt><dd>{new Date(ticket.createdAt).toLocaleString('pt-BR')}</dd></div>
               </dl>
               {ticket.resolution && <div className="resolution-box"><strong>Resolução</strong><p>{ticket.resolution}</p></div>}
+              {latestDiagnosis?.kind === 'activity' && <div className="resolution-box"><strong>Diagnóstico mais recente</strong><p>{latestDiagnosis.description}</p></div>}
             </section>
 
             <section className="auth-panel ai-summary-card">
@@ -202,7 +205,7 @@ export function TicketDetailScreen() {
             <section className="auth-panel">
               <h2>Estado do chamado</h2>
               <label className="filter-field">Prioridade
-                <select value={ticket.priority} onChange={(event) => void update('/priority', 'PATCH', { priority: event.target.value as TicketPriority })}>
+                <select disabled={state === 'saving'} value={ticket.priority} onChange={(event) => void update('/priority', 'PATCH', { priority: event.target.value as TicketPriority })}>
                   <option value="LOW">Baixa</option><option value="MEDIUM">Média</option><option value="HIGH">Alta</option><option value="CRITICAL">Crítica</option>
                 </select>
               </label>
@@ -214,7 +217,7 @@ export function TicketDetailScreen() {
                 <p className="page-kicker">Supervisão</p>
                 <h2>Reatribuir responsável</h2>
                 <label className="filter-field">Responsável
-                  <select value={ticket.assignedToUserId ?? ''} onChange={(event) => void update('/assignee', 'PATCH', { assignedToUserId: event.target.value })}>
+                  <select disabled={state === 'saving'} value={ticket.assignedToUserId ?? ''} onChange={(event) => void update('/assignee', 'PATCH', { assignedToUserId: event.target.value })}>
                     {assignableUsers.map((user) => <option key={user.id} value={user.id}>{user.name} · {user.role === 'SUPERVISOR' ? 'Supervisor' : 'Atendente'}</option>)}
                   </select>
                 </label>
