@@ -1,5 +1,23 @@
 # Arquitetura de Software
 
+## Estado implementado na V3 — atualização de 05/10/2026
+
+As seções de arquitetura-alvo abaixo preservam o planejamento original. Para
+interpretar a implementação atual, prevalece este quadro:
+
+| Área | Implementação atual | Planejamento ainda não comprovado como implementado |
+|---|---|---|
+| Frontend | Next.js/React/TypeScript, CSS próprio e formulários React | Tailwind CSS, React Hook Form e Zod |
+| Persistência | PostgreSQL/Supabase via Data API, repositórios no NestJS e migrations SQL em `supabase/migrations` | Prisma e Prisma Migrate |
+| Identidade | Clerk, RBAC no NestJS e associação das contas fictícias por configuração de ambiente | Administração e persistência de usuários de negócio |
+| Entrega | Vercel, Render, GitHub Actions, Dockerfiles e `render.yaml` | Ambiente de staging independente |
+| Observabilidade | Logs JSON com request/trace ID e health checks | Instrumentação e comprovação de eventos no Sentry |
+| IA | Resumo assistivo com provedor OpenAI-compatible e falha controlada | Inferência ao vivo validada no ambiente publicado |
+
+Containers e IaC já fazem parte da V3; as referências a itens fora do MVP nas
+seções originais descrevem o escopo inicial da V1. Os resultados efetivamente
+verificados estão em [code-review-2026-10-05.md](code-review-2026-10-05.md).
+
 ## Contexto Arquitetural
 
 ### Objetivo

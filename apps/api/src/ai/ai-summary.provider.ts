@@ -12,9 +12,9 @@ export abstract class AiSummaryProvider {
 @Injectable()
 export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider {
   async generate(context: string): Promise<AiProviderResult> {
-    const url = process.env.AI_PROVIDER_URL ?? 'https://openrouter.ai/api/v1/chat/completions';
-    const apiKey = process.env.AI_API_KEY ?? process.env.OPENROUTER_API_KEY ?? '';
-    const model = process.env.AI_MODEL ?? 'openai/gpt-4o-mini';
+    const url = process.env.AI_PROVIDER_URL?.trim() || 'https://openrouter.ai/api/v1/chat/completions';
+    const apiKey = process.env.AI_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim() || '';
+    const model = process.env.AI_MODEL?.trim() || 'openai/gpt-4o-mini';
 
     if (!apiKey) {
       throw new ServiceUnavailableException('Resumo por IA não está configurado neste ambiente.');

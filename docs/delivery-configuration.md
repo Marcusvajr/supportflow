@@ -1,5 +1,7 @@
 # Delivery — Seções 1 a 6
 
+> Atualização V3 (05/10/2026): as evidências da Change 02 e do SonarQube abaixo são históricas. As Changes 03–08 já têm implementação no repositório. IA ao vivo e fluxo publicado completo com supervisor ainda não foram aprovados. Consulte [a revisão atual](code-review-2026-10-05.md).
+
 Este documento registra como as **seções 1 a 6** do roteiro de Delivery foram aplicadas ao **SupportFlow**. Ele funciona como mapa da entrega: ambiente, configuração do agente, OpenSpec, implementação e verificação.
 
 ## 1. Visão geral do fluxo
@@ -117,7 +119,7 @@ Os grupos de configuração incluem:
 
 ### README
 
-O `README.md` resume o estado atual da entrega e separa tecnologias já usadas das tecnologias que ainda pertencem às próximas changes. Isso evita apresentar Prisma, Supabase, Sentry ou IaC como se já estivessem implementados.
+O `README.md` resume o estado atual da entrega e separa tecnologias já usadas das tecnologias que ainda pertencem às próximas changes. Na V3, Supabase, containers e IaC já foram implementados; Prisma e Sentry continuam como arquitetura-alvo, sem comprovação de implementação nesta revisão.
 
 ## 4. Configuração do agente de IA
 
@@ -201,9 +203,9 @@ Spec consolidada:
 
 `openspec/specs/auth-clerk/spec.md`
 
-### Próximas changes
+### Changes implementadas na V3
 
-Continuam planejadas, sem serem apresentadas como implementadas:
+As mudanças abaixo estão implementadas e arquivadas no repositório. Implementação não equivale a validação de todos os serviços externos:
 
 - `change-03-customer-management`;
 - `change-04-ticket-lifecycle`;
