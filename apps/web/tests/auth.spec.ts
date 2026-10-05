@@ -1,6 +1,17 @@
 import { clerk } from '@clerk/testing/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
+// Login exercises real Clerk and /me. Operational data is outside this suite
+// and must not require a configured business database to validate a session.
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/v1/dashboard/summary', (route) => route.fulfill({
+    json: { total: 0, open: 0, diagnosing: 0, escalated: 0, resolved: 0, criticalActive: 0, highActive: 0, recent: [] },
+  }));
+  await page.route('**/api/v1/customers?*', (route) => route.fulfill({
+    json: { items: [], page: 1, pageSize: 1, total: 0 },
+  }));
+});
+
 async function signIn(page: Page, kind: 'AGENT' | 'INACTIVE') {
   await page.goto('/');
 
@@ -16,7 +27,7 @@ test('login válido retorna ao dashboard, consulta /me e permite logout', async 
   await signIn(page, 'AGENT');
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByText('Seu acesso está ativo')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Projetos Integrados' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Visão geral', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Sair da conta' }).click();
   await expect(page).toHaveURL(/\/sign-in/);
   await page.goto('/dashboard');
@@ -28,7 +39,7 @@ test('usuário autenticado inativo recebe acesso indisponível', async ({ page }
   await expect(page).toHaveURL(/\/access-unavailable$/);
   await expect(page.getByRole('heading', { name: 'Acesso indisponível' })).toBeVisible();
   await expect(page.getByText('Seu acesso está ativo')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Sair da conta' }).click();
+  await page.getByRole('main').getByRole('button', { name: 'Sair da conta' }).click();
   await expect(page).toHaveURL(/\/sign-in/);
 });
 

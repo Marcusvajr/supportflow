@@ -93,23 +93,32 @@ export class SupabaseTicketsRepository extends TicketsRepository {
   }
 
   async summary(): Promise<DashboardSummary> {
-    const params = new URLSearchParams({ select: 'status,priority', limit: '1000' });
-    const rows = await this.records<Array<{ status: Ticket['status']; priority: Ticket['priority'] }>[number]>(
-      await this.fetch(`tickets?${params.toString()}`),
-    );
-    const recent = await this.list({
-      page: 1, pageSize: 5, sortBy: 'updatedAt', sortDirection: 'desc',
-    });
+    const [total, open, diagnosing, escalated, resolved, criticalActive, highActive, recent] = await Promise.all([
+      this.count(),
+      this.count({ status: 'eq.OPEN' }),
+      this.count({ status: 'eq.DIAGNOSING' }),
+      this.count({ status: 'eq.ESCALATED' }),
+      this.count({ status: 'eq.RESOLVED' }),
+      this.count({ priority: 'eq.CRITICAL', status: 'neq.RESOLVED' }),
+      this.count({ priority: 'eq.HIGH', status: 'neq.RESOLVED' }),
+      this.list({ page: 1, pageSize: 5, sortBy: 'updatedAt', sortDirection: 'desc' }),
+    ]);
     return {
-      total: rows.length,
-      open: rows.filter((item) => item.status === 'OPEN').length,
-      diagnosing: rows.filter((item) => item.status === 'DIAGNOSING').length,
-      escalated: rows.filter((item) => item.status === 'ESCALATED').length,
-      resolved: rows.filter((item) => item.status === 'RESOLVED').length,
-      criticalActive: rows.filter((item) => item.priority === 'CRITICAL' && item.status !== 'RESOLVED').length,
-      highActive: rows.filter((item) => item.priority === 'HIGH' && item.status !== 'RESOLVED').length,
+      total, open, diagnosing, escalated, resolved, criticalActive, highActive,
       recent: recent.items,
     };
+  }
+
+  private async count(filters: Record<string, string> = {}): Promise<number> {
+    const params = new URLSearchParams({ select: 'id', ...filters });
+    const response = await this.fetch(`tickets?${params.toString()}`, {
+      method: 'HEAD', headers: { Prefer: 'count=exact' },
+    });
+    const total = response.headers.get('content-range')?.split('/')[1];
+    if (!response.ok || !total || !/^\d+$/.test(total)) {
+      throw new ServiceUnavailableException('Persistência de chamados temporariamente indisponível.');
+    }
+    return Number(total);
   }
 
   async findById(id: string): Promise<Ticket | null> {
