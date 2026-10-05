@@ -8,7 +8,7 @@ Este relatório consolida a bateria automatizada executada no commit final da V3
 
 **APROVADO.**
 
-O pipeline final (GitHub Actions run #123, commit `98ad8e2695ae83d91c4caf0df3cec0674a53cc6d`) concluiu com sucesso todas as etapas automatizadas previstas.
+O pipeline final de fechamento (GitHub Actions run #124, commit `a6f10c02ca763d19ba3a69ac71ede1de5b8ba4de`) concluiu com sucesso todas as etapas automatizadas previstas. Em 04/10/2026, foi feita uma nova verificação antes da entrega: Render permaneceu `live`, as quatro migrations do Supabase estavam aplicadas e o Database Advisor continuava com **0 alertas de segurança**.
 
 ## Testes de código
 
@@ -63,7 +63,7 @@ Cobertura funcional exercitada:
 
 - Vercel: deploy do frontend com status de sucesso;
 - Render: API em estado `live`;
-- Supabase: migrations aplicadas, RLS habilitado e Database Advisor sem alertas de segurança.
+- Supabase: 4 migrations aplicadas, RLS habilitado e Database Advisor sem alertas de segurança. O Advisor de performance apresentou apenas 2 avisos informativos de índices ainda não utilizados, compatíveis com o baixo volume do banco de demonstração.
 
 ## Testes com dependências externas
 
@@ -79,3 +79,22 @@ Não bloqueiam o build nem os fluxos já implementados:
 - anexar o ZIP final no Canvas;
 - informar URL e credenciais demo no Canvas;
 - opcionalmente cadastrar uma credencial real de IA para demonstração ao vivo.
+
+
+## Revalidação final solicitada antes da entrega
+
+Após o fechamento das changes, a base foi novamente conferida contra o commit final da V3.
+
+- GitHub Actions run #124: **sucesso** em todas as etapas;
+- audit de dependências: **sucesso**;
+- lint/TypeScript: **sucesso**;
+- 38 testes unitários/HTTP: **sucesso**;
+- build web e API: **sucesso**;
+- build dos 2 containers OCI: **sucesso**;
+- Playwright smoke: **sucesso**;
+- pacote final: **gerado e anexado como artefato do CI**;
+- Render: **live**;
+- Supabase: **0 alertas de segurança**;
+- RLS: habilitado nas quatro tabelas públicas.
+
+Essa revalidação não substitui a demonstração manual com a conta acadêmica, mas confirma que o estado versionado e implantado está consistente para entrega.
