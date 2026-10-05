@@ -103,7 +103,9 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 
 Nesta V3 também foram concluídos os **containers OCI**, a **Infraestrutura como Código**, a **observabilidade/rastreabilidade** e o **recurso assistivo de IA**. A integração de IA é compatível com provedor OpenAI-compatible e degrada com segurança quando não há credencial configurada.
 
-A única dependência externa não versionada é a credencial de um provedor real de IA, necessária apenas para demonstrar uma resposta gerada ao vivo.
+A demonstração de IA ao vivo depende da configuração de um provedor externo. A reatribuição e a reabertura no navegador dependem também de uma conta Clerk associada ao supervisor no backend. Esses testes publicados continuam pendentes; o CI padrão não os substitui.
+
+Veja a [revisão de código e validação de 05/10](docs/code-review-2026-10-05.md), incluindo evidências dos fluxos manuais, correções e limites.
 
 ## Estrutura atual
 

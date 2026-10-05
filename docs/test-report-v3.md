@@ -1,4 +1,6 @@
-# Relatório final de testes — SupportFlow V3
+# Relatório de testes — SupportFlow V3 (04/10/2026)
+
+> Evidência histórica do commit citado abaixo. Para o estado posterior, os testes manuais publicados de 05/10 e as pendências externas, consulte [code-review-2026-10-05.md](code-review-2026-10-05.md). A aprovação do pipeline não significa aprovação da IA ao vivo nem do fluxo de supervisor publicado.
 
 ## Escopo
 

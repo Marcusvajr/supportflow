@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { ApiError, createApiClient } from '../../lib/api-client';
-import type { CustomerPage } from '../../lib/customer-types';
+import type { Customer } from '../../lib/customer-types';
+import { loadCustomerOptions } from '../../lib/customer-options';
 import { categoryLabels, priorityLabels, type Ticket, type TicketCategory, type TicketPriority } from '../../lib/ticket-types';
 
 type FormState = {
@@ -20,7 +21,7 @@ export function NewTicketScreen() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const { signOut } = useClerk();
   const router = useRouter();
-  const [customers, setCustomers] = useState<CustomerPage | null>(null);
+  const [customers, setCustomers] = useState<Customer[] | null>(null);
   const [form, setForm] = useState<FormState>({ customerId: '', title: '', description: '', category: 'NO_CONNECTION', priority: 'MEDIUM' });
   const [state, setState] = useState<'loading' | 'ready' | 'saving' | 'error'>('loading');
 
@@ -33,7 +34,7 @@ export function NewTicketScreen() {
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
-    api().request<CustomerPage>('/customers?page=1&pageSize=100')
+    loadCustomerOptions(api())
       .then((page) => { setCustomers(page); setState('ready'); })
       .catch((error: unknown) => {
         if (!(error instanceof ApiError && [401, 403].includes(error.status))) setState('error');
@@ -65,15 +66,15 @@ export function NewTicketScreen() {
       <section className="auth-panel">
         {state === 'loading' && <p role="status">Carregando clientes…</p>}
         {state === 'error' && <p role="alert">Não foi possível preparar o formulário. Verifique a persistência e tente novamente.</p>}
-        {state !== 'loading' && customers?.items.length === 0 && (
+        {state !== 'loading' && customers?.length === 0 && (
           <div role="status"><h2>Cadastre um cliente primeiro</h2><p>Todo chamado precisa estar vinculado a um cliente fictício.</p><Link className="primary-action" href="/customers">Abrir clientes</Link></div>
         )}
-        {customers && customers.items.length > 0 && (
+        {customers && customers.length > 0 && (
           <form className="form-grid" onSubmit={submit}>
             <label>Cliente
               <select required value={form.customerId} onChange={(event) => setForm({ ...form, customerId: event.target.value })}>
                 <option value="">Selecione</option>
-                {customers.items.map((customer) => <option key={customer.id} value={customer.id}>{customer.referenceCode} — {customer.name}</option>)}
+                {customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.referenceCode} — {customer.name}</option>)}
               </select>
             </label>
             <label>Categoria

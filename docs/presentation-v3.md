@@ -89,4 +89,4 @@ A IA recebe apenas fatos registrados e produz resumo de apoio. Ela não altera s
 
 ## 9. Estado da V3
 
-O núcleo funcional, os dois fluxos de negócio, persistência, segurança, dashboard/busca, containers, IaC e observabilidade estão implementados. A única dependência externa opcional é a credencial de um provedor real para demonstrar a geração do resumo por IA.
+O núcleo funcional, os dois fluxos de negócio, persistência, segurança, dashboard/busca, containers, IaC e observabilidade estão implementados. A geração de IA ao vivo e o fluxo publicado completo com supervisor permanecem pendentes de configuração e validação externa. No teste manual de 05/10, o fluxo de atendente chegou à resolução e o segundo chamado chegou ao escalonamento, com persistência e auditoria confirmadas. Observabilidade implementada significa logs estruturados e correlação; não comprova integração com Sentry.
