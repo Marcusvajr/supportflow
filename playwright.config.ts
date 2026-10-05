@@ -22,7 +22,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: '**/auth.spec.ts',
+      testIgnore: ['**/auth.spec.ts', '**/business.spec.ts'],
       use: { ...devices['Desktop Chrome'] },
     },
     { name: 'clerk-setup', testMatch: '**/clerk.setup.ts' },
@@ -32,6 +32,12 @@ export default defineConfig({
       dependencies: ['clerk-setup'],
       use: { ...devices['Desktop Chrome'] },
     },
+    ...(process.env.E2E_BUSINESS_ENABLED === 'true' ? [{
+      name: 'chromium-business',
+      testMatch: '**/business.spec.ts',
+      dependencies: ['clerk-setup'],
+      use: { ...devices['Desktop Chrome'] },
+    }] : []),
   ],
   webServer: [
     {

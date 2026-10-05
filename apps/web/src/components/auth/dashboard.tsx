@@ -136,6 +136,22 @@ export function Dashboard() {
             </div>
 
             <aside className="dashboard-side">
+              <section className="surface-card">
+                <div className="card-heading"><div><p className="page-kicker">Distribuição</p><h2>Situação da fila</h2></div></div>
+                <div className="status-distribution">
+                  {([
+                    ['Aberto', state.data.summary.open],
+                    ['Em diagnóstico', state.data.summary.diagnosing],
+                    ['Encaminhado', state.data.summary.escalated],
+                    ['Resolvido', state.data.summary.resolved],
+                  ] as const).map(([label, count]) => (
+                    <div className="status-distribution-row" key={label}>
+                      <div><span>{label}</span><strong>{count}</strong></div>
+                      <progress aria-label={`${label}: ${count} de ${state.data.summary.total} chamados`} value={count} max={Math.max(1, state.data.summary.total)} />
+                    </div>
+                  ))}
+                </div>
+              </section>
               <section className="surface-card quick-actions">
                 <div className="card-heading"><div><p className="page-kicker">Atalhos</p><h2>Ações rápidas</h2></div></div>
                 <Link className="quick-action-link" href="/tickets/new"><span>+</span><div><strong>Novo chamado</strong><small>Iniciar atendimento técnico</small></div></Link>
