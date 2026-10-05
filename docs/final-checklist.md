@@ -55,6 +55,12 @@
 - [x] Changes 03 a 08 verificadas e arquivadas
 - [x] Specs consolidadas sincronizadas
 
+## Revalidação final
+- [x] commit final com CI completo verde
+- [x] Render revalidado em estado `live`
+- [x] Supabase revalidado com 0 alertas de segurança
+- [x] artefato ZIP final disponível no GitHub Actions
+
 ## Antes da entrega
 - [ ] liberar acesso ao professor no repositório;
 - [ ] anexar o ZIP final gerado pelo CI;
