@@ -2,6 +2,8 @@
 
 > O repositório de referência utilizado no roteiro da disciplina não disponibilizava `template.spec.md` no momento da elaboração. Este documento foi estruturado para cumprir a função descrita no roteiro: transformar o PRD em regras de negócio, fluxos, estados, validações e contratos implementáveis.
 
+> Para o que foi implementado e seu estado de validação, consulte [docs/funcionalidades.md](funcionalidades.md). A especificação abaixo descreve também requisitos planejados e não é uma declaração de todos os recursos aprovados em produção.
+
 ## 1. Visão Geral
 
 O SupportFlow é uma aplicação web para gerenciamento e continuidade de chamados técnicos em provedores de internet.
