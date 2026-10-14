@@ -9,13 +9,14 @@ type NavItem = {
   href: string;
   label: string;
   description: string;
-  icon: 'dashboard' | 'tickets' | 'customers';
+  icon: 'dashboard' | 'tickets' | 'customers' | 'features';
 };
 
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Visão geral', description: 'Indicadores e atalhos', icon: 'dashboard' },
   { href: '/tickets', label: 'Chamados', description: 'Fila e atendimentos', icon: 'tickets' },
   { href: '/customers', label: 'Clientes', description: 'Base de demonstração', icon: 'customers' },
+  { href: '/funcionalidades', label: 'Funcionalidades', description: 'Guia e limites dos recursos', icon: 'features' },
 ];
 
 function NavIcon({ name }: Readonly<{ name: NavItem['icon'] }>) {
@@ -25,6 +26,7 @@ function NavIcon({ name }: Readonly<{ name: NavItem['icon'] }>) {
   if (name === 'tickets') {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v3.2a3 3 0 0 0 0 5.6V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3.2a3 3 0 0 0 0-5.6V6a2 2 0 0 1 2-2Zm7 3v2m0 2v2m0 2v2" /></svg>;
   }
+  if (name === 'features') return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>;
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-1.5a4.5 4.5 0 0 0-4.5-4.5h-3A4.5 4.5 0 0 0 4 18.5V20m12-9a3.5 3.5 0 1 0 0-7m4 16v-1.5a4.5 4.5 0 0 0-3.1-4.28M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" /></svg>;
 }
 
