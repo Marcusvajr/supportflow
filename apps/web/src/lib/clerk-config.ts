@@ -20,7 +20,10 @@ export function isValidClerkPublishableKey(value: string): boolean {
 }
 
 export function validateClerkBuildConfig(
-  env: Partial<Pick<NodeJS.ProcessEnv, 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY' | 'CLERK_SECRET_KEY'>> = process.env,
+  env: { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?: string; CLERK_SECRET_KEY?: string } = {
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+  },
 ): void {
   const publishable = env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   const secret = env.CLERK_SECRET_KEY;
