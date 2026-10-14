@@ -30,6 +30,8 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider implement
       throw new ServiceUnavailableException('Resumo por IA não está configurado neste ambiente.');
     }
 
+    // The free router may select slower providers. Keep one deadline for headers AND body.
+    const signal = AbortSignal.timeout(60000);
     let response: Response;
     try {
       response = await fetch(url, {
@@ -43,6 +45,7 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider implement
           model,
           temperature: 0.1,
           max_tokens: 500,
+          stream: false,
           messages: [
             {
               role: 'system',
@@ -51,10 +54,10 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider implement
             { role: 'user', content: context },
           ],
         }),
-        signal: AbortSignal.timeout(15000),
+        signal,
       });
     } catch (error) {
-      const reason = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')
+      const reason = signal.aborted || (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError'))
         ? 'timeout'
         : 'network_error';
       this.logger.warn(`ai_summary_failure reason=${reason}`);
@@ -74,9 +77,14 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider implement
         choices?: Array<{ message?: { content?: unknown } }>;
       } | null;
       content = body?.choices?.[0]?.message?.content;
-    } catch {
-      this.logger.warn('ai_summary_failure reason=invalid_json');
-      throw new ServiceUnavailableException('O provedor de IA não retornou um resumo válido.');
+    } catch (error) {
+      // A timeout can happen while reading a 200 response body, not only in fetch().
+      // Previously this was incorrectly logged as invalid_json after 15 seconds.
+      const timedOut = signal.aborted || (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError'));
+      this.logger.warn(`ai_summary_failure reason=${timedOut ? 'timeout' : 'invalid_json'} phase=response_body`);
+      throw new ServiceUnavailableException(
+        timedOut ? 'O provedor de IA demorou para responder. Tente novamente.' : 'O provedor de IA não retornou um resumo válido.',
+      );
     }
     if (typeof content !== 'string' || !content.trim()) {
       this.logger.warn('ai_summary_failure reason=invalid_content');
