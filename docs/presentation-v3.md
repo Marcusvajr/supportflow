@@ -1,5 +1,24 @@
 # Apresentação V3 — SupportFlow
 
+## Demonstração de 14/10/2026, às 19h
+
+Endereço principal: https://supportflow-pi.vercel.app/dashboard.
+
+Abra a aplicação antes do horário para inicializar a API no plano gratuito. A conta de demonstração tem papel de atendente; reatribuição e reabertura exigem supervisor.
+
+Roteiro sugerido (8 a 10 minutos):
+
+1. Apresente o problema: perda de contexto na passagem de um atendimento técnico.
+2. Mostre o dashboard e a separação entre clientes, chamados e indicadores.
+3. Abra `SF-2026-000002`: exiba descrição, teste, diagnóstico, resolução e linha do tempo. Esse caso já está persistido e foi reaberto para consulta em 14/10.
+4. Abra `SF-2026-000003`: explique o estado encaminhado e a continuidade por outro responsável. Explique a permissão de supervisor sem tentar executá-la com a conta de atendente.
+5. Mostre o formulário de novo chamado e explique a validação. Se fizer a demonstração de escrita, utilize somente dados fictícios.
+6. Explique a arquitetura: Next.js → API NestJS → Supabase, identidade Clerk e autorização no backend. A persistência usa a Data API do Supabase; Prisma não está implementado.
+7. Mostre o repositório e o resultado atual do GitHub Actions. A suíte contém 57 testes (45 API e 12 frontend); os smoke tests do Playwright são uma etapa separada.
+8. Encerre com os limites: IA ao vivo e fluxo completo de supervisor dependem de configuração/validação; Sentry não foi comprovado. O núcleo do atendimento funciona sem IA.
+
+O frontend alternativo do Render ainda exibiu autenticação indisponível na verificação de 14/10. Use a Vercel na apresentação. Não inclua senhas ou chaves nos slides nem nos arquivos versionados.
+
 ## 1. Problema e objetivo
 
 O SupportFlow reduz perda de contexto e retrabalho em chamados técnicos de provedores de internet. Quando um atendimento muda de responsável, testes, hipóteses e diagnósticos podem ficar dispersos. A aplicação concentra cliente, chamado, prioridade, responsável, atividades técnicas, diagnóstico, resolução e histórico.
