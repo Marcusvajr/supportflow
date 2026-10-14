@@ -1784,3 +1784,51 @@ body {
     justify-content: flex-start;
   }
 }
+
+
+/* Public feature guide */
+.landing-features-intro {
+  width: min(1180px, calc(100% - 48px));
+  margin: 44px auto 38px;
+}
+.landing-features-intro h1 {
+  margin: 10px 0 18px;
+  font-size: clamp(32px, 5vw, 54px);
+  letter-spacing: -.04em;
+}
+.landing-features-intro > p:last-child {
+  max-width: 820px;
+  line-height: 1.7;
+  color: #58677e;
+}
+.feature-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  color: var(--primary);
+}
+.landing-features .feature-detail {
+  margin-top: 12px;
+  color: #334155;
+}
+.landing-features .feature-status {
+  margin-top: 18px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+.landing-features .feature-readmore {
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+.feature-disclaimer {
+  width: min(1180px, calc(100% - 48px));
+  margin: -30px auto 50px;
+  color: #475569;
+  line-height: 1.65;
+  font-size: 13px;
+}
