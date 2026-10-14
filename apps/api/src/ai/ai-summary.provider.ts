@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException, type OnModuleInit } from '@nestjs/common';
 
 export type AiProviderResult = {
   text: string;
@@ -10,13 +10,23 @@ export abstract class AiSummaryProvider {
 }
 
 @Injectable()
-export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider {
+export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider implements OnModuleInit {
+  private readonly logger = new Logger(OpenAiCompatibleSummaryProvider.name);
+
+  onModuleInit(): void {
+    const hasKey = Boolean(process.env.AI_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim());
+    const endpoint = process.env.AI_PROVIDER_URL?.trim() ? 'custom' : 'openrouter_default';
+    // Log configuration presence only. Never record the secret, URL query or ticket text.
+    this.logger.log(`ai_summary_config credential=${hasKey ? 'present' : 'missing'} endpoint=${endpoint}`);
+  }
+
   async generate(context: string): Promise<AiProviderResult> {
     const url = process.env.AI_PROVIDER_URL?.trim() || 'https://openrouter.ai/api/v1/chat/completions';
     const apiKey = process.env.AI_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim() || '';
     const model = process.env.AI_MODEL?.trim() || 'openai/gpt-4o-mini';
 
     if (!apiKey) {
+      this.logger.warn('ai_summary_failure reason=missing_credential');
       throw new ServiceUnavailableException('Resumo por IA não está configurado neste ambiente.');
     }
 
@@ -43,11 +53,18 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider {
         }),
         signal: AbortSignal.timeout(15000),
       });
-    } catch {
+    } catch (error) {
+      const reason = error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')
+        ? 'timeout'
+        : 'network_error';
+      this.logger.warn(`ai_summary_failure reason=${reason}`);
       throw new ServiceUnavailableException('O provedor de IA está temporariamente indisponível.');
     }
 
     if (!response.ok) {
+      // The upstream HTTP status distinguishes invalid key, credits and rate limiting.
+      // Do not log the provider body: it may include user content or credentials.
+      this.logger.warn(`ai_summary_failure reason=provider_http status=${response.status}`);
       throw new ServiceUnavailableException('O provedor de IA está temporariamente indisponível.');
     }
 
@@ -58,9 +75,11 @@ export class OpenAiCompatibleSummaryProvider extends AiSummaryProvider {
       } | null;
       content = body?.choices?.[0]?.message?.content;
     } catch {
+      this.logger.warn('ai_summary_failure reason=invalid_json');
       throw new ServiceUnavailableException('O provedor de IA não retornou um resumo válido.');
     }
     if (typeof content !== 'string' || !content.trim()) {
+      this.logger.warn('ai_summary_failure reason=invalid_content');
       throw new ServiceUnavailableException('O provedor de IA não retornou um resumo válido.');
     }
 
