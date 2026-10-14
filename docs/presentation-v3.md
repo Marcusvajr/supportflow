@@ -19,6 +19,14 @@ Roteiro sugerido (8 a 10 minutos):
 
 O frontend alternativo do Render ainda exibiu autenticação indisponível na verificação de 14/10. Use a Vercel na apresentação. Não inclua senhas ou chaves nos slides nem nos arquivos versionados.
 
+## Catálogo das funcionalidades e roteiro de explicação
+
+Para apresentar **todos os recursos**, veja [Funcionalidades do SupportFlow](funcionalidades.md). A demonstração deve explicar, na ordem: autenticação e permissões; dashboard; cadastro e consulta de clientes; abertura, busca e filtros de chamados; categorias, prioridades e estados; atribuição e reatribuição; registros de observações, testes e diagnósticos; resolução; linha do tempo/auditoria; resumo opcional por IA.
+
+**Limite da IA:** existe botão no frontend e endpoint `POST /api/v1/tickets/:id/ai-summary`, mas chamadas observadas em 14/10/2026 tiveram HTTP 503 (três registros). A geração real depende de um provedor externo com credencial configurada no backend. Não trate essa integração como validada, nem confunda resumo de informações com diagnóstico automático.
+
+**Plataformas:** Vercel hospeda o frontend principal; Render executa API e frontend alternativo; Supabase armazena dados em PostgreSQL; Clerk cuida da identidade; GitHub versiona código e executa o CI; Stitch orientou o protótipo visual.
+
 ## 1. Problema e objetivo
 
 O SupportFlow reduz perda de contexto e retrabalho em chamados técnicos de provedores de internet. Quando um atendimento muda de responsável, testes, hipóteses e diagnósticos podem ficar dispersos. A aplicação concentra cliente, chamado, prioridade, responsável, atividades técnicas, diagnóstico, resolução e histórico.

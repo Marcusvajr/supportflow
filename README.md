@@ -10,6 +10,21 @@ O SupportFlow parte da hipótese de que informações técnicas fragmentadas dur
 
 A proposta é manter o histórico técnico do chamado organizado para que outro atendente consiga entender o que já foi feito e continuar o atendimento sem reconstruir todo o contexto.
 
+## Funcionalidades explicadas
+
+O [guia de funcionalidades](docs/funcionalidades.md) descreve **cada recurso, sua finalidade, seu uso e seu nível de validação**. A [página pública de funcionalidades](https://supportflow-pi.vercel.app/funcionalidades) foi preparada no frontend (a disponibilidade depende da publicação desta alteração).
+
+| Área | O que está disponível | Limite importante |
+|---|---|---|
+| Autenticação e permissões | Clerk, sessões privadas e perfis atendente/supervisor | Fluxo completo com supervisor ainda precisa de teste publicado |
+| Painel | Indicadores e chamados para acompanhamento | Métricas do ambiente acadêmico, com dados fictícios |
+| Clientes | Cadastro, consulta, busca e atualização | Somente dados fictícios |
+| Chamados | Protocolo, cadastro, filtros, prioridades, estados, responsáveis, resolução | Transições e permissões são validadas pela API |
+| Registro técnico | Observações, testes, diagnósticos, linha do tempo e auditoria | Histórico depende dos dados registrados pelo operador |
+| Resumo assistivo por IA | Interface e endpoint de geração com contexto do chamado | **Não validado em produção:** três requisições devolveram HTTP 503 em 14/10/2026; requer provedor externo configurado |
+
+O resumo por IA **não executa diagnóstico automático nem altera o chamado**. A operação principal continua disponível se o serviço externo falhar. Não publique chaves de IA no frontend ou no GitHub.
+
 ## Estado da V3
 
 Nesta entrega incremental já estão implementados:

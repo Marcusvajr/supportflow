@@ -1,5 +1,7 @@
 # Definição de Requisitos do Produto (PRD)
 
+> Guia de funcionalidades implementadas, uso e limites de validação: [docs/funcionalidades.md](funcionalidades.md). O resumo assistivo por IA é opcional e não deve ser confundido com um diagnóstico automático.
+
 ## Descrição do produto
 
 ### Problema

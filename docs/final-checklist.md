@@ -22,6 +22,15 @@ No ambiente local desta revisão, os testes usaram `node --import tsx --test` de
 
 O resultado de containers, Playwright smoke e empacotamento deve ser conferido na execução do commit entregue em [GitHub Actions](https://github.com/Marcusvajr/supportflow/actions). Os registros anteriores do CI não comprovam uma execução nova. O ZIP final é produzido pelo workflow quando todas as etapas passam.
 
+## Funcionalidades e IA
+
+- [x] Catálogo detalhado disponível em [docs/funcionalidades.md](funcionalidades.md), com propósito, operação e limitações.
+- [x] Frontend preparado com navegação para uma página pública de recursos e descrição das funcionalidades; conferir o deploy desta atualização antes de divulgar o novo endereço.
+- [x] Implementação identificada para botão e endpoint do resumo assistivo por IA.
+- [ ] **Resumo por IA gerando texto real em produção:** não confirmado. Logs Render de 14/10/2026 mostram três respostas HTTP 503 do endpoint.
+- [ ] **Teste de supervisor completo em produção:** não confirmado.
+- [ ] **Troca da credencial Clerk antes exposta:** ainda necessária por segurança.
+
 ## Escopo e limites conhecidos
 
 - A URL da apresentação é https://supportflow-pi.vercel.app/dashboard. O frontend alternativo do Render ainda mostrou autenticação indisponível; não usar como link de demonstração.
