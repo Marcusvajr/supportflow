@@ -36,6 +36,14 @@ A aplicação usa por padrão `https://openrouter.ai/api/v1/chat/completions`, m
 
 Não cole a chave no chat, no GitHub, em slides ou no frontend. Não envie uma chave da OmniRoute ao endpoint da OpenRouter sem confirmar a compatibilidade do provedor e a URL correta.
 
+## Demora durante a geração (14/10/2026)
+
+Após configurar `OPENROUTER_API_KEY` no Render, a requisição ao modelo `openrouter/free` retornou **503 após cerca de 15,6 segundos**, com a categoria `invalid_json`. O código tinha um `AbortSignal.timeout(15000)` compartilhado pela solicitação e pela leitura da resposta; quando o limite ocorria na fase de `response.json()`, a exceção era classificada incorretamente.
+
+A alteração de 14/10 aumenta o limite único para **60 segundos**, especifica `stream: false` e registra `reason=timeout phase=response_body` em vez de `invalid_json` quando a leitura é abortada. Não altera credenciais, modelo nem dados dos chamados.
+
+O modelo `openrouter/free` seleciona provedores gratuitos, cuja latência pode variar. Caso a requisição exceda 60 segundos ou retorne outro erro, verificar os novos logs e evitar prometer que a geração está validada sem uma resposta HTTP 200.
+
 ## Critério de aceite
 
 1. Render registra `credential=present`.
