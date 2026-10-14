@@ -1,68 +1,38 @@
-# Checklist final da disciplina — SupportFlow
+# Checklist da apresentação — 14/10/2026, 19h
 
-## Entregas de produto
-- [x] Lean Canvas
-- [x] Personas
-- [x] Jornada
-- [x] Mapeamento de histórias
-- [x] Definição do problema
-- [x] Requisitos do produto
-- [x] Especificações
+## Aplicação e materiais
 
-## Modelos
-- [x] Contexto
-- [x] Contêineres
-- [x] Componentes
-- [x] Classes
-- [x] Implantação
+- [x] Documentação de produto: problema, Lean Canvas, personas, jornada, histórias, PRD e especificações.
+- [x] Modelos de contexto, contêineres, componentes, classes e implantação.
+- [x] Autenticação Clerk, autorização AGENT/SUPERVISOR e persistência Supabase implementadas.
+- [x] Dashboard autenticado da Vercel consultado em 14/10: dois clientes e dois chamados.
+- [x] Chamado `SF-2026-000002` consultado com teste, diagnóstico, resolução e histórico preservados.
+- [x] API e frontend Render responderam HTTP 200 nos health checks.
+- [x] Roteiro atualizado em [presentation-v3.md](presentation-v3.md).
 
-## Implementação e plataforma
-- [x] Monorepo
-- [x] Frontend responsivo
-- [x] Backend REST
-- [x] PostgreSQL/Supabase
-- [x] Autenticação externa
-- [x] Autorização por perfis
-- [x] Dois fluxos de negócio
-- [x] Testes unitários
-- [x] Testes de integração
-- [x] Testes smoke/aceite automatizados
-- [x] CI/CD
-- [x] Containers OCI
-- [x] IaC
-- [x] Observabilidade
-- [x] Aplicação publicada
-- [x] Credenciais demo cadastradas
-- [x] Recurso assistivo de IA implementado
-- [x] Integração de IA pronta para provedor real; credencial permanece externa e opcional para a demonstração
+## Validação da atualização de dependências
 
-## Validação técnica final
-- [x] `npm audit --omit=dev --audit-level=high`
-- [x] lint/TypeScript
-- [x] 4 testes unitários do frontend
-- [x] 34 testes unitários/HTTP do backend
-- [x] build Next.js
-- [x] build NestJS
-- [x] build do container OCI da API
-- [x] build do container OCI do frontend
-- [x] Playwright smoke
-- [x] Vercel com status de deploy bem-sucedido
-- [x] Render em estado `live`
-- [x] Supabase Database Advisor sem alertas de segurança
-- [x] ZIP final gerado automaticamente pelo CI
+- [x] Instalação limpa com `npm ci`.
+- [x] Lint/TypeScript.
+- [x] 45 testes da API e 12 testes do frontend aprovados localmente.
+- [x] Build Next.js e NestJS.
+- [x] `npm audit --omit=dev --audit-level=high`: zero vulnerabilidades na verificação de 14/10.
 
-## OpenSpec
-- [x] Changes 03 a 08 verificadas e arquivadas
-- [x] Specs consolidadas sincronizadas
+No ambiente local desta revisão, os testes usaram `node --import tsx --test` devido à restrição de IPC do executável `tsx`. O CI mantém o comando normal `npm run test`.
 
-## Revalidação final
-- [x] commit final com CI completo verde
-- [x] Render revalidado em estado `live`
-- [x] Supabase revalidado com 0 alertas de segurança
-- [x] artefato ZIP final disponível no GitHub Actions
+O resultado de containers, Playwright smoke e empacotamento deve ser conferido na execução do commit entregue em [GitHub Actions](https://github.com/Marcusvajr/supportflow/actions). Os registros anteriores do CI não comprovam uma execução nova. O ZIP final é produzido pelo workflow quando todas as etapas passam.
 
-## Antes da entrega
-- [ ] liberar acesso ao professor no repositório;
-- [ ] anexar o ZIP final gerado pelo CI;
-- [ ] informar URL e credenciais da conta demo no Canvas;
-- [ ] usar `docs/presentation-v3.md` como roteiro.
+## Escopo e limites conhecidos
+
+- A URL da apresentação é https://supportflow-pi.vercel.app/dashboard. O frontend alternativo do Render ainda mostrou autenticação indisponível; não usar como link de demonstração.
+- A verificação de 14/10 reutilizou uma sessão autenticada; não equivale a um novo login desde a entrada de senha.
+- O fluxo publicado de supervisor e a geração de IA ao vivo ainda não foram revalidados. A conta demonstrativa atual é de atendente.
+- Sentry e Prisma não devem ser apresentados como integrações implementadas; há logs estruturados/correlação e persistência pela Data API do Supabase.
+- A rotação da chave anteriormente exposta não foi executada nesta revisão, conforme decisão do titular.
+
+## Preparação do apresentador
+
+- [ ] Abrir a Vercel e conferir a conta demonstrativa antes das 19h.
+- [ ] Abrir os dois chamados de exemplo, o roteiro e o repositório em abas separadas.
+- [ ] Conferir o acesso do professor ao repositório e anexar o ZIP aprovado pelo CI.
+- [ ] Informar credenciais de demonstração apenas no canal privado da entrega, nunca no Git.

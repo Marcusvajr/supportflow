@@ -2,6 +2,8 @@
 
 Aplicação web para centralização e continuidade de chamados técnicos em provedores de internet, desenvolvida de forma incremental na disciplina **Práticas de Implementação e Evolução de Software**.
 
+**Demonstração:** [abrir SupportFlow](https://supportflow-pi.vercel.app/dashboard) · [roteiro da apresentação](docs/presentation-v3.md) · [checklist atualizado em 14/10/2026](docs/final-checklist.md) · [validação no GitHub Actions](https://github.com/Marcusvajr/supportflow/actions).
+
 ## Problema
 
 O SupportFlow parte da hipótese de que informações técnicas fragmentadas durante o atendimento podem causar retrabalho, repetição de testes e perda de contexto em transferências e escalonamentos.
