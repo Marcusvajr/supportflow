@@ -1,10 +1,6 @@
 import Link from 'next/link';
+import { featureCatalog as features } from '../lib/feature-catalog';
 
-const features = [
-  { number: '01', title: 'Continuidade real', text: 'Histórico técnico com testes, diagnósticos, mudanças de status e resolução em uma única linha do tempo.' },
-  { number: '02', title: 'Operação organizada', text: 'Clientes, chamados, prioridades e filtros em uma interface feita para rotina de Help Desk.' },
-  { number: '03', title: 'Rastreabilidade', text: 'Eventos críticos auditados e persistidos em PostgreSQL para reduzir perda de contexto entre atendentes.' },
-];
 
 export default function HomePage() {
   return (
@@ -21,6 +17,7 @@ export default function HomePage() {
           <p>Uma central web para registrar, acompanhar e dar continuidade a chamados técnicos sem reconstruir o atendimento do zero.</p>
           <div className="landing-actions">
             <Link className="primary-action large" href="/dashboard" prefetch={false}>Entrar no SupportFlow</Link>
+            <Link className="secondary-action" href="/funcionalidades">Conhecer os recursos</Link>
             <span>Ambiente acadêmico · Dados fictícios</span>
           </div>
         </div>
@@ -50,6 +47,7 @@ export default function HomePage() {
             <span>{feature.number}</span>
             <h2>{feature.title}</h2>
             <p>{feature.text}</p>
+            <Link className="feature-readmore" href="/funcionalidades">Como funciona e situação da validação</Link>
           </article>
         ))}
       </section>
