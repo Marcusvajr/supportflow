@@ -21,7 +21,7 @@ O [guia de funcionalidades](docs/funcionalidades.md) descreve **cada recurso, su
 | Clientes | Cadastro, consulta, busca e atualização | Somente dados fictícios |
 | Chamados | Protocolo, cadastro, filtros, prioridades, estados, responsáveis, resolução | Transições e permissões são validadas pela API |
 | Registro técnico | Observações, testes, diagnósticos, linha do tempo e auditoria | Histórico depende dos dados registrados pelo operador |
-| Resumo assistivo por IA | Interface e endpoint de geração com contexto do chamado | **Não validado em produção:** três requisições devolveram HTTP 503 em 14/10/2026; requer provedor externo configurado |
+| Resumo assistivo por IA | Interface e endpoint de geração com contexto do chamado | **Geração real confirmada:** POST do resumo respondeu HTTP 201 em 15/10/2026 00:28 UTC (7,6 s); provedor OpenRouter, revisão humana necessária |
 
 O resumo por IA **não executa diagnóstico automático nem altera o chamado**. A operação principal continua disponível se o serviço externo falhar. Não publique chaves de IA no frontend ou no GitHub.
 
@@ -120,7 +120,7 @@ Telas planejadas: login, dashboard, chamados, novo chamado, detalhes do chamado,
 
 Nesta V3 também foram concluídos os **containers OCI**, a **Infraestrutura como Código**, a **observabilidade/rastreabilidade** e o **recurso assistivo de IA**. A integração de IA é compatível com provedor OpenAI-compatible e degrada com segurança quando não há credencial configurada.
 
-A demonstração de IA ao vivo depende da configuração de um provedor externo. A reatribuição e a reabertura no navegador dependem também de uma conta Clerk associada ao supervisor no backend. Esses testes publicados continuam pendentes; o CI padrão não os substitui.
+A IA foi conectada à OpenRouter e uma geração real de resumo em chamado fictício foi confirmada pelo Render (HTTP 201 em 15/10/2026 00:28 UTC). Isso comprova a execução da rota, não a qualidade de todas as respostas. A reatribuição e a reabertura dependem de uma conta Clerk associada ao supervisor no backend, e o fluxo completo de supervisor publicado continua pendente. O CI padrão não substitui esses testes.
 
 Veja a [revisão de código e validação de 05/10](docs/code-review-2026-10-05.md), incluindo evidências dos fluxos manuais, correções e limites.
 

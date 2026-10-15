@@ -15,7 +15,7 @@ Roteiro sugerido (8 a 10 minutos):
 5. Mostre o formulário de novo chamado e explique a validação. Se fizer a demonstração de escrita, utilize somente dados fictícios.
 6. Explique a arquitetura: Next.js → API NestJS → Supabase, identidade Clerk e autorização no backend. A persistência usa a Data API do Supabase; Prisma não está implementado.
 7. Mostre o repositório e o resultado atual do GitHub Actions. A suíte contém 57 testes (45 API e 12 frontend); os smoke tests do Playwright são uma etapa separada.
-8. Encerre com os limites: IA ao vivo e fluxo completo de supervisor dependem de configuração/validação; Sentry não foi comprovado. O núcleo do atendimento funciona sem IA.
+8. Encerre com os limites: o fluxo completo de supervisor ainda não foi validado; a IA foi testada com sucesso via OpenRouter. Sentry não foi comprovado. O núcleo do atendimento funciona sem IA.
 
 O frontend alternativo do Render ainda exibiu autenticação indisponível na verificação de 14/10. Use a Vercel na apresentação. Não inclua senhas ou chaves nos slides nem nos arquivos versionados.
 
@@ -23,7 +23,7 @@ O frontend alternativo do Render ainda exibiu autenticação indisponível na ve
 
 Para apresentar **todos os recursos**, veja [Funcionalidades do SupportFlow](funcionalidades.md). A demonstração deve explicar, na ordem: autenticação e permissões; dashboard; cadastro e consulta de clientes; abertura, busca e filtros de chamados; categorias, prioridades e estados; atribuição e reatribuição; registros de observações, testes e diagnósticos; resolução; linha do tempo/auditoria; resumo opcional por IA.
 
-**Limite da IA:** existe botão no frontend e endpoint `POST /api/v1/tickets/:id/ai-summary`, mas chamadas observadas em 14/10/2026 tiveram HTTP 503 (três registros). A geração real depende de um provedor externo com credencial configurada no backend. Não trate essa integração como validada, nem confunda resumo de informações com diagnóstico automático.
+**Validação de IA:** botão e endpoint `POST /api/v1/tickets/:id/ai-summary` foram integrados com OpenRouter. Após correção de timeout, requisição autenticada retornou **HTTP 201 em 15/10/2026 00:28 UTC, em 7,6 s**, confirmando geração real. A resposta deve ser revisada e não equivale a diagnóstico automático.
 
 **Plataformas:** Vercel hospeda o frontend principal; Render executa API e frontend alternativo; Supabase armazena dados em PostgreSQL; Clerk cuida da identidade; GitHub versiona código e executa o CI; Stitch orientou o protótipo visual.
 
@@ -116,4 +116,8 @@ A IA recebe apenas fatos registrados e produz resumo de apoio. Ela não altera s
 
 ## 9. Estado da V3
 
-O núcleo funcional, os dois fluxos de negócio, persistência, segurança, dashboard/busca, containers, IaC e observabilidade estão implementados. A geração de IA ao vivo e o fluxo publicado completo com supervisor permanecem pendentes de configuração e validação externa. No teste manual de 05/10, o fluxo de atendente chegou à resolução e o segundo chamado chegou ao escalonamento, com persistência e auditoria confirmadas. Observabilidade implementada significa logs estruturados e correlação; não comprova integração com Sentry.
+O núcleo funcional, os dois fluxos de negócio, persistência, segurança, dashboard/busca, containers, IaC e observabilidade estão implementados. A geração de IA ao vivo foi confirmada em uma requisição real; apenas o fluxo publicado completo com supervisor permanece pendente de validação externa. No teste manual de 05/10, o fluxo de atendente chegou à resolução e o segundo chamado chegou ao escalonamento, com persistência e auditoria confirmadas. Observabilidade implementada significa logs estruturados e correlação; não comprova integração com Sentry.
+
+## Complemento da entrega final — verificação de 14/10/2026
+
+Quatro clientes fictícios, quatro novos chamados e onze atividades técnicas foram criados diretamente no banco. O total após testes era de 6 clientes, 7 chamados, 14 atividades e 31 auditorias. Essa evidência confirma integridade e persistência, mas não demonstra os botões dos formulários web. Para a apresentação, use a Vercel como frontend principal e a demonstração autenticada com dados fictícios.

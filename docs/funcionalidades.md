@@ -18,7 +18,7 @@
 | Atividades técnicas | Registro de observações, testes e diagnósticos. Cada registro descreve o que foi feito ou identificado para evitar repetição de procedimentos. | Implementado no código; conferir cenários reais conforme testes |
 | Resolução | Encerramento com descrição obrigatória da solução aplicada. A resolução é preservada para consulta posterior e registrada no histórico. | Implementado no código; conferir cenários reais conforme testes |
 | Linha do tempo e auditoria | Histórico cronológico de atividades e alterações relevantes. Permite acompanhar testes, diagnósticos, responsáveis e mudanças de estado. | Implementado no código; conferir cenários reais conforme testes |
-| Resumo assistivo por IA | Geração opcional de uma síntese dos fatos registrados no chamado. A interface e a rota de API estão implementadas, mas dependem de um provedor externo com credenciais válidas. Há registros de respostas HTTP 503 em 14/10/2026; a geração ao vivo ainda não foi validada. A IA não altera o chamado. | Implementado; serviço de IA externa não validado |
+| Resumo assistivo por IA | Geração opcional de uma síntese dos fatos registrados no chamado. A interface e a rota de API estão implementadas, mas dependem de um provedor externo com credenciais válidas. Após corrigir o timeout, houve geração real confirmada no Render (HTTP 201 em 15/10/2026 00:28 UTC; 7,6 s). A IA não altera o chamado e exige revisão humana. | Implementado; teste autenticado real aprovado |
 
 ## Como demonstrar (sem alterar dados reais)
 
@@ -28,7 +28,7 @@
 4. Em **Chamados**, use busca e filtros por status/prioridade; abra um caso de demonstração.
 5. Nos detalhes, mostre categoria, prioridade, responsável, observações, testes, diagnósticos, resolução e linha do tempo.
 6. Explique reatribuição/reabertura como ações restritas ao supervisor; não as execute com conta de atendente.
-7. Explique o botão de resumo por IA como **opcional e dependente de provedor externo**. Não afirme funcionamento ao vivo sem uma resposta real bem-sucedida.
+7. Explique o botão de resumo por IA como **opcional e dependente de provedor externo**. Uma geração real foi confirmada em 15/10/2026; avise que a fidelidade de cada resumo deve ser conferida pelo atendente.
 
 ## Resumo assistivo por IA: funcionamento e diagnóstico
 
@@ -37,7 +37,7 @@
 - O backend reúne título, descrição, cliente, categoria, status, prioridade, resolução e até 30 eventos recentes da linha do tempo.
 - O provedor OpenAI-compatible é configurado pelo servidor por `AI_PROVIDER_URL`, `AI_MODEL` e uma credencial em `AI_API_KEY` ou `OPENROUTER_API_KEY`. Não armazene a chave no frontend, nos slides ou no Git.
 - Sem credencial, erro de rede, resposta inválida ou falha do provedor, a API devolve indisponibilidade controlada e **não altera o atendimento**.
-- **Evidência de limitação atual:** logs da API Render registraram respostas HTTP 503 em três chamadas do endpoint em 14/10/2026 (14:57, 17:29 e 18:03 UTC). Não foi comprovada uma geração ao vivo bem-sucedida nesta verificação.
+- **Evidência de limitação atual:** logs da API Render registraram respostas HTTP 503 em três chamadas do endpoint em 14/10/2026 (14:57, 17:29 e 18:03 UTC). Após configuração do provedor e correção do timeout, o endpoint respondeu HTTP 201 em 15/10/2026 00:28 UTC, concluindo uma geração real em aproximadamente 7,6 s.
 - **Para concluir:** configurar/validar credenciais exclusivamente no servidor, testar um chamado fictício em ambiente controlado, verificar HTTP 200 e a qualidade do texto; preservar os dados e revisar eventuais custos/termos do provedor antes do uso.
 
 ## Arquitetura de referência
@@ -53,7 +53,7 @@
 
 - Integrações com OLT/ONU/ONT, ERP e WhatsApp; aplicativo móvel nativo; automações e alertas inteligentes: **fora do MVP**.
 - Prisma e Sentry: citados em propostas anteriores, não comprovados como implementados nesta entrega.
-- IA ao vivo e fluxo completo de supervisor: implementações existentes, **aceitação publicada ainda pendente**.
+- IA ao vivo: **uma geração real aprovada**; fluxo completo de supervisor: **aceitação publicada ainda pendente**.
 - O frontend alternativo do Render pode exigir configuração do Clerk; prefira a URL Vercel para demonstrações até validação específica.
 
 ## Evidências
@@ -61,3 +61,7 @@
 - Código e testes: `apps/api/src/ai/`, `apps/web/src/components/`, `apps/api/tests/`.
 - Execução de CI referenciada na entrega: https://github.com/Marcusvajr/supportflow/actions/runs/38605369155.
 - Consulte `docs/final-checklist.md` e `docs/presentation-v3.md` para limitações e roteiro.
+
+## Dados de teste adicionados em 14/10/2026
+
+No Supabase, foram inseridos diretamente e identificados como fictícios quatro clientes (`SF-TEST-101` a `SF-TEST-104`) e chamados com protocolos `SF-2026-000005` a `SF-2026-000008`. Foram adicionadas onze atividades (NOTE, TEST e DIAGNOSIS) e testadas mudanças de status e resolução. Verificação de integridade: **6 clientes, 7 chamados, 14 atividades e 31 eventos de auditoria**. Esses testes confirmam persistência e triggers, **não validam os formulários nem a autorização da API pelo navegador**.
